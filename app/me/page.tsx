@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getPrefill, signOut } from "./actions";
 import ProfileForm from "./ProfileForm";
+import PhotoUpload from "./PhotoUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +32,25 @@ export default async function MePage({
         Signed in as {user?.email}
       </p>
 
+      {profile && (
+        <PhotoUpload
+          userId={user!.id}
+          firstName={profile.first_name ?? ""}
+          lastName={profile.last_name ?? ""}
+          photoUrl={profile.photo_url ?? null}
+        />
+      )}
+
       <ProfileForm
         profile={profile ?? prefill ?? {}}
         prefilled={Boolean(!profile && prefill)}
       />
+
+      {!profile && (
+        <p className="mt-6 text-xs text-[var(--color-muted)]">
+          You can add a photo once your profile is saved.
+        </p>
+      )}
 
       <form action={signOut} className="mt-8">
         <button type="submit" className="text-sm text-[var(--color-muted)] underline">

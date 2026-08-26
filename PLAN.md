@@ -11,8 +11,8 @@
 
 ## 0. STATUS — updated 26 Aug 2026
 
-**Stage: Phases 1 and 2 complete. Starting Phase 3.**
-Still day 1 of 15. Phases 1–2 were budgeted for days 1–5.
+**Stage: Phases 1–3 complete. Starting Phase 4 (the OCR agent).**
+Still day 1 of 15. Phases 1–3 were budgeted for days 1–8.
 
 **Live:** https://aic-info-production.up.railway.app
 **Repo:** https://github.com/DanGomezWins/AIC-Info (private, auto-deploys from `main`)
@@ -23,8 +23,8 @@ Still day 1 of 15. Phases 1–2 were budgeted for days 1–5.
 |---|---|---|---|
 | 1 | 1–2 | Foundation — deploy, schema, auth, PWA shell | ✅ **Done** |
 | 2 | 3–5 | Feed + Program + manual schedule admin | ✅ **Done** |
-| 3 | 6–8 | Networking directory + photo upload | 🔵 **Next** |
-| 4 | 9–11 | Photo → OCR → draft → publish agent | ⬜ Not started |
+| 3 | 6–8 | Networking directory + photo upload | ✅ **Done** |
+| 4 | 9–11 | Photo → OCR → draft → publish agent | 🔵 **Next** |
 | 5 | 12–13 | Web push + auto-announcement scheduler | ⬜ Not started |
 | 6 | 14 | Seed real data + device testing + dry run | ⬜ Not started |
 | 7 | 15 | Buffer / launch | ⬜ Not started |
@@ -52,9 +52,6 @@ are placeholder screens today.
 
 - ~~Feed: realtime updates, organiser posting~~ ✅ built
 - ~~Program: three-track schedule~~ ✅ built — session **detail** view still outstanding *(Phase 2)*
-- **Networking directory** — sort, filter, search, profile detail *(Phase 3)*
-  ← this is why a registered attendee does not yet appear anywhere
-- Profile photo upload *(Phase 3)*
 - Photo → OCR → draft → correct → publish agent *(Phase 4)*
 - Web push notifications *(Phase 5)*
 - Auto-announcement scheduler *(Phase 5)*
@@ -67,6 +64,9 @@ are placeholder screens today.
   runtime variable `ENABLE_DEV_SIGNIN`; clearing it disables the bypass instantly with
   no rebuild. **Must be removed before the event.**
 - **Icons are placeholders** — a generated blue ring on dark. Awaiting brand assets.
+- **15 dummy attendee profiles** seeded by `npm run seed:people`, all on
+  `@dummy.aicinfo.test` addresses. `node scripts/seed-people.mjs --clear` removes exactly
+  those and cascades their profiles away.
 - **The programme is dummy data.** 25 fictional speaker sessions plus the real day
   structure, seeded by `npm run seed:program`. Every row is tagged `notes='DUMMY'`, so
   `node scripts/seed-program.mjs --clear` removes exactly those rows and nothing else.
@@ -275,8 +275,8 @@ Bottom tab bar, three tabs, matching the brief exactly.
 |---|---|---|
 | `/` | **Feed** — organiser updates, newest first, live via Realtime, "N new" banner | ✅ built |
 | `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, now/next highlighting, day structure inline | ✅ built (dummy data) |
-| `/people` | **Networking** — directory. A–Z sort, Speaker/Guest filter, free-text search across name + company + role | ⬜ placeholder |
-| `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn, email, sessions if a speaker | ⬜ not built |
+| `/people` | **Networking** — directory. A–Z sort, Speaker/Guest filter, instant search across name + company + role, with Nordic character folding | ✅ built |
+| `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn, email, and their sessions | ✅ built |
 | `/me` | Create / edit my own profile | ✅ built |
 | `/login` | Magic-link sign-in | ✅ built |
 | `/auth/callback` | Redeems the magic link, routes first-timers to profile setup | ✅ built |
@@ -347,7 +347,7 @@ Organiser-only — none built yet:
 |---|---|---|---|
 | 1–2 | **Foundation** | Next.js + Supabase + Railway wired up (both EU region), schema + RLS live, magic-link auth working, PWA shell installs to home screen. **Live URL exists at the end of day 2.** | ✅ done day 1 |
 | 3–5 | **Feed + Program** | Feed with realtime; organiser posting; three-track program; manual schedule admin (the fallback) | ✅ done day 1 |
-| 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail | ◐ profile create/edit done early; directory + photo outstanding |
+| 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail | ✅ done day 1 |
 | 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish | ⬜ |
 | 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch | ⬜ |
 | 14 | **Seed + rehearse** | Real program data loaded; test on real iOS + Android; dry run with Martin | ⬜ |
