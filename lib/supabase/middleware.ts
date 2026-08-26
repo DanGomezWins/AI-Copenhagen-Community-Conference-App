@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { publicOrigin } from "@/lib/site-url";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
@@ -41,11 +42,12 @@ export async function updateSession(request: NextRequest) {
   );
 
   if (!user && !isPublic) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    // Build from the public origin, not request.nextUrl — behind a proxy the
+    // latter can be the container's internal bind address.
+    const url = new URL("/login", publicOrigin(request));
     // Preserve where they were heading so we can land them there after login.
     if (path !== "/") url.searchParams.set("next", path);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url.toString());
   }
 
   return response;
