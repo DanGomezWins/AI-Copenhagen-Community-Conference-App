@@ -15,16 +15,20 @@
     "migrate:status": "node scripts/migrate.mjs --status",
     "db:verify": "node scripts/verify-schema.mjs",
     "seed:program": "node scripts/seed-program.mjs",
-    "seed:people": "node scripts/seed-people.mjs"
+    "seed:people": "node scripts/seed-people.mjs",
+    "test:scan": "tsx scripts/test-scan.mts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^16.3.3",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.0",
     "@types/pg": "^8.23.1",

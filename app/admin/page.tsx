@@ -1,9 +1,11 @@
 import Link from "next/link";
 
-const ITEMS = [
+type Item = { href: string; title: string; desc: string; soon?: boolean };
+
+const ITEMS: Item[] = [
   { href: "/admin/post", title: "Post an update", desc: "Goes to every attendee's feed instantly." },
   { href: "/admin/schedule", title: "Edit the schedule", desc: "Change a time, room or speaker. Posts the notice for you." },
-  { href: "/admin/scan", title: "Scan the whiteboard", desc: "Photograph the open sessions board and publish it.", soon: true },
+  { href: "/admin/scan", title: "Scan the board", desc: "Photograph the open sessions board and publish it." },
   { href: "/admin/organisers", title: "Who can post", desc: "Add or remove organisers." },
 ];
 

@@ -16,3 +16,6 @@ npm-debug.log*
 
 # Local paste-helper for Railway variables — contains secrets
 railway-vars.txt
+
+# OCR agent test artefacts
+.scan-test/

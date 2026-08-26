@@ -11,8 +11,8 @@
 
 ## 0. STATUS — updated 26 Aug 2026
 
-**Stage: Phases 1–3 complete. Starting Phase 4 (the OCR agent).**
-Still day 1 of 15. Phases 1–3 were budgeted for days 1–8.
+**Stage: Phases 1–4 complete. Starting Phase 5 (push + auto-announcer).**
+Still day 1 of 15. Phases 1–4 were budgeted for days 1–11.
 
 **Live:** https://aic-info-production.up.railway.app
 **Repo:** https://github.com/DanGomezWins/AIC-Info (private, auto-deploys from `main`)
@@ -24,8 +24,8 @@ Still day 1 of 15. Phases 1–3 were budgeted for days 1–8.
 | 1 | 1–2 | Foundation — deploy, schema, auth, PWA shell | ✅ **Done** |
 | 2 | 3–5 | Feed + Program + manual schedule admin | ✅ **Done** |
 | 3 | 6–8 | Networking directory + photo upload | ✅ **Done** |
-| 4 | 9–11 | Photo → OCR → draft → publish agent | 🔵 **Next** |
-| 5 | 12–13 | Web push + auto-announcement scheduler | ⬜ Not started |
+| 4 | 9–11 | Photo → OCR → draft → publish agent | ✅ **Done** |
+| 5 | 12–13 | Web push + auto-announcement scheduler | 🔵 **Next** |
 | 6 | 14 | Seed real data + device testing + dry run | ⬜ Not started |
 | 7 | 15 | Buffer / launch | ⬜ Not started |
 
@@ -52,7 +52,6 @@ are placeholder screens today.
 
 - ~~Feed: realtime updates, organiser posting~~ ✅ built
 - ~~Program: three-track schedule~~ ✅ built — session **detail** view still outstanding *(Phase 2)*
-- Photo → OCR → draft → correct → publish agent *(Phase 4)*
 - Web push notifications *(Phase 5)*
 - Auto-announcement scheduler *(Phase 5)*
 
@@ -291,7 +290,7 @@ Organiser-only — none built yet:
 | `/admin/post` | Free-text update with optional track tag and an alert flag. Edit and delete after posting. Presets dropped by decision 26 Aug — the auto-announcer covers the scheduled cases, so manual posts are inherently the unplanned ones. | ✅ built |
 | `/admin/organisers` | Add/remove organisers by email. Self-removal blocked. | ✅ built |
 | `/admin/schedule` | Add / edit / cancel / restore any session in any track. Auto-posts a change notice, but only when the time or room actually moved. The always-works fallback if OCR misfires. | ✅ built |
-| `/admin/scan` | The photo → OCR flow | ⬜ not built |
+| `/admin/scan` | Photo → `claude-opus-5` vision → colour-coded diff → plain-English correction → publish | ✅ built |
 
 ---
 
@@ -348,7 +347,7 @@ Organiser-only — none built yet:
 | 1–2 | **Foundation** | Next.js + Supabase + Railway wired up (both EU region), schema + RLS live, magic-link auth working, PWA shell installs to home screen. **Live URL exists at the end of day 2.** | ✅ done day 1 |
 | 3–5 | **Feed + Program** | Feed with realtime; organiser posting; three-track program; manual schedule admin (the fallback) | ✅ done day 1 |
 | 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail | ✅ done day 1 |
-| 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish | ⬜ |
+| 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish | ✅ done day 1 |
 | 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch | ⬜ |
 | 14 | **Seed + rehearse** | Real program data loaded; test on real iOS + Android; dry run with Martin | ⬜ |
 | 15 | **Buffer** | Slack for whatever breaks. Launch. | ⬜ |
