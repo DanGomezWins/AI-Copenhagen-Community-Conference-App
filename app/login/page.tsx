@@ -4,9 +4,13 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+const DEV_SIGNIN = process.env.NEXT_PUBLIC_ENABLE_DEV_SIGNIN === "true";
+
 function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next") ?? "/";
+  const urlError = params.get("error");
+
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -14,13 +18,23 @@ function LoginForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setState("sending");
+    const address = email.trim().toLowerCase();
+
+    // Dev mode: sign in directly, no email round-trip. Still a real session.
+    if (DEV_SIGNIN) {
+      const url = new URL("/dev/signin", window.location.origin);
+      url.searchParams.set("email", address);
+      url.searchParams.set("next", next);
+      window.location.href = url.toString();
+      return;
+    }
 
     const supabase = createClient();
     const redirect = new URL("/auth/callback", window.location.origin);
     redirect.searchParams.set("next", next);
 
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
+      email: address,
       options: { emailRedirectTo: redirect.toString() },
     });
 
@@ -52,10 +66,15 @@ function LoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {DEV_SIGNIN && (
+        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+          <strong>Test mode.</strong> Entering an email signs you straight in —
+          no email is sent. Turn this off before the event.
+        </p>
+      )}
+
       <div>
-        <label htmlFor="email" className="block text-sm font-medium">
-          Email
-        </label>
+        <label htmlFor="email" className="block text-sm font-medium">Email</label>
         <input
           id="email"
           type="email"
@@ -72,8 +91,10 @@ function LoginForm() {
         </p>
       </div>
 
-      {state === "error" && (
-        <p className="text-sm text-red-600" role="alert">{message}</p>
+      {(state === "error" || urlError) && (
+        <p className="text-sm text-red-600" role="alert">
+          {message || urlError}
+        </p>
       )}
 
       <button
@@ -81,7 +102,8 @@ function LoginForm() {
         disabled={state === "sending"}
         className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3 font-medium text-white disabled:opacity-60"
       >
-        {state === "sending" ? "Sending…" : "Send sign-in link"}
+        {state === "sending" ? (DEV_SIGNIN ? "Signing in…" : "Sending…")
+          : (DEV_SIGNIN ? "Sign in" : "Send sign-in link")}
       </button>
     </form>
   );

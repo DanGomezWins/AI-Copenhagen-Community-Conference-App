@@ -5,7 +5,14 @@ import { publicOrigin } from "@/lib/site-url";
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 /** Routes reachable without a session. Everything else redirects to /login. */
-const PUBLIC_PATHS = ["/login", "/auth", "/api/health", "/manifest.json", "/sw.js"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/auth",
+  "/dev", // dev sign-in; the route itself 404s unless the flag is on
+  "/api/health",
+  "/manifest.json",
+  "/sw.js",
+];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
