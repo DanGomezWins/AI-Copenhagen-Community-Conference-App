@@ -50,7 +50,7 @@ Day 1 of 15. Phase 1 was budgeted for days 1–2, so we are marginally ahead.
 Everything a user actually opens the app to see. The Feed, Program and Networking tabs
 are placeholder screens today.
 
-- Feed: realtime updates, organiser posting, one-tap presets *(Phase 2)*
+- ~~Feed: realtime updates, organiser posting~~ ✅ built
 - ~~Program: three-track schedule~~ ✅ built — session **detail** view still outstanding *(Phase 2)*
 - Manual schedule admin — the always-works fallback *(Phase 2)*
 - **Networking directory** — sort, filter, search, profile detail *(Phase 3)*
@@ -274,7 +274,7 @@ Bottom tab bar, three tabs, matching the brief exactly.
 
 | Route | What it is | Status |
 |---|---|---|
-| `/` | **Feed** — organiser updates, newest first, live via Realtime, unread badge | ⬜ placeholder |
+| `/` | **Feed** — organiser updates, newest first, live via Realtime, "N new" banner | ✅ built |
 | `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, now/next highlighting, day structure inline | ✅ built (dummy data) |
 | `/people` | **Networking** — directory. A–Z sort, Speaker/Guest filter, free-text search across name + company + role | ⬜ placeholder |
 | `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn, email, sessions if a speaker | ⬜ not built |
@@ -288,8 +288,9 @@ Organiser-only — none built yet:
 
 | Route | What it is | Status |
 |---|---|---|
-| `/admin` | Hub, including the auto-announce kill switch | ⬜ not built |
-| `/admin/post` | Compose a feed update. **One-tap presets**: "Break in 10 minutes", "Next up: …", "Room change", plus free text. This is the "MUST be easy to publish updates" requirement — target is under 5 seconds from unlock to published. | ⬜ not built |
+| `/admin` | Hub. 404s for non-organisers so the area isn't advertised | ✅ built |
+| `/admin/post` | Free-text update with optional track tag and an alert flag. Edit and delete after posting. Presets dropped by decision 26 Aug — the auto-announcer covers the scheduled cases, so manual posts are inherently the unplanned ones. | ✅ built |
+| `/admin/organisers` | Add/remove organisers by email. Self-removal blocked. | ✅ built |
 | `/admin/schedule` | Manual add/edit/cancel any session in any track — the fallback path | ⬜ not built |
 | `/admin/scan` | The photo → OCR flow | ⬜ not built |
 
@@ -374,6 +375,13 @@ differently from a human organiser update, and so they're easy to audit afterwar
 **Interaction with live edits:** if the OCR flow or a manual edit changes a session's time,
 `announced_at` resets to null — so a rescheduled session gets a fresh, correct announcement
 rather than being silently skipped.
+
+**Manual posting is deliberately free-text only** (decided 26 Aug). The auto-announcer
+handles everything schedule-derived, so what an organiser types by hand is by definition
+the unplanned stuff — wifi passwords, a speaker stuck in traffic, lunch being ready. One
+carve-out: **time and room changes go through the schedule editor, not the feed**, because
+a free-text "moved to Room 3" would leave the Program tab and the announcer both stating
+the old room. The editor changes the session and posts the notice in one action.
 
 **Kill switch:** a single toggle at `/admin` disables all auto-posting instantly. If the day
 runs late and the schedule drifts, Martin turns it off rather than having the app confidently
