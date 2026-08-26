@@ -6,7 +6,11 @@ Thursday 10 September 2026, twoday København (Sundkaj 125, Nordhavn).
 Three tabs: **Feed** (live organiser updates) · **Program** (Main stage / Demos /
 Open sessions) · **Networking** (attendee directory).
 
-See [PLAN.md](PLAN.md) for the full build plan, data model, and timeline.
+**Live:** https://aic-info-production.up.railway.app
+
+See [PLAN.md](PLAN.md) for the full build plan, data model, and timeline —
+**§0 STATUS** at the top is the current state of play: what is done, what is
+not, and what is blocked.
 
 ## Stack
 

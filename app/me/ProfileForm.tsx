@@ -87,9 +87,21 @@ export default function ProfileForm({
       </div>
 
       <div>
-        <label htmlFor="linkedin_url" className="block text-sm font-medium">
-          LinkedIn <span className="font-normal text-[var(--color-muted)]">(optional)</span>
-        </label>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+          <label htmlFor="linkedin_url" className="text-sm font-medium">
+            LinkedIn <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+          </label>
+          {/* /in/me/ resolves to the viewer's own profile, so it is one tap
+              to get somewhere they can copy their URL from. */}
+          <a
+            href="https://www.linkedin.com/in/me/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-[var(--color-accent)] underline"
+          >
+            Open my LinkedIn ↗
+          </a>
+        </div>
         <input
           id="linkedin_url"
           name="linkedin_url"
@@ -98,6 +110,9 @@ export default function ProfileForm({
           defaultValue={profile.linkedin_url ?? ""}
           className={field}
         />
+        <p className="mt-1 text-xs text-[var(--color-muted)]">
+          Opens in a new tab — copy the address bar, then come back and paste.
+        </p>
       </div>
 
       <div>

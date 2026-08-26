@@ -9,11 +9,84 @@
 
 ---
 
+## 0. STATUS — updated 26 Aug 2026
+
+**Stage: Phase 1 complete. Starting Phase 2.**
+Day 1 of 15. Phase 1 was budgeted for days 1–2, so we are marginally ahead.
+
+**Live:** https://aic-info-production.up.railway.app
+**Repo:** https://github.com/DanGomezWins/AIC-Info (private, auto-deploys from `main`)
+
+### Phase progress
+
+| Phase | Days | What | Status |
+|---|---|---|---|
+| 1 | 1–2 | Foundation — deploy, schema, auth, PWA shell | ✅ **Done** |
+| 2 | 3–5 | Feed + Program + manual schedule admin | 🔵 **In progress** |
+| 3 | 6–8 | Networking directory + photo upload | ⬜ Not started |
+| 4 | 9–11 | Photo → OCR → draft → publish agent | ⬜ Not started |
+| 5 | 12–13 | Web push + auto-announcement scheduler | ⬜ Not started |
+| 6 | 14 | Seed real data + device testing + dry run | ⬜ Not started |
+| 7 | 15 | Buffer / launch | ⬜ Not started |
+
+### Done
+
+- **Infrastructure** — Railway (EU West) auto-deploying from GitHub; Supabase (EU West,
+  Ireland); both regions confirmed for GDPR data residency.
+- **App shell** — Next.js 16, Tailwind v4, three-tab bottom nav, PWA manifest, service
+  worker, generated icons. Installs to a phone home screen.
+- **Database** — 8 tables, RLS enabled on every one, 2 storage buckets, realtime on
+  `posts` and `sessions`. Applied via a versioned migration runner (`npm run migrate`),
+  not dashboard clicks, so the schema is reproducible and in git.
+- **Auth** — magic-link sign-in, route gating, deep-link preservation through login,
+  first-run routing to profile setup.
+- **Profiles** — create and edit, with prefill from the attendee allowlist. Verified
+  working end to end: a real profile row exists, written under RLS by its owner.
+- **Health endpoint** — `/api/health` reports configuration presence without exposing
+  values.
+
+### Not done
+
+Everything a user actually opens the app to see. The Feed, Program and Networking tabs
+are placeholder screens today.
+
+- Feed: realtime updates, organiser posting, one-tap presets *(Phase 2)*
+- Program: three-track schedule, "happening now", session detail *(Phase 2)*
+- Manual schedule admin — the always-works fallback *(Phase 2)*
+- **Networking directory** — sort, filter, search, profile detail *(Phase 3)*
+  ← this is why a registered attendee does not yet appear anywhere
+- Profile photo upload *(Phase 3)*
+- Photo → OCR → draft → correct → publish agent *(Phase 4)*
+- Web push notifications *(Phase 5)*
+- Auto-announcement scheduler *(Phase 5)*
+
+### Known temporary state
+
+- **Email sign-in is bypassed.** Supabase's built-in SMTP allows only a couple of
+  messages per hour, which blocked testing. `/dev/signin` mints a *real* session
+  (real user, real cookies, real RLS) without sending mail. Gated by the server-only
+  runtime variable `ENABLE_DEV_SIGNIN`; clearing it disables the bypass instantly with
+  no rebuild. **Must be removed before the event.**
+- **Icons are placeholders** — a generated blue ring on dark. Awaiting brand assets.
+
+### Waiting on you
+
+| # | Item | Blocks | Needed by |
+|---|---|---|---|
+| 1 | **Resend approval + setup** | Real sign-in for ~200 attendees | Before launch — hard blocker |
+| 2 | **Program data** (25 sessions: title, speaker, time, room) | Program tab having real content | Day 14, sooner is better |
+| 3 | **Attendee list** (email, name, company, role, speaker flag) | Login allowlist + profile prefill | Day 14 |
+| 4 | **Logo / brand colours** | Replacing placeholder icons and theme | Optional |
+
+Nothing on this list blocks Phase 2 or 3.
+
+---
+
 ## 1. Decisions locked
 
 | Decision | Choice |
 |---|---|
-| Stack | Next.js 15 (App Router, TypeScript) + Supabase + **Railway** |
+| Stack | Next.js 16 (App Router, TypeScript, Tailwind v4) + Supabase + **Railway** |
 | PWA | Hand-rolled manifest + service worker (needed anyway for push) |
 | Auth | Supabase email magic link |
 | Schedule updates | Photo → OCR agent → draft → NL correction → approve → publish **(v1 scope)** |
@@ -34,7 +107,7 @@
    employers, emails, photos, LinkedIn URLs) in the EU — the right GDPR posture for a Danish
    event.
 4. **Persistent container.** Enables an in-process scheduler for auto-announcements
-   (see §7 stretch) that Vercel Hobby's 2-cron-jobs-per-day cap ruled out.
+   (see §7) that Vercel Hobby's 2-cron-jobs-per-day cap ruled out.
 
 **Cost:** memory dominates at $0.00000386/GB/sec — a constant 0.5 GB for a 30-day month is
 $5.00. Next.js idling at ~350–400 MB ≈ **$3.50–4/mo**. CPU bills only when *active*, which
@@ -58,7 +131,7 @@ Two items in scope are the ones that can go wrong on the day:
 
 1. **The OCR agent.** It's the most complex piece and it depends on a photo of a whiteboard
    taken in a busy room. **Mitigation: we build the plain manual schedule editor first**
-   (Phase 3), and it stays in the app permanently. If OCR misreads something on the day, the
+   (Phase 2), and it stays in the app permanently. If OCR misreads something on the day, the
    organiser edits a session in ~10 seconds by hand. The OCR flow becomes the fast path, not
    the only path.
 2. **iOS web push.** Works only when the user has added the PWA to their home screen *and*
