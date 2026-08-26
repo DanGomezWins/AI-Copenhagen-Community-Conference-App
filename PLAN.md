@@ -146,89 +146,149 @@ Neither of these blocks the build. Both are worth knowing before launch day.
 
 ## 3. Data model (Postgres / Supabase)
 
+*Verified against the live database 26 Aug 2026. Applied by
+`supabase/migrations/0001`–`0004`; run `npm run db:verify` to re-check.*
+
 ```
-profiles
-  id                uuid PK  → auth.users.id
-  first_name        text
-  last_name         text
-  is_speaker        bool         -- the Speaker/Guest radio
-  company           text  null
-  role              text  null
-  linkedin_url      text  null
-  public_email      text  null   -- optional, shown on profile; separate from login email
-  photo_url         text  null   -- Supabase Storage
+profiles                          -- opt-in; created by the attendee, never for them
+  id                 uuid PK  → auth.users.id  (cascade delete)
+  first_name         text                   -- checked non-blank
+  last_name          text                   -- checked non-blank
+  is_speaker         bool                   -- the Speaker/Guest radio
+  company            text  null
+  role               text  null
+  linkedin_url       text  null
+  public_email       text  null   -- shown to attendees; separate from login email
+  photo_url          text  null   -- Supabase Storage, avatars bucket
   created_at, updated_at
 
 sessions                          -- the program, all three tracks
-  id                uuid PK
-  track             enum('main','demos','open')
-  title             text
-  speaker_name      text          -- free text; most speakers won't have an app profile
-  speaker_profile_id uuid null → profiles.id     -- linked when they do
-  starts_at         timestamptz
-  ends_at           timestamptz
-  room              text
-  status            enum('scheduled','cancelled')
-  notes             text null
-  announced_at      timestamptz null   -- set by the auto-announcer; reset to null on reschedule
-  updated_at
+  id                 uuid PK
+  track              track_t enum('main','demos','open')
+  title              text
+  speaker_name       text  null   -- free text; most speakers have no app profile
+  speaker_profile_id uuid  null → profiles.id     -- linked when they do
+  starts_at          timestamptz
+  ends_at            timestamptz null            -- checked > starts_at
+  room               text  null
+  status             session_status_t enum('scheduled','cancelled')
+  notes              text  null
+  announced_at       timestamptz null  -- auto-announcer stamp; cleared on reschedule
+  created_at, updated_at
 
 posts                             -- the feed
-  id                uuid PK
-  body              text
-  kind              enum('info','alert','schedule_change','auto')
-  author_id         uuid null → profiles.id      -- null for scheduler-generated posts
+  id                 uuid PK
+  body               text                   -- checked non-blank
+  kind               post_kind_t enum('info','alert','schedule_change','auto')
+  author_id          uuid  null → profiles.id   -- null for scheduler-generated posts
+  session_id         uuid  null → sessions.id   -- set when a post is about a session
   created_at
 
-app_settings                      -- single row; runtime toggles
-  auto_announce     bool          -- the scheduler kill switch
-  updated_at
-
-schedule_drafts                   -- the OCR agent's working state
-  id                uuid PK
-  photo_url         text
-  status            enum('processing','review','published','discarded')
-  proposed          jsonb         -- array of proposed session rows
-  conversation      jsonb         -- turns of NL correction, for context on refine
-  created_by        uuid
+schedule_drafts                   -- OCR agent working state
+  id                 uuid PK
+  photo_url          text
+  status             draft_status_t enum('processing','review','published','discarded')
+  track              track_t                -- defaults to 'open'
+  proposed           jsonb                  -- proposed session rows
+  conversation       jsonb                  -- NL correction turns, for refine context
+  error              text  null
+  created_by         uuid  null → profiles.id
   created_at, published_at
 
+attendee_allowlist                -- from the checkin.no export
+  email              text PK                -- the join key
+  first_name, last_name, company, role   text null
+  is_speaker         bool
+  created_at
+
 push_subscriptions
-  id, profile_id, endpoint, keys jsonb, created_at
+  id                 uuid PK
+  profile_id         uuid → profiles.id  (cascade delete)
+  endpoint           text UNIQUE
+  keys               jsonb
+  created_at
 
 organisers                        -- admin allowlist
-  email             text PK
+  email              text PK
+  note               text null
+  created_at
+
+app_settings                      -- single row, enforced by a check constraint
+  id                 bool PK  (always true)
+  auto_announce      bool                   -- the scheduler kill switch
+  updated_at
+
+_migrations                       -- migration ledger; RLS-locked, not app data
+  filename           text PK
+  applied_at
 ```
 
-**Row Level Security:** everyone authenticated can read `profiles`, `sessions`, `posts`.
-Only the owner can write their own `profiles` row. Only emails in `organisers` can write
-`sessions`, `posts`, `schedule_drafts`.
+### Row Level Security
+
+RLS is enabled on **every** table above. Current policy set:
+
+| Table | Read | Write |
+|---|---|---|
+| `profiles` | any authenticated user | owner only (`auth.uid() = id`); organisers may also delete |
+| `sessions` | any authenticated user | organisers only |
+| `posts` | any authenticated user | organisers only |
+| `app_settings` | any authenticated user | organisers only |
+| `organisers` | any authenticated user | service role only (no write policy) |
+| `schedule_drafts` | organisers only | organisers only |
+| `push_subscriptions` | own rows only | own rows only |
+| `attendee_allowlist` | **organisers only** | service role only |
+| `_migrations` | nobody | nobody (direct connection only) |
+
+`attendee_allowlist` is deliberately not readable by ordinary attendees: it holds
+personal data for people who have **not** opted into the directory. Only the service
+role touches it, during sign-in gating and profile prefill.
+
+`is_organiser()` is a `SECURITY DEFINER` function comparing the caller's JWT email
+against `organisers`. It must be definer-rights, or every policy that calls it would
+fail against its own RLS.
+
+### Storage buckets
+
+| Bucket | Public | Limit | Write access |
+|---|---|---|---|
+| `avatars` | yes — they appear in the directory | 5 MB | owner only, folder scoped to their uid |
+| `scans` | no | 20 MB | organisers only |
+
+### Realtime
+
+Enabled on `posts` and `sessions` — driving the live feed and the program's
+"happening now" state.
 
 ---
 
 ## 4. App structure
 
-Bottom tab bar, three tabs, matching the brief exactly:
+Bottom tab bar, three tabs, matching the brief exactly.
+**Status column reflects what is actually built.**
 
-| Route | What it is |
-|---|---|
-| `/` | **Feed** — organiser updates, newest first, live via Supabase Realtime, unread badge |
-| `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, "happening now" highlight, tap a session for detail |
-| `/people` | **Networking** — attendee directory. A–Z sort, Speaker/Guest filter, free-text search across name + company + role |
-| `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn (opens app), email, and their sessions if a speaker |
-| `/me` | Edit my own profile |
-| `/login` | Magic link |
+| Route | What it is | Status |
+|---|---|---|
+| `/` | **Feed** — organiser updates, newest first, live via Realtime, unread badge | ⬜ placeholder |
+| `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, "happening now" highlight, tap for detail | ⬜ placeholder |
+| `/people` | **Networking** — directory. A–Z sort, Speaker/Guest filter, free-text search across name + company + role | ⬜ placeholder |
+| `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn, email, sessions if a speaker | ⬜ not built |
+| `/me` | Create / edit my own profile | ✅ built |
+| `/login` | Magic-link sign-in | ✅ built |
+| `/auth/callback` | Redeems the magic link, routes first-timers to profile setup | ✅ built |
+| `/api/health` | Config presence check, no values exposed. Railway healthcheck target | ✅ built |
+| `/dev/signin` | **Temporary** email-free sign-in — see §0 | ⚠️ built, must be removed |
 
-Organiser-only:
+Organiser-only — none built yet:
 
-| Route | What it is |
-|---|---|
-| `/admin` | Hub |
-| `/admin/post` | Compose a feed update. **One-tap presets**: "Break in 10 minutes", "Next up: …", "Room change", plus free text. This is the "MUST be easy to publish updates" requirement — target is under 5 seconds from unlock to published. |
-| `/admin/schedule` | Manual add/edit/cancel any session in any track — the fallback path |
-| `/admin/scan` | The photo → OCR flow |
+| Route | What it is | Status |
+|---|---|---|
+| `/admin` | Hub, including the auto-announce kill switch | ⬜ not built |
+| `/admin/post` | Compose a feed update. **One-tap presets**: "Break in 10 minutes", "Next up: …", "Room change", plus free text. This is the "MUST be easy to publish updates" requirement — target is under 5 seconds from unlock to published. | ⬜ not built |
+| `/admin/schedule` | Manual add/edit/cancel any session in any track — the fallback path | ⬜ not built |
+| `/admin/scan` | The photo → OCR flow | ⬜ not built |
 
 ---
+
 
 ## 5. The OCR schedule agent
 
@@ -277,15 +337,15 @@ Organiser-only:
 
 ## 7. Timeline
 
-| Days | Phase | Output |
-|---|---|---|
-| 1–2 | **Foundation** | Next.js + Supabase + Railway wired up (both EU region), schema + RLS live, magic-link auth working, PWA shell installs to home screen. **Live URL exists at the end of day 2.** |
-| 3–5 | **Feed + Program** | Feed with realtime; organiser posting with presets; three-track program; manual schedule admin (the fallback) |
-| 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail |
-| 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish |
-| 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch |
-| 14 | **Seed + rehearse** | Real program data loaded; test on real iOS + Android; dry run with Martin |
-| 15 | **Buffer** | Slack for whatever breaks. Launch. |
+| Days | Phase | Output | Status |
+|---|---|---|---|
+| 1–2 | **Foundation** | Next.js + Supabase + Railway wired up (both EU region), schema + RLS live, magic-link auth working, PWA shell installs to home screen. **Live URL exists at the end of day 2.** | ✅ done day 1 |
+| 3–5 | **Feed + Program** | Feed with realtime; organiser posting with presets; three-track program; manual schedule admin (the fallback) | 🔵 in progress |
+| 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail | ◐ profile create/edit done early; directory + photo outstanding |
+| 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish | ⬜ |
+| 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch | ⬜ |
+| 14 | **Seed + rehearse** | Real program data loaded; test on real iOS + Android; dry run with Martin | ⬜ |
+| 15 | **Buffer** | Slack for whatever breaks. Launch. | ⬜ |
 
 The ordering is deliberate: **the app is useful and shippable from the end of day 5.**
 Everything after that improves it. If we lose days somewhere, we cut from the back, not
@@ -318,40 +378,64 @@ Half a day, lands in days 12–13 alongside push.
 
 ---
 
-## 8. Status of what I need from you
+## 8. Setup & credentials — all resolved
 
-> **All credentials live in `.env.local`, which is gitignored. Never paste a secret into
-> PLAN.md or any tracked file.** The same values get pasted into Railway's Variables tab
-> for production.
+> **All credentials live in `.env.local`, gitignored. Never paste a secret into
+> PLAN.md or any tracked file.** `railway-vars.txt` (also gitignored) holds the
+> same values formatted for Railway's raw variable editor.
 
-**Blocking — needed on day 1:**
+Everything that was blocking day 1 is done:
 
-| # | Item | Status |
-|---|---|---|
-| 1 | **Supabase** project, EU region | 🟡 Project created (`shggwtoeppiwyybkanfc`). Still need the **anon key** and **service role key** — Dashboard → Project Settings → API. |
-| 2 | **Railway** project, EU West | 🟡 Needs a GitHub repo first — see below. |
-| 3 | **Anthropic API key** | 🔴 **Must be rotated** — the original was written to PLAN.md in plaintext. Revoke at console.anthropic.com → API keys, issue a new one, put it in `.env.local`. |
-| 4 | **Organiser emails** | 🟢 `dangomezwindshuttle@gmail.com`. Martin's to be added later — it's one row in the `organisers` table, addable any time, including on the day. |
+| #   | Item                                    | Status                                                                                                                                                                                                       |
+| --- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | **Supabase** project, EU West (Ireland) | ✅ `shggwtoeppiwyybkanfc`. Both keys in `.env.local` and Railway; verified with live API calls.                                                                                                               |
+| 2   | **GitHub repo**                         | ✅ [DanGomezWins/AIC-Info](https://github.com/DanGomezWins/AIC-Info), private.                                                                                                                                |
+| 3   | **Railway** project, EU West            | ✅ Live at https://aic-info-production.up.railway.app, auto-deploying from `main`.                                                                                                                            |
+| 4   | **Anthropic API key**                   | ✅ In place and verified. *Not rotated — your decision, 26 Aug. The key was written to PLAN.md in plaintext but never reached GitHub (the repo held only README.md at the time), so exposure was local only.* |
+| 5   | **Organiser allowlist**                 | ✅ `dangomezwindshuttle@gmail.com` seeded. Martin's is one row, addable any time including on the day.                                                                                                        |
+| 6   | **Supabase redirect URLs**              | ✅ Site URL and both redirect entries configured.                                                                                                                                                             |
+|     |                                         |                                                                                                                                                                                                              |
 
-**Needed by day 14 (seeding):**
+### Environment variables
 
-| # | Item | Status |
-|---|---|---|
-| 5 | **Program data** (25 sessions) | 🟡 Coming. Importer will be built format-agnostic — CSV, spreadsheet, or pasted text. |
-| 6 | **Attendee list** | 🟡 Coming. Used as a login allowlist + profile prefill, *not* to pre-create public profiles. Fields needed: **email** (the join key — essential), first name, last name, company, job title, and a speaker/attendee flag if the export has one. |
-| 7 | **Domain** | 🟡 `aimuccc` chosen. See note below. |
-| 8 | **Logo / brand colours** | ⚪ Not yet provided. Will ship with a neutral theme and restyle later if they arrive. |
+Set in `.env.local` **and** Railway → Variables:
+
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser client; RLS does the protecting |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only. Bypasses RLS. |
+| `SUPABASE_DB_PASSWORD` | Local migrations only; not needed by the app |
+| `ANTHROPIC_API_KEY` | OCR agent (Phase 4) |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for redirects behind Railway's proxy |
+| `ENABLE_DEV_SIGNIN` | **Temporary.** Server-only, runtime-read security gate. Delete to kill the email bypass instantly. |
+| `NEXT_PUBLIC_ENABLE_DEV_SIGNIN` | **Temporary.** Build-time; only swaps the login button. Never the security gate. |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web push — generated in Phase 5 |
+
+### Still outstanding
+
+| # | Item | Blocks | Needed by |
+|---|---|---|---|
+| 1 | **Resend** — approval, then SMTP setup in Supabase | Real sign-in for ~200 attendees | **Before launch — hard blocker** |
+| 2 | **Program data** — 25 sessions: title, speaker, time, room | Program tab having real content | Day 14; sooner is better |
+| 3 | **Attendee list** — email (join key), first/last name, company, job title, speaker flag | Login allowlist + profile prefill | Day 14 |
+| 4 | **Logo / brand colours** | Replacing the placeholder icons and theme | Optional |
+
+Importer formats for 2 and 3 will be built to match whatever you have — CSV,
+spreadsheet, or pasted text. Don't reformat anything on my account.
 
 ### On the domain
 
-Railway gives us `<name>.up.railway.app` free, so `aimuccc.up.railway.app` works today at
-zero cost. Two things worth weighing: seven letters of acronym is hard to say out loud and
-easy to mistype, and it will mostly be reached as a tap-through link from email anyway.
+Currently `aic-info-production.up.railway.app`, which works and costs nothing.
 
-If you want something people can actually repeat to each other, Railway Hobby includes **2
-custom domains** — a `.dk` runs about €10/year, and something like `aimc.dk` is far easier
-to say at a registration desk than "A-I-M-U-C-C-C". Your call; not a blocker either way, and
-we can add a custom domain after launch without changing anything else.
+`aimuccc` was your earlier preference. Two things worth weighing: seven letters of
+acronym is hard to say aloud and easy to mistype, and it will mostly be reached as a
+tap-through link from email anyway. Railway Hobby includes **2 custom domains**; a `.dk`
+runs about €10/year, and something like `aimc.dk` is far easier to say at a registration
+desk. Not a blocker, and a custom domain can be attached after launch without changing
+anything else.
+
+---
 
 ## 9. Assumptions I've made
 
@@ -370,3 +454,21 @@ we can add a custom domain after launch without changing anything else.
 - **Danish/English:** English only. Everything on the Meetup and registration pages is English.
 - **One event.** No multi-event support, no year-over-year reuse. If AIC #2 happens we
   revisit; building for it now would cost days we don't have.
+
+---
+
+## 10. Open decisions
+
+**Should the Feed and Program be readable without signing in?**
+Currently everything requires a login. My recommendation is that the Feed and Program
+should be public — they hold nothing personal beyond speaker names and talk titles,
+which are already published on Meetup and the registration site — with sign-in required
+only for the Networking directory and profile creation.
+
+The argument is launch-day resilience: if email delivery misbehaves on the morning of
+the 10th, an all-authenticated app is useless to everyone, whereas a public Program and
+Feed keep working and only networking degrades. It also removes all friction from the
+most common action, which is someone glancing at what is on next.
+
+Raised 26 Aug; you set it aside pending the Resend decision. Cheap to change either way
+until Phase 3 is finished — after that the directory's auth boundary is load-bearing.
