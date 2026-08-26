@@ -10,7 +10,10 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "node scripts/migrate.mjs",
+    "migrate:status": "node scripts/migrate.mjs --status",
+    "db:verify": "node scripts/verify-schema.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -22,8 +25,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "pg": "^8.23.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"
   }
