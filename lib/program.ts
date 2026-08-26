@@ -72,3 +72,45 @@ export function liveness(sessions: Session[], at: Date = new Date()): Map<string
   if (nextId && !Array.from(out.values()).includes("now")) out.set(nextId, "next");
   return out;
 }
+
+// ---------------------------------------------------------------------------
+// Editing helpers. The event is a single fixed day, so the admin UI collects
+// a time only — a date picker on a phone for a date that cannot change is
+// friction and an error source.
+// ---------------------------------------------------------------------------
+
+export const EVENT_DATE = "2026-09-10";
+export const EVENT_UTC_OFFSET = "+02:00"; // CEST on 10 Sep 2026
+
+/** "14:20" → full ISO timestamp at the venue. */
+export function timeToIso(hhmm: string): string {
+  return `${EVENT_DATE}T${hhmm}:00${EVENT_UTC_OFFSET}`;
+}
+
+/** ISO timestamp → "14:20" as an <input type="time"> value, in venue time. */
+export function isoToTime(iso: string | null): string {
+  if (!iso) return "";
+  return timeAt(iso);
+}
+
+/** Human summary of what changed, for the feed notice. Null when nothing did. */
+export function describeChange(
+  before: Pick<Session, "title" | "starts_at" | "room" | "status">,
+  after: Pick<Session, "title" | "starts_at" | "room" | "status">,
+): string | null {
+  if (before.status !== "cancelled" && after.status === "cancelled") {
+    return `Cancelled: ${before.title} (${timeAt(before.starts_at)}${
+      before.room ? `, ${before.room}` : ""
+    })`;
+  }
+
+  const parts: string[] = [];
+  const movedTime = before.starts_at !== after.starts_at;
+  const movedRoom = before.room !== after.room;
+
+  if (movedTime) parts.push(`now at ${timeAt(after.starts_at)} (was ${timeAt(before.starts_at)})`);
+  if (movedRoom) parts.push(`now in ${after.room ?? "TBA"} (was ${before.room ?? "TBA"})`);
+
+  if (parts.length === 0) return null; // title-only edits are not worth a broadcast
+  return `Schedule change: ${after.title} is ${parts.join(", ")}.`;
+}
