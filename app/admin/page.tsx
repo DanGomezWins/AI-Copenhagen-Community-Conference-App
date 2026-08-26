@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AnnouncerToggle from "./AnnouncerToggle";
 
 type Item = { href: string; title: string; desc: string; soon?: boolean };
 
@@ -9,13 +10,15 @@ const ITEMS: Item[] = [
   { href: "/admin/organisers", title: "Who can post", desc: "Add or remove organisers." },
 ];
 
-export default function AdminHub() {
+export default async function AdminHub() {
   return (
     <section>
       <h1 className="text-2xl font-bold tracking-tight">Organiser</h1>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         Everything here is visible to attendees the moment you save it.
       </p>
+
+      <AnnouncerToggle />
 
       <ul className="mt-6 space-y-3">
         {ITEMS.map((i) => (

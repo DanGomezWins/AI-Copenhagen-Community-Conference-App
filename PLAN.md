@@ -11,8 +11,10 @@
 
 ## 0. STATUS — updated 26 Aug 2026
 
-**Stage: Phases 1–4 complete. Starting Phase 5 (push + auto-announcer).**
-Still day 1 of 15. Phases 1–4 were budgeted for days 1–11.
+**Stage: Phases 1–5 complete. All features built.**
+Still day 1 of 15; the build was budgeted through day 13. What remains is real
+data, real-device testing, and the two things blocked on you (Resend, and the
+programme/attendee exports).
 
 **Live:** https://aic-info-production.up.railway.app
 **Repo:** https://github.com/DanGomezWins/AIC-Info (private, auto-deploys from `main`)
@@ -25,8 +27,8 @@ Still day 1 of 15. Phases 1–4 were budgeted for days 1–11.
 | 2 | 3–5 | Feed + Program + manual schedule admin | ✅ **Done** |
 | 3 | 6–8 | Networking directory + photo upload | ✅ **Done** |
 | 4 | 9–11 | Photo → OCR → draft → publish agent | ✅ **Done** |
-| 5 | 12–13 | Web push + auto-announcement scheduler | 🔵 **Next** |
-| 6 | 14 | Seed real data + device testing + dry run | ⬜ Not started |
+| 5 | 12–13 | Web push + auto-announcement scheduler | ✅ **Done** |
+| 6 | 14 | Seed real data + device testing + dry run | 🔵 **Next** — blocked on the real programme and attendee list |
 | 7 | 15 | Buffer / launch | ⬜ Not started |
 
 ### Done
@@ -47,13 +49,10 @@ Still day 1 of 15. Phases 1–4 were budgeted for days 1–11.
 
 ### Not done
 
-Everything a user actually opens the app to see. The Feed, Program and Networking tabs
-are placeholder screens today.
+Every feature in the brief is built. What remains is data and rehearsal:
 
 - ~~Feed: realtime updates, organiser posting~~ ✅ built
 - ~~Program: three-track schedule~~ ✅ built — session **detail** view still outstanding *(Phase 2)*
-- Web push notifications *(Phase 5)*
-- Auto-announcement scheduler *(Phase 5)*
 
 ### Known temporary state
 
@@ -286,7 +285,7 @@ Organiser-only — none built yet:
 
 | Route | What it is | Status |
 |---|---|---|
-| `/admin` | Hub. 404s for non-organisers so the area isn't advertised | ✅ built |
+| `/admin` | Hub, including the auto-announce kill switch. 404s for non-organisers so the area isn't advertised | ✅ built |
 | `/admin/post` | Free-text update with optional track tag and an alert flag. Edit and delete after posting. Presets dropped by decision 26 Aug — the auto-announcer covers the scheduled cases, so manual posts are inherently the unplanned ones. | ✅ built |
 | `/admin/organisers` | Add/remove organisers by email. Self-removal blocked. | ✅ built |
 | `/admin/schedule` | Add / edit / cancel / restore any session in any track. Auto-posts a change notice, but only when the time or room actually moved. The always-works fallback if OCR misfires. | ✅ built |
@@ -348,7 +347,7 @@ Organiser-only — none built yet:
 | 3–5 | **Feed + Program** | Feed with realtime; organiser posting; three-track program; manual schedule admin (the fallback) | ✅ done day 1 |
 | 6–8 | **Networking** | Profile create/edit, photo upload, directory with sort/filter/search, profile detail | ✅ done day 1 |
 | 9–11 | **OCR agent** | Capture → extract → diff review → NL correction → publish | ✅ done day 1 |
-| 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch | ⬜ |
+| 12–13 | **Push + auto-announcer** | VAPID, service worker, subscription flow, install explainer; `node-cron` scheduler with duplicate protection and kill switch | ✅ done day 1 |
 | 14 | **Seed + rehearse** | Real program data loaded; test on real iOS + Android; dry run with Martin | ⬜ |
 | 15 | **Buffer** | Slack for whatever breaks. Launch. | ⬜ |
 

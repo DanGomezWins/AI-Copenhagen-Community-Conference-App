@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPrefill, signOut } from "./actions";
 import ProfileForm from "./ProfileForm";
 import PhotoUpload from "./PhotoUpload";
+import PushPrompt from "@/components/PushPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +52,8 @@ export default async function MePage({
           You can add a photo once your profile is saved.
         </p>
       )}
+
+      {profile && <PushPrompt />}
 
       <form action={signOut} className="mt-8">
         <button type="submit" className="text-sm text-[var(--color-muted)] underline">

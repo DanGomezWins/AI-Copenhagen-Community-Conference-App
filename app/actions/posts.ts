@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { isTrackKey } from "@/lib/program";
+import { isTrackKey, TRACKS } from "@/lib/program";
+import { sendToAll } from "@/lib/push";
 
 export type PostFormState = { error?: string; ok?: boolean };
 
@@ -38,6 +39,17 @@ export async function createPost(
   });
 
   if (error) return { error: error.message };
+
+  // Push is an accelerant, never a gate: a failure here must not fail the post,
+  // because the feed is the source of truth.
+  const track = isTrackKey(rawTrack) ? rawTrack : null;
+  const label = track ? TRACKS.find((t) => t.key === track)?.label : null;
+  void sendToAll({
+    title: rawKind === "alert" ? "AIC Info — Alert" : "AIC Info",
+    body: label ? `${label}: ${body}` : body,
+    url: "/",
+    tag: "organiser-post",
+  }).catch(() => {});
 
   revalidatePath("/");
   revalidatePath("/admin/post");

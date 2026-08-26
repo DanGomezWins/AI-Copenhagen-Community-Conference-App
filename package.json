@@ -16,24 +16,29 @@
     "db:verify": "node scripts/verify-schema.mjs",
     "seed:program": "node scripts/seed-program.mjs",
     "seed:people": "node scripts/seed-people.mjs",
-    "test:scan": "tsx scripts/test-scan.mts"
+    "test:scan": "tsx scripts/test-scan.mts",
+    "test:announcer": "tsx scripts/test-announcer.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^16.3.3",
+    "node-cron": "^4.6.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "web-push": "^3.6.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.0",
+    "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/web-push": "^3.6.4",
     "pg": "^8.23.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0"
