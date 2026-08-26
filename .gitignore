@@ -1,0 +1,15 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.local
+
+# Scratch
+.firecrawl/
+.obsidian/
+
+# Node
+node_modules/
+.next/
+dist/
+npm-debug.log*

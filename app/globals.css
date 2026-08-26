@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0f1115;
+  --color-surface: #ffffff;
+  --color-muted: #6b7280;
+  --color-accent: #2563eb;
+  --color-line: #e5e7eb;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-ink: #f3f4f6;
+    --color-surface: #0f1115;
+    --color-muted: #9ca3af;
+    --color-line: #262b33;
+  }
+}
+
+html,
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Room for the fixed tab bar plus the iOS home indicator. */
+body {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
