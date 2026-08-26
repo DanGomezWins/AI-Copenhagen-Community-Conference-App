@@ -51,7 +51,7 @@ Everything a user actually opens the app to see. The Feed, Program and Networkin
 are placeholder screens today.
 
 - Feed: realtime updates, organiser posting, one-tap presets *(Phase 2)*
-- Program: three-track schedule, "happening now", session detail *(Phase 2)*
+- ~~Program: three-track schedule~~ ✅ built — session **detail** view still outstanding *(Phase 2)*
 - Manual schedule admin — the always-works fallback *(Phase 2)*
 - **Networking directory** — sort, filter, search, profile detail *(Phase 3)*
   ← this is why a registered attendee does not yet appear anywhere
@@ -68,6 +68,12 @@ are placeholder screens today.
   runtime variable `ENABLE_DEV_SIGNIN`; clearing it disables the bypass instantly with
   no rebuild. **Must be removed before the event.**
 - **Icons are placeholders** — a generated blue ring on dark. Awaiting brand assets.
+- **The programme is dummy data.** 25 fictional speaker sessions plus the real day
+  structure, seeded by `npm run seed:program`. Every row is tagged `notes='DUMMY'`, so
+  `node scripts/seed-program.mjs --clear` removes exactly those rows and nothing else.
+  Speaker names are invented deliberately: the 15 real speakers are public but their
+  topics are not announced, and attaching invented talk titles to real, identifiable
+  people is not something to leave sitting in a database.
 
 ### Waiting on you
 
@@ -269,7 +275,7 @@ Bottom tab bar, three tabs, matching the brief exactly.
 | Route | What it is | Status |
 |---|---|---|
 | `/` | **Feed** — organiser updates, newest first, live via Realtime, unread badge | ⬜ placeholder |
-| `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, "happening now" highlight, tap for detail | ⬜ placeholder |
+| `/program` | **Program** — segmented control: Main stage / Demos / Open sessions. Time-ordered, now/next highlighting, day structure inline | ✅ built (dummy data) |
 | `/people` | **Networking** — directory. A–Z sort, Speaker/Guest filter, free-text search across name + company + role | ⬜ placeholder |
 | `/people/[id]` | Profile detail — photo, name, company, role, LinkedIn, email, sessions if a speaker | ⬜ not built |
 | `/me` | Create / edit my own profile | ✅ built |
@@ -417,23 +423,16 @@ Set in `.env.local` **and** Railway → Variables:
 | # | Item | Blocks | Needed by |
 |---|---|---|---|
 | 1 | **Resend** — approval, then SMTP setup in Supabase | Real sign-in for ~200 attendees | **Before launch — hard blocker** |
-| 2 | **Program data** — 25 sessions: title, speaker, time, room | Program tab having real content | Day 14; sooner is better |
+| 2 | **Program data** — 25 sessions: title, speaker, time, room | Replacing the dummy programme with the real one | Day 14; sooner is better |
 | 3 | **Attendee list** — email (join key), first/last name, company, job title, speaker flag | Login allowlist + profile prefill | Day 14 |
 | 4 | **Logo / brand colours** | Replacing the placeholder icons and theme | Optional |
 
 Importer formats for 2 and 3 will be built to match whatever you have — CSV,
 spreadsheet, or pasted text. Don't reformat anything on my account.
 
-### On the domain
+### On the domain — settled
 
-Currently `aic-info-production.up.railway.app`, which works and costs nothing.
-
-`aimuccc` was your earlier preference. Two things worth weighing: seven letters of
-acronym is hard to say aloud and easy to mistype, and it will mostly be reached as a
-tap-through link from email anyway. Railway Hobby includes **2 custom domains**; a `.dk`
-runs about €10/year, and something like `aimc.dk` is far easier to say at a registration
-desk. Not a blocker, and a custom domain can be attached after launch without changing
-anything else.
+`aic-info-production.up.railway.app`. Decided 26 Aug: no custom domain.
 
 ---
 

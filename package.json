@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "migrate": "node scripts/migrate.mjs",
     "migrate:status": "node scripts/migrate.mjs --status",
-    "db:verify": "node scripts/verify-schema.mjs"
+    "db:verify": "node scripts/verify-schema.mjs",
+    "seed:program": "node scripts/seed-program.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
