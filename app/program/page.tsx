@@ -175,7 +175,6 @@ function SessionRow({
         ) : (
           s.speaker_name
         )}
-        {s.room && <span> · {s.room}</span>}
       </p>
     </li>
   );

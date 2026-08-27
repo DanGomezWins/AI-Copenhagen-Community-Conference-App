@@ -56,7 +56,12 @@ export default function SessionForm({ session }: { session?: Session | null }) {
         {session && <input type="hidden" name="id" value={session.id} />}
 
         <fieldset>
-          <legend className="text-sm font-medium">Track</legend>
+          <legend className="text-sm font-medium">
+            Room{" "}
+            <span className="font-normal text-[var(--color-muted)]">
+              (there are three, and each one is a track)
+            </span>
+          </legend>
           <div className="mt-2 flex flex-wrap gap-2">
             {TRACKS.map((t) => (
               <label key={t.key}>
@@ -130,22 +135,6 @@ export default function SessionForm({ session }: { session?: Session | null }) {
             The end time is before the start time. Fix it before saving.
           </p>
         )}
-
-        <div>
-          <label htmlFor="room" className="block text-sm font-medium">
-            Room{" "}
-            <span className="font-normal text-[var(--color-muted)]">
-              (defaults to the track&rsquo;s room)
-            </span>
-          </label>
-          <input
-            id="room"
-            name="room"
-            defaultValue={session?.room ?? ""}
-            placeholder="Auditorium"
-            className={field}
-          />
-        </div>
 
         {editing && (
           <label className="flex items-start gap-3 rounded-lg border border-[var(--color-line)] px-3 py-3">

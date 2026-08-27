@@ -29,7 +29,7 @@ await db.query("delete from public.sessions where notes = $1", [MARK]);
 const soon = new Date(Date.now() + 3 * 60_000);
 const { rows: [s] } = await db.query(
   `insert into public.sessions (track, title, speaker_name, starts_at, ends_at, room, notes)
-   values ('open', $1, 'Test Speaker', $2, $3, 'Room 3', $4) returning id`,
+   values ('open', $1, 'Test Speaker', $2, $3, 'Open sessions', $4) returning id`,
   ["Announcer smoke test", soon.toISOString(),
    new Date(soon.getTime() + 25 * 60_000).toISOString(), MARK],
 );

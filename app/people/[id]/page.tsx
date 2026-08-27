@@ -131,7 +131,6 @@ export default async function ProfilePage({
                   </p>
                   <p className="mt-1 text-sm text-[var(--color-muted)]">
                     {TRACKS.find((t) => t.key === s.track)?.label}
-                    {s.room ? ` · ${s.room}` : ""}
                   </p>
                 </Link>
               </li>

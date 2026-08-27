@@ -79,7 +79,7 @@ for (const s of result.sessions) {
 console.log("\n→ applying a plain-English correction…\n");
 const revised = await refineDraft(
   result,
-  "The 11:00 one is in Room 3, not Room 2. And the last speaker is Mikkel Thorvaldsen.",
+  "The 11:00 one ends at 11:25, and the last speaker is Mikkel Thorvaldsen.",
   [],
 );
 for (const s of revised.sessions) {

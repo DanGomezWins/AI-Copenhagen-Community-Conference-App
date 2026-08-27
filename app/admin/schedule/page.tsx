@@ -59,7 +59,6 @@ export default async function SchedulePage() {
                     </p>
                     <p className="truncate text-xs text-[var(--color-muted)]">
                       {isStructural(s) ? "Day structure" : s.speaker_name}
-                      {s.room ? ` · ${s.room}` : ""}
                     </p>
                   </div>
                   <form action={setCancelled} className="shrink-0">

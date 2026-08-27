@@ -31,23 +31,23 @@ All seven values must read `true`. `/admin → Testing tools` also now shows a r
 
 ### Retest these
 
-| # | Was | Now |
-|---|---|---|
-| **7.3, 7.4, 7.5** | "Notifications aren't configured yet" | Add the VAPID vars above. The error message now explains what's actually wrong instead of dead-ending. |
-| **7.10** | Times two hours behind; no press feedback | **Fixed.** The label used the server's clock (UTC on Railway) instead of Copenhagen. Every button in the organiser area now shows a spinner while it works. |
-| **7.13** | Feed didn't show the auto post | **Couldn't reproduce** — re-verified end to end and the post lands correctly. Most likely the cleanup step removed it before you looked. The testing page now **lists the automatic posts it created**, so you can see them without leaving the page, and cleanup asks for confirmation first. |
-| **6.12** | "daniel gomez-windshuttle" didn't match "Daniel Gomez-Windshuttle" | **Fixed, and your suggestion adopted.** All names are now stored and shown in Title Case. I also backfilled what was already in the database — including that exact row. Matching was already case-insensitive; the display wasn't. |
-| **3.2** | Couldn't test — profile already existed | **/me** now has **"Remove me from the directory"**. You stay signed in, you just stop being listed — so you can run the first-run flow properly. Worth having anyway: a directory publishing your employer and LinkedIn should let you leave it. |
+| #                 | Was                                                                | Now                                                                                                                                                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **7.3, 7.4, 7.5** | "Notifications aren't configured yet"                              | Add the VAPID vars above. The error message now explains what's actually wrong instead of dead-ending.                                                                                                                                                                                         |
+| **7.10**          | Times two hours behind; no press feedback                          | **Fixed.** The label used the server's clock (UTC on Railway) instead of Copenhagen. Every button in the organiser area now shows a spinner while it works.                                                                                                                                    |
+| **7.13**          | Feed didn't show the auto post                                     | **Couldn't reproduce** — re-verified end to end and the post lands correctly. Most likely the cleanup step removed it before you looked. The testing page now **lists the automatic posts it created**, so you can see them without leaving the page, and cleanup asks for confirmation first. |
+| **6.12**          | "daniel gomez-windshuttle" didn't match "Daniel Gomez-Windshuttle" | **Fixed, and your suggestion adopted.** All names are now stored and shown in Title Case. I also backfilled what was already in the database — including that exact row. Matching was already case-insensitive; the display wasn't.                                                            |
+| **3.2**           | Couldn't test — profile already existed                            | **/me** now has **"Remove me from the directory"**. You stay signed in, you just stop being listed — so you can run the first-run flow properly. Worth having anyway: a directory publishing your employer and LinkedIn should let you leave it.                                               |
 
 ### Also new this round
 
-| Change | Where |
-|---|---|
+| Change                                                          | Where                                                                                                                             |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **Title is now "AI Meetup Copenhagen Community Conference #1"** | Login, Feed, browser tab, home-screen icon. The sticky top bar shortens it on a narrow phone so it doesn't crowd out your avatar. |
-| **Link to the Meetup event page** | Under the title on the Feed and on the login screen |
-| Title Case names everywhere | Profiles, schedule editor, and scanner output |
-| Press feedback on buttons | Every organiser action button |
-| Confirmation before destructive actions | Cleanup, and removing your profile |
+| **Link to the Meetup event page**                               | Under the title on the Feed and on the login screen                                                                               |
+| Title Case names everywhere                                     | Profiles, schedule editor, and scanner output                                                                                     |
+| Press feedback on buttons                                       | Every organiser action button                                                                                                     |
+| Confirmation before destructive actions                         | Cleanup, and removing your profile                                                                                                |
 
 > ### ⚠️ Still worth knowing — 6.25
 > Any signed-in attendee can add, edit or cancel **Open Sessions**. Main stage

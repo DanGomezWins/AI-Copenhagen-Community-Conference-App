@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { ScanResultSchema } from "@/lib/scan/schema";
 import { buildDiff, summarise } from "@/lib/scan/diff";
-import { timeToIso, type Session } from "@/lib/program";
+import { timeToIso, roomForTrack, type Session } from "@/lib/program";
 import { titleCaseName } from "@/lib/names";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         speaker_name: p.speaker_name ? titleCaseName(p.speaker_name) : null,
         starts_at: timeToIso(p.start_time),
         ends_at: p.end_time ? timeToIso(p.end_time) : null,
-        room: p.room ?? "Room 3",
+        room: roomForTrack("open"),
       });
     } else if (row.kind === "changed" && row.proposed && row.existing) {
       const p = row.proposed;
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
           speaker_name: p.speaker_name ? titleCaseName(p.speaker_name) : null,
           starts_at: timeToIso(p.start_time),
           ends_at: p.end_time ? timeToIso(p.end_time) : row.existing.ends_at,
-          room: p.room ?? row.existing.room,
+          room: roomForTrack("open"),
         })
         .eq("id", row.existing.id);
     } else if (row.kind === "removed" && row.existing) {

@@ -1,8 +1,17 @@
+/**
+ * The three tracks ARE the three rooms — there are no separate room numbers.
+ * `room` is kept equal to the label so the stored value stays human-readable,
+ * but it is always derived from the track and is never entered by hand.
+ */
 export const TRACKS = [
-  { key: "main", label: "Main stage", room: "Auditorium" },
-  { key: "demos", label: "Demos", room: "Room 2" },
-  { key: "open", label: "Open sessions", room: "Room 3" },
+  { key: "main", label: "Main stage", room: "Main stage" },
+  { key: "demos", label: "Demos", room: "Demos" },
+  { key: "open", label: "Open sessions", room: "Open sessions" },
 ] as const;
+
+export function roomForTrack(track: TrackKey): string {
+  return TRACKS.find((t) => t.key === track)!.room;
+}
 
 export type TrackKey = (typeof TRACKS)[number]["key"];
 

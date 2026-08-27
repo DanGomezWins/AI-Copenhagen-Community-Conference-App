@@ -37,7 +37,7 @@ export default function OrganiserForm() {
         <input
           id="note"
           name="note"
-          placeholder="Room 2 host"
+          placeholder="Demos room host"
           className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]"
         />
       </div>

@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { runAnnouncerTick } from "@/lib/announcer";
 import { sendToAll } from "@/lib/push";
 import { TEST_MARK } from "@/lib/test-mark";
-import { timeAt } from "@/lib/program";
+import { timeAt, roomForTrack } from "@/lib/program";
 
 
 
@@ -42,7 +42,7 @@ export async function createTestSession(formData: FormData): Promise<void> {
     speaker_name: "Test Speaker",
     starts_at: starts.toISOString(),
     ends_at: ends.toISOString(),
-    room: "Room 3",
+    room: roomForTrack("open"),
     notes: TEST_MARK,
   });
 

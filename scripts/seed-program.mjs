@@ -39,7 +39,8 @@ const end = (hhmm) => {
   return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 };
 
-const ROOM = { main: "Auditorium", demos: "Room 2", open: "Room 3" };
+// The three tracks are the three rooms; there are no separate room numbers.
+const ROOM = { main: "Main stage", demos: "Demos", open: "Open sessions" };
 
 // 10 main-stage talks + 1 closing keynote
 const MAIN = [

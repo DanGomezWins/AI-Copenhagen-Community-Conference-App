@@ -23,10 +23,10 @@ function announcementFor(s: Session): { body: string; push: string } {
     };
   }
 
-  const where = [s.room, track].filter(Boolean).join(" · ");
+  // The track is the room, so naming both would say the same thing twice.
   return {
-    body: `Next up at ${time}: ${s.title} — ${s.speaker_name}${where ? ` (${where})` : ""}.`,
-    push: `${s.title} — ${s.speaker_name}${s.room ? `, ${s.room}` : ""}`,
+    body: `Next up at ${time}: ${s.title} — ${s.speaker_name}${track ? ` (${track})` : ""}.`,
+    push: `${s.title} — ${s.speaker_name}${track ? `, ${track}` : ""}`,
   };
 }
 
