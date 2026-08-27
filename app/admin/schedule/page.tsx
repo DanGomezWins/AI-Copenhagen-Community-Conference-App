@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { setCancelled } from "@/app/actions/sessions";
 import { TRACKS, timeRange, isStructural, type Session } from "@/lib/program";
+import SubmitButton from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -68,9 +69,12 @@ export default async function SchedulePage() {
                       name="cancel"
                       value={s.status === "cancelled" ? "false" : "true"}
                     />
-                    <button type="submit" className="text-xs font-medium text-[var(--color-muted)]">
+                    <SubmitButton
+                      className="text-xs font-medium text-[var(--color-muted)]"
+                      pendingLabel="…"
+                    >
                       {s.status === "cancelled" ? "Restore" : "Cancel"}
-                    </button>
+                    </SubmitButton>
                   </form>
                   <Link
                     href={`/admin/schedule/${s.id}`}

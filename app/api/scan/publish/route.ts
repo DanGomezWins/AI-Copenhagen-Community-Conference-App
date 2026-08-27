@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ScanResultSchema } from "@/lib/scan/schema";
 import { buildDiff, summarise } from "@/lib/scan/diff";
 import { timeToIso, type Session } from "@/lib/program";
+import { titleCaseName } from "@/lib/names";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
       await supabase.from("sessions").insert({
         track: "open",
         title: p.title,
-        speaker_name: p.speaker_name,
+        speaker_name: p.speaker_name ? titleCaseName(p.speaker_name) : null,
         starts_at: timeToIso(p.start_time),
         ends_at: p.end_time ? timeToIso(p.end_time) : null,
         room: p.room ?? "Room 3",
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         .from("sessions")
         .update({
           title: p.title,
-          speaker_name: p.speaker_name,
+          speaker_name: p.speaker_name ? titleCaseName(p.speaker_name) : null,
           starts_at: timeToIso(p.start_time),
           ends_at: p.end_time ? timeToIso(p.end_time) : row.existing.ends_at,
           room: p.room ?? row.existing.room,

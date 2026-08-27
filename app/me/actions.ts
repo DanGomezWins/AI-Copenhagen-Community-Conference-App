@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { titleCaseName } from "@/lib/names";
 
 export type ProfileFormState = { error?: string; ok?: boolean };
 
@@ -43,9 +44,14 @@ export async function saveProfile(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "You are not signed in." };
 
-  const first = clean(formData.get("first_name"));
-  const last = clean(formData.get("last_name"));
-  if (!first || !last) return { error: "First and last name are required." };
+  const firstRaw = clean(formData.get("first_name"));
+  const lastRaw = clean(formData.get("last_name"));
+  if (!firstRaw || !lastRaw) return { error: "First and last name are required." };
+
+  // Stored title-cased so the directory reads consistently and so a session's
+  // handwritten booker name matches regardless of how either was typed.
+  const first = titleCaseName(firstRaw);
+  const last = titleCaseName(lastRaw);
 
   let linkedin = clean(formData.get("linkedin_url"));
   if (linkedin && !/^https?:\/\//i.test(linkedin)) linkedin = `https://${linkedin}`;
@@ -66,6 +72,26 @@ export async function saveProfile(
   revalidatePath("/me");
   revalidatePath("/people");
   return { ok: true };
+}
+
+/**
+ * Removes the person from the directory. Their sign-in still works; they simply
+ * stop being listed, and can create a profile again later.
+ *
+ * Worth having on its own merits — a directory that publishes your employer and
+ * LinkedIn to a few hundred strangers should let you leave it — and it makes the
+ * first-run flow testable without touching the database.
+ */
+export async function deleteMyProfile(): Promise<void> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.storage.from("avatars").remove([`${user.id}/avatar.jpg`]);
+  await supabase.from("profiles").delete().eq("id", user.id);
+
+  revalidatePath("/me");
+  revalidatePath("/people");
 }
 
 export async function signOut() {

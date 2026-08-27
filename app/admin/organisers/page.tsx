@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { removeOrganiser } from "@/app/actions/organisers";
 import OrganiserForm from "./OrganiserForm";
+import SubmitButton from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -35,9 +36,12 @@ export default async function OrganisersPage() {
             ) : (
               <form action={removeOrganiser}>
                 <input type="hidden" name="email" value={o.email} />
-                <button type="submit" className="shrink-0 text-xs font-medium text-red-600">
+                <SubmitButton
+                  className="shrink-0 text-xs font-medium text-red-600"
+                  pendingLabel="Removing…"
+                >
                   Remove
-                </button>
+                </SubmitButton>
               </form>
             )}
           </li>

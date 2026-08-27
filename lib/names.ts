@@ -58,3 +58,33 @@ export function nameKey(s: string): string {
     .replace(/\s+/g, " ")
     .trim();
 }
+
+/**
+ * Title-cases a person's name for storage and display.
+ *
+ * Only touches words that are entirely one case: "daniel" and "DANIEL" both
+ * become "Daniel", while genuinely mixed-case names like "McDonald" and
+ * "van der Berg" are left exactly as the person typed them. Guessing at those
+ * is worse than leaving them alone.
+ *
+ * Capitalises after hyphens and apostrophes too, so "gomez-windshuttle" and
+ * "o'brien" come out as "Gomez-Windshuttle" and "O'Brien".
+ */
+export function titleCaseName(input: string): string {
+  return input
+    // Dots and underscores are separators, not part of a name: people paste
+    // "daniel.gomez-windshuttle" from an email or handle.
+    .replace(/[._]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((word) => {
+      if (!word) return word;
+      const isUniformCase = word === word.toLowerCase() || word === word.toUpperCase();
+      if (!isUniformCase) return word; // McDonald, MacLeod, iPhone — leave be
+      return word
+        .toLowerCase()
+        .replace(/(^|[-'’])(\p{L})/gu, (_m, sep, ch) => sep + ch.toUpperCase());
+    })
+    .join(" ");
+}

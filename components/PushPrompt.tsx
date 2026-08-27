@@ -74,7 +74,13 @@ export default function PushPrompt() {
 
       const reg = await navigator.serviceWorker.ready;
       const key = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      if (!key) throw new Error("Notifications aren’t configured yet.");
+      if (!key) {
+        throw new Error(
+          "Notifications aren’t set up on this deployment yet — the server is " +
+            "missing its notification keys. Tell the organiser; it’s a one-off " +
+            "config step, not something you did.",
+        );
+      }
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,

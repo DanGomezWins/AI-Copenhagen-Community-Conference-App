@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import FeedList from "./FeedList";
 import type { PostWithAuthor } from "@/lib/feed";
+import { EVENT } from "@/lib/event";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,21 @@ export default async function FeedPage() {
   return (
     <section>
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Feed</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold leading-tight tracking-tight">
+            {EVENT.name}
+          </h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            Live updates from the organisers.
+            {EVENT.date} · {EVENT.venue}
           </p>
+          <a
+            href={EVENT.meetupUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-block text-sm font-medium text-[var(--color-accent)] underline underline-offset-2"
+          >
+            Event details on Meetup ↗
+          </a>
         </div>
         {isOrganiser && (
           <Link
@@ -37,6 +48,10 @@ export default async function FeedPage() {
           </Link>
         )}
       </div>
+
+      <h2 className="mt-8 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+        Live updates
+      </h2>
 
       <FeedList
         initial={(posts ?? []) as PostWithAuthor[]}

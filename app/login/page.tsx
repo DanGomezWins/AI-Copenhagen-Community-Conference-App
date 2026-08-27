@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { EVENT } from "@/lib/event";
 
 const DEV_SIGNIN = process.env.NEXT_PUBLIC_ENABLE_DEV_SIGNIN === "true";
 
@@ -112,10 +113,20 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <section className="pt-8">
-      <h1 className="text-2xl font-bold tracking-tight">AIC Info</h1>
-      <p className="mt-1 text-sm text-[var(--color-muted)]">
-        AI Meetup Copenhagen Community Conference #1 · 10 September
+      <h1 className="text-2xl font-bold leading-tight tracking-tight">
+        {EVENT.name}
+      </h1>
+      <p className="mt-2 text-sm text-[var(--color-muted)]">
+        {EVENT.date} · {EVENT.venue}
       </p>
+      <a
+        href={EVENT.meetupUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-1 inline-block text-sm font-medium text-[var(--color-accent)] underline underline-offset-2"
+      >
+        Event details on Meetup ↗
+      </a>
       <div className="mt-8">
         <Suspense fallback={null}>
           <LoginForm />

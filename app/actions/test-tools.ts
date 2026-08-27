@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { runAnnouncerTick } from "@/lib/announcer";
 import { sendToAll } from "@/lib/push";
 import { TEST_MARK } from "@/lib/test-mark";
+import { timeAt } from "@/lib/program";
 
 
 
@@ -35,7 +36,9 @@ export async function createTestSession(formData: FormData): Promise<void> {
   const admin = createAdminClient();
   await admin.from("sessions").insert({
     track: "open",
-    title: `Announcer test — ${starts.getHours()}:${String(starts.getMinutes()).padStart(2, "0")}`,
+    // timeAt() formats in Copenhagen. getHours() would use the server's clock,
+    // which on Railway is UTC — that is why the label read two hours behind.
+    title: `Announcer test — ${timeAt(starts.toISOString())}`,
     speaker_name: "Test Speaker",
     starts_at: starts.toISOString(),
     ends_at: ends.toISOString(),

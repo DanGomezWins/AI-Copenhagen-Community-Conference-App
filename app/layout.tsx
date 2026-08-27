@@ -2,14 +2,15 @@ import type { Metadata, Viewport } from "next";
 import TabBar from "@/components/TabBar";
 import AppHeader from "@/components/AppHeader";
 import RegisterServiceWorker from "@/components/RegisterServiceWorker";
+import { EVENT } from "@/lib/event";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AIC Info",
+  title: EVENT.name,
   description:
     "Live program, updates and networking for AI Meetup Copenhagen Community Conference #1",
   manifest: "/manifest.json",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "AIC Info" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: EVENT.short },
 };
 
 export const viewport: Viewport = {

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { getPrefill, signOut } from "./actions";
+import { getPrefill, signOut, deleteMyProfile } from "./actions";
+import SubmitButton from "@/components/SubmitButton";
 import ProfileForm from "./ProfileForm";
 import PhotoUpload from "./PhotoUpload";
 import PushPrompt from "@/components/PushPrompt";
@@ -55,11 +56,31 @@ export default async function MePage({
 
       {profile && <PushPrompt />}
 
-      <form action={signOut} className="mt-8">
-        <button type="submit" className="text-sm text-[var(--color-muted)] underline">
-          Sign out
-        </button>
-      </form>
+      <div className="mt-10 border-t border-[var(--color-line)] pt-6">
+        <form action={signOut}>
+          <SubmitButton
+            className="text-sm text-[var(--color-muted)] underline"
+            pendingLabel="Signing out…"
+          >
+            Sign out
+          </SubmitButton>
+        </form>
+
+        {profile && (
+          <form action={deleteMyProfile} className="mt-4">
+            <SubmitButton
+              className="text-sm text-red-600 underline"
+              pendingLabel="Removing…"
+              confirm="Remove your profile from the Networking directory? You can create it again any time."
+            >
+              Remove me from the directory
+            </SubmitButton>
+            <p className="mt-1 text-xs text-[var(--color-muted)]">
+              You stay signed in. You just stop being listed.
+            </p>
+          </form>
+        )}
+      </div>
     </section>
   );
 }

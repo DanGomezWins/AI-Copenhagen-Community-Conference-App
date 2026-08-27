@@ -5,6 +5,7 @@ import {
   type Session, type TrackKey,
 } from "@/lib/program";
 import { nameKey } from "@/lib/names";
+import { EVENT } from "@/lib/event";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default async function ProgramPage({
     <section>
       <h1 className="text-2xl font-bold tracking-tight">Program</h1>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
-        Thursday 10 September · twoday København
+        {EVENT.date} · {EVENT.venue}
       </p>
 
       <nav className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1">

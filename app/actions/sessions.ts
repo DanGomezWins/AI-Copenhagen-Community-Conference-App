@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isTrackKey, timeToIso, timeAt, describeChange, TRACKS, type Session } from "@/lib/program";
+import { titleCaseName } from "@/lib/names";
 
 export type SessionFormState = { error?: string; warning?: string };
 
@@ -21,7 +22,7 @@ function readForm(formData: FormData) {
   return {
     track: isTrackKey(track) ? track : null,
     title: String(formData.get("title") ?? "").trim(),
-    speaker_name: String(formData.get("speaker_name") ?? "").trim() || null,
+    speaker_name: titleCaseName(String(formData.get("speaker_name") ?? "")) || null,
     room: String(formData.get("room") ?? "").trim() || null,
     starts_at: startTime ? timeToIso(startTime) : null,
     ends_at: endTime ? timeToIso(endTime) : null,
