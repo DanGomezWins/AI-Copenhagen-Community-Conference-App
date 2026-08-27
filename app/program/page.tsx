@@ -16,15 +16,22 @@ export default async function ProgramPage({
   const track: TrackKey = isTrackKey(raw) ? raw : "main";
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("sessions")
-    .select("*")
-    .eq("track", track)
-    .order("starts_at", { ascending: true });
+  const [{ data, error }, { data: profiles }] = await Promise.all([
+    supabase.from("sessions").select("*").eq("track", track)
+      .order("starts_at", { ascending: true }),
+    supabase.from("profiles").select("id, first_name, last_name"),
+  ]);
 
   const sessions = (data ?? []) as Session[];
   const state = liveness(sessions);
   const meta = TRACKS.find((t) => t.key === track)!;
+
+  // Speakers are stored as free text — the programme is imported long before
+  // those people ever sign in — so link a name to a profile when one exists.
+  const byName = new Map<string, string>();
+  for (const p of profiles ?? []) {
+    byName.set(`${p.first_name} ${p.last_name}`.toLowerCase().trim(), p.id);
+  }
 
   return (
     <section>
@@ -70,7 +77,15 @@ export default async function ProgramPage({
 
       <ol className="mt-4 space-y-2">
         {sessions.map((s) => (
-          <SessionRow key={s.id} session={s} state={state.get(s.id) ?? "upcoming"} />
+          <SessionRow
+            key={s.id}
+            session={s}
+            state={state.get(s.id) ?? "upcoming"}
+            profileId={
+              s.speaker_profile_id ??
+              (s.speaker_name ? byName.get(s.speaker_name.toLowerCase().trim()) ?? null : null)
+            }
+          />
         ))}
       </ol>
     </section>
@@ -80,9 +95,11 @@ export default async function ProgramPage({
 function SessionRow({
   session: s,
   state,
+  profileId,
 }: {
   session: Session;
   state: "past" | "now" | "next" | "upcoming";
+  profileId: string | null;
 }) {
   const cancelled = s.status === "cancelled";
 
@@ -132,8 +149,17 @@ function SessionRow({
       </h2>
 
       <p className="mt-1 text-sm text-[var(--color-muted)]">
-        {s.speaker_name}
-        {s.room && <span className="text-[var(--color-muted)]"> · {s.room}</span>}
+        {profileId ? (
+          <Link
+            href={`/people/${profileId}`}
+            className="font-medium text-[var(--color-accent)] underline underline-offset-2"
+          >
+            {s.speaker_name}
+          </Link>
+        ) : (
+          s.speaker_name
+        )}
+        {s.room && <span> · {s.room}</span>}
       </p>
     </li>
   );

@@ -74,12 +74,12 @@ Every feature in the brief is built. What remains is data and rehearsal:
 
 ### Waiting on you
 
-| # | Item | Blocks | Needed by |
-|---|---|---|---|
-| 1 | **Resend approval + setup** | Real sign-in for ~200 attendees | Before launch — hard blocker |
-| 2 | **Program data** (25 sessions: title, speaker, time, room) | Program tab having real content | Day 14, sooner is better |
-| 3 | **Attendee list** (email, name, company, role, speaker flag) | Login allowlist + profile prefill | Day 14 |
-| 4 | **Logo / brand colours** | Replacing placeholder icons and theme | Optional |
+| #   | Item                                                         | Blocks                                | Needed by                    |
+| --- | ------------------------------------------------------------ | ------------------------------------- | ---------------------------- |
+| 1   | **Resend approval + setup**                                  | Real sign-in for ~200 attendees       | Before launch — hard blocker |
+| 2   | **Program data** (25 sessions: title, speaker, time, room)   | Program tab having real content       | Day 14, sooner is better     |
+| 3   | **Attendee list** (email, name, company, role, speaker flag) | Login allowlist + profile prefill     | Day 14                       |
+| 4   | **Logo / brand colours**                                     | Replacing placeholder icons and theme | Optional                     |
 
 Nothing on this list blocks Phase 2 or 3.
 

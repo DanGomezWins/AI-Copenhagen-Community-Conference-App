@@ -1,0 +1,88 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { runAnnouncerTick } from "@/lib/announcer";
+import { sendToAll } from "@/lib/push";
+import { TEST_MARK } from "@/lib/test-mark";
+
+
+
+async function guard() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data } = await supabase.rpc("is_organiser");
+  return { supabase, user, ok: data === true && Boolean(user) };
+}
+
+/**
+ * Creates a session a few minutes from now, dated TODAY.
+ *
+ * The real programme is all on 10 September, so nothing in it can ever fall
+ * inside the announcer's window until the day itself. Without this the
+ * announcer is untestable before the event, which is the worst possible time
+ * to discover it doesn't work.
+ */
+export async function createTestSession(formData: FormData): Promise<void> {
+  const { ok } = await guard();
+  if (!ok) return;
+
+  const minutes = Number(formData.get("minutes") ?? 3);
+  const starts = new Date(Date.now() + minutes * 60_000);
+  const ends = new Date(starts.getTime() + 25 * 60_000);
+
+  const admin = createAdminClient();
+  await admin.from("sessions").insert({
+    track: "open",
+    title: `Announcer test — ${starts.getHours()}:${String(starts.getMinutes()).padStart(2, "0")}`,
+    speaker_name: "Test Speaker",
+    starts_at: starts.toISOString(),
+    ends_at: ends.toISOString(),
+    room: "Room 3",
+    notes: TEST_MARK,
+  });
+
+  revalidatePath("/admin/test");
+  revalidatePath("/program");
+}
+
+export async function runAnnouncerNow(): Promise<void> {
+  const { ok } = await guard();
+  if (!ok) return;
+  await runAnnouncerTick();
+  revalidatePath("/");
+  revalidatePath("/admin/test");
+}
+
+export async function sendTestPush(): Promise<void> {
+  const { ok } = await guard();
+  if (!ok) return;
+  await sendToAll({
+    title: "AIC Info — test",
+    body: "If you can see this, notifications are working.",
+    url: "/",
+    tag: "test-push",
+  });
+}
+
+export async function clearTestData(): Promise<void> {
+  const { ok } = await guard();
+  if (!ok) return;
+
+  const admin = createAdminClient();
+  const { data: sessions } = await admin
+    .from("sessions")
+    .select("id")
+    .eq("notes", TEST_MARK);
+
+  const ids = (sessions ?? []).map((s) => s.id);
+  if (ids.length) {
+    await admin.from("posts").delete().in("session_id", ids);
+    await admin.from("sessions").delete().in("id", ids);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/program");
+  revalidatePath("/admin/test");
+}

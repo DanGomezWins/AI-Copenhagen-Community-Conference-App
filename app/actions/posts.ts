@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isTrackKey, TRACKS } from "@/lib/program";
 import { sendToAll } from "@/lib/push";
@@ -84,4 +85,5 @@ export async function deletePost(formData: FormData): Promise<void> {
 
   await supabase.from("posts").delete().eq("id", id);
   revalidatePath("/");
+  redirect("/");
 }
