@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 /** Recomputes the diff against live data, so review always reflects reality. */
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
-  const { data: allowed } = await supabase.rpc("is_organiser");
-  if (allowed !== true) {
-    return NextResponse.json({ error: "Organisers only." }, { status: 403 });
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Sign in first." }, { status: 401 });
   }
 
   const body = await request.json();

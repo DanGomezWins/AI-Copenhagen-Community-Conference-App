@@ -48,6 +48,17 @@ export async function updateSession(request: NextRequest) {
     (p) => path === p || path.startsWith(p + "/"),
   );
 
+  // Gate /admin here, before anything renders. Doing it in the layout meant
+  // Next streamed the admin page's markup alongside the not-found, so the menu
+  // labels reached non-organisers even though the 404 won. RLS is still the
+  // real boundary — this stops the UI leaking at all.
+  if (user && path.startsWith("/admin")) {
+    const { data: organiser } = await supabase.rpc("is_organiser");
+    if (organiser !== true) {
+      return new NextResponse(null, { status: 404 });
+    }
+  }
+
   if (!user && !isPublic) {
     // Build from the public origin, not request.nextUrl — behind a proxy the
     // latter can be the container's internal bind address.

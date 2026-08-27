@@ -14,10 +14,8 @@ type Allowed = (typeof ALLOWED)[number];
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: allowed } = await supabase.rpc("is_organiser");
-
-  if (!user || allowed !== true) {
-    return NextResponse.json({ error: "Organisers only." }, { status: 403 });
+  if (!user) {
+    return NextResponse.json({ error: "Sign in first." }, { status: 401 });
   }
 
   const form = await request.formData();
@@ -47,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   const { data: draft, error: draftErr } = await supabase
     .from("schedule_drafts")
-    .insert({ photo_url: path, status: "processing", track: "open" })
+    .insert({ photo_url: path, status: "processing", track: "open", created_by: user.id })
     .select("id")
     .single();
   if (draftErr) {

@@ -3,6 +3,7 @@
 import { useMemo, useState, useDeferredValue } from "react";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
+import { normalise, searchKey } from "@/lib/names";
 
 export type DirectoryPerson = {
   id: string;
@@ -21,46 +22,6 @@ const FILTERS: { key: Filter; label: string }[] = [
   { key: "speakers", label: "Speakers" },
   { key: "guests", label: "Guests" },
 ];
-
-/**
- * Fold names to a searchable form.
- *
- * NFD alone is not enough for Danish: a-with-ring decomposes, but o-with-stroke
- * and ae are distinct Unicode letters and survive untouched. At a Copenhagen
- * event people type "norgaard" and "odegard" on an English keyboard, so those
- * are mapped explicitly.
- *
- * a-with-ring is genuinely ambiguous - "Aagaard" and "Agaard" are both plausible
- * things to type - so both spellings go into the index and either query hits.
- */
-const BASE: Record<string, string> = {
-  "ø": "o",  // o with stroke
-  "æ": "ae",
-  "ð": "d",
-  "þ": "th",
-  "ł": "l",
-};
-
-function fold(s: string, ring: string): string {
-  const lowered = s.toLowerCase();
-  let out = "";
-  for (const ch of lowered) {
-    out += ch === "å" ? ring : (BASE[ch] ?? ch);
-  }
-  return out.normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
-
-/** Query side, and the primary index form. */
-function normalise(s: string): string {
-  return fold(s, "a");
-}
-
-/** Everything a name could reasonably be typed as. */
-function searchKey(s: string): string {
-  const a = fold(s, "a");
-  const aa = fold(s, "aa");
-  return a === aa ? a : `${a} ${aa}`;
-}
 
 export default function Directory({ people }: { people: DirectoryPerson[] }) {
   const [query, setQuery] = useState("");

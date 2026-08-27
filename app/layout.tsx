@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import TabBar from "@/components/TabBar";
+import AppHeader from "@/components/AppHeader";
 import RegisterServiceWorker from "@/components/RegisterServiceWorker";
 import "./globals.css";
 
@@ -25,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-dvh">
+        <AppHeader />
         <main className="mx-auto w-full max-w-screen-sm px-4 pt-4">{children}</main>
+        <noscript>
+          <p className="p-4 text-sm">AIC Info needs JavaScript enabled.</p>
+        </noscript>
         <TabBar />
         <RegisterServiceWorker />
       </body>

@@ -4,6 +4,7 @@ import {
   TRACKS, isTrackKey, timeRange, isStructural, liveness,
   type Session, type TrackKey,
 } from "@/lib/program";
+import { nameKey } from "@/lib/names";
 
 export const dynamic = "force-dynamic";
 
@@ -24,13 +25,12 @@ export default async function ProgramPage({
 
   const sessions = (data ?? []) as Session[];
   const state = liveness(sessions);
-  const meta = TRACKS.find((t) => t.key === track)!;
 
   // Speakers are stored as free text — the programme is imported long before
   // those people ever sign in — so link a name to a profile when one exists.
   const byName = new Map<string, string>();
   for (const p of profiles ?? []) {
-    byName.set(`${p.first_name} ${p.last_name}`.toLowerCase().trim(), p.id);
+    byName.set(nameKey(`${p.first_name} ${p.last_name}`), p.id);
   }
 
   return (
@@ -58,7 +58,22 @@ export default async function ProgramPage({
         ))}
       </nav>
 
-      <p className="mt-3 text-xs text-[var(--color-muted)]">{meta.room}</p>
+      {track === "open" && (
+        <Link
+          href="/scan"
+          className="mt-4 flex items-center justify-between rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/5 p-3.5"
+        >
+          <span className="text-sm">
+            <span className="font-medium">Added your session to the board?</span>
+            <span className="block text-xs text-[var(--color-muted)]">
+              Photograph it and it goes live for everyone.
+            </span>
+          </span>
+          <span className="shrink-0 text-sm font-medium text-[var(--color-accent)]">
+            Scan ↗
+          </span>
+        </Link>
+      )}
 
       {error && (
         <p className="mt-6 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm">
@@ -83,7 +98,7 @@ export default async function ProgramPage({
             state={state.get(s.id) ?? "upcoming"}
             profileId={
               s.speaker_profile_id ??
-              (s.speaker_name ? byName.get(s.speaker_name.toLowerCase().trim()) ?? null : null)
+              (s.speaker_name ? byName.get(nameKey(s.speaker_name)) ?? null : null)
             }
           />
         ))}
@@ -151,7 +166,7 @@ function SessionRow({
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         {profileId ? (
           <Link
-            href={`/people/${profileId}`}
+            href={`/people/${profileId}?from=program&track=${s.track}`}
             className="font-medium text-[var(--color-accent)] underline underline-offset-2"
           >
             {s.speaker_name}

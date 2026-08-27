@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { saveSession, deleteSession, type SessionFormState } from "@/app/actions/sessions";
 import { TRACKS, isoToTime, type Session } from "@/lib/program";
@@ -8,12 +8,47 @@ import { TRACKS, isoToTime, type Session } from "@/lib/program";
 const field =
   "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
 
+const DEFAULT_MINUTES = 25; // 20 minute talk + 5 minutes of questions
+
+function addMinutes(hhmm: string, minutes: number): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return "";
+  const t = (h * 60 + m + minutes + 1440) % 1440;
+  return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+}
+
+function minutesBetween(a: string, b: string): number | null {
+  if (!a || !b) return null;
+  const [ah, am] = a.split(":").map(Number);
+  const [bh, bm] = b.split(":").map(Number);
+  if ([ah, am, bh, bm].some(Number.isNaN)) return null;
+  return bh * 60 + bm - (ah * 60 + am);
+}
+
 export default function SessionForm({ session }: { session?: Session | null }) {
   const [state, action, pending] = useActionState<SessionFormState, FormData>(
     saveSession,
     {},
   );
   const editing = Boolean(session);
+
+  const [start, setStart] = useState(isoToTime(session?.starts_at ?? null));
+  const [end, setEnd] = useState(isoToTime(session?.ends_at ?? null));
+
+  /**
+   * Moving the start drags the end with it, preserving the session's length.
+   * Without this, rescheduling a 09:30 session to 16:45 leaves the end at 09:55
+   * and the save is rejected as "end before start" — which is exactly how a
+   * reschedule silently failed in testing.
+   */
+  function onStartChange(next: string) {
+    const duration = minutesBetween(start, end) ?? DEFAULT_MINUTES;
+    setStart(next);
+    if (next) setEnd(addMinutes(next, duration > 0 ? duration : DEFAULT_MINUTES));
+  }
+
+  const endsBeforeStart =
+    Boolean(start && end) && (minutesBetween(start, end) ?? 1) <= 0;
 
   return (
     <>
@@ -68,7 +103,8 @@ export default function SessionForm({ session }: { session?: Session | null }) {
               name="start_time"
               type="time"
               required
-              defaultValue={isoToTime(session?.starts_at ?? null)}
+              value={start}
+              onChange={(e) => onStartChange(e.target.value)}
               className={field}
             />
           </div>
@@ -78,14 +114,22 @@ export default function SessionForm({ session }: { session?: Session | null }) {
               id="end_time"
               name="end_time"
               type="time"
-              defaultValue={isoToTime(session?.ends_at ?? null)}
-              className={field}
+              value={end}
+              onChange={(e) => setEnd(e.target.value)}
+              className={`${field} ${endsBeforeStart ? "border-red-500" : ""}`}
             />
           </div>
         </div>
         <p className="-mt-2 text-xs text-[var(--color-muted)]">
-          Thursday 10 September, Copenhagen time.
+          Thursday 10 September, Copenhagen time. Moving the start moves the end
+          with it.
         </p>
+
+        {endsBeforeStart && (
+          <p className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm font-medium text-red-600">
+            The end time is before the start time. Fix it before saving.
+          </p>
+        )}
 
         <div>
           <label htmlFor="room" className="block text-sm font-medium">
@@ -121,12 +165,30 @@ export default function SessionForm({ session }: { session?: Session | null }) {
           </label>
         )}
 
-        {state.error && <p className="text-sm text-red-600" role="alert">{state.error}</p>}
+        {/* Errors sit directly above the button and are impossible to miss —
+            a quiet line of red text mid-form got overlooked in testing. */}
+        {state.error && (
+          <p
+            role="alert"
+            className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm font-medium text-red-600"
+          >
+            {state.error}
+          </p>
+        )}
+
+        {state.warning && (
+          <p
+            role="status"
+            className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400"
+          >
+            {state.warning}
+          </p>
+        )}
 
         <button
           type="submit"
-          disabled={pending}
-          className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3.5 font-semibold text-white disabled:opacity-60"
+          disabled={pending || endsBeforeStart}
+          className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3.5 font-semibold text-white disabled:opacity-50"
         >
           {pending ? "Saving…" : editing ? "Save changes" : "Add session"}
         </button>

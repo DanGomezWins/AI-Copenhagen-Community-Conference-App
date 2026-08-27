@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { ScanResult, ProposedSession } from "@/lib/scan/schema";
 import type { DiffRow } from "@/lib/scan/diff";
 import type { Session } from "@/lib/program";
+import { nameKey } from "@/lib/names";
 
 type Stage = "capture" | "working" | "review" | "publishing";
 
@@ -21,7 +22,13 @@ const KIND_META: Record<DiffRow["kind"], { label: string; cls: string }> = {
   unchanged: { label: "Unchanged", cls: "bg-[var(--color-line)] text-[var(--color-muted)]" },
 };
 
-export default function ScanFlow({ existing }: { existing: Session[] }) {
+export default function ScanFlow({
+  existing,
+  knownNames = [],
+}: {
+  existing: Session[];
+  knownNames?: string[];
+}) {
   const router = useRouter();
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -176,6 +183,10 @@ export default function ScanFlow({ existing }: { existing: Session[] }) {
     removed: diff.filter((d) => d.kind === "removed").length,
   };
   const flagged = (result?.sessions ?? []).filter((s) => s.confidence !== "high");
+  const known = new Set(knownNames);
+  const unmatched = (result?.sessions ?? [])
+    .map((s) => s.speaker_name)
+    .filter((n): n is string => Boolean(n) && !known.has(nameKey(n!)));
   const nothingToDo = stats.added + stats.changed + stats.removed === 0;
 
   return (
@@ -183,6 +194,17 @@ export default function ScanFlow({ existing }: { existing: Session[] }) {
       {result?.unreadable && (
         <p className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm">
           That photo couldn’t be read. Try again with more light, or closer.
+        </p>
+      )}
+
+      {unmatched.length > 0 && (
+        <p className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+          <strong>
+            {unmatched.length === 1 ? "This name doesn’t" : "These names don’t"} match
+            anyone with a profile:
+          </strong>{" "}
+          {unmatched.join(", ")}. The session will still publish, but it won’t link
+          to a profile. Ask them to add one, or correct the spelling below.
         </p>
       )}
 
@@ -226,7 +248,7 @@ export default function ScanFlow({ existing }: { existing: Session[] }) {
           rows={2}
           value={instruction}
           onChange={(e) => setInstruction(e.target.value)}
-          placeholder="The 14:20 one is in Room 2, not Room 3. And the speaker is Ida, not Ada."
+          placeholder="e.g. The 14:20 one ends at 14:45, and the name is Ida, not Ada."
           className="mt-2 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]"
         />
         <button
@@ -259,7 +281,7 @@ export default function ScanFlow({ existing }: { existing: Session[] }) {
         onClick={() => { setStage("capture"); setResult(null); setDiff([]); setPreview(null); }}
         className="mt-3 w-full py-2 text-sm text-[var(--color-muted)] underline"
       >
-        Discard and photograph again
+        Throw this away and start over
       </button>
     </div>
   );

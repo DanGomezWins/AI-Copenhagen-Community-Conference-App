@@ -13,7 +13,10 @@ export const ProposedSessionSchema = z.object({
   speaker_name: z
     .string()
     .nullable()
-    .describe("Presenter name as written, or null if the board doesn't give one"),
+    .describe(
+      "The booker's full name exactly as written, including diacritics. It is " +
+        "matched against attendee profiles. Null only if the board gives none.",
+    ),
   start_time: z
     .string()
     .describe('24-hour wall-clock start time, "HH:MM". Convert any 12-hour times.'),
@@ -24,7 +27,10 @@ export const ProposedSessionSchema = z.object({
   room: z
     .string()
     .nullable()
-    .describe("Room as written on the board, or null if not stated"),
+    .describe(
+      "Almost always null: every Open Session is in the same room. Only fill " +
+        "this in if the board explicitly names a different one.",
+    ),
   confidence: z
     .enum(["high", "medium", "low"])
     .describe(

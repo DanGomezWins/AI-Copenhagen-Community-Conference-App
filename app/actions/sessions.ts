@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isTrackKey, timeToIso, describeChange, TRACKS, type Session } from "@/lib/program";
+import { isTrackKey, timeToIso, timeAt, describeChange, TRACKS, type Session } from "@/lib/program";
 
-export type SessionFormState = { error?: string };
+export type SessionFormState = { error?: string; warning?: string };
 
 async function organiserClient() {
   const supabase = await createClient();
@@ -61,6 +61,11 @@ export async function saveSession(
     ends_at: f.ends_at,
   };
 
+  // Warn on a room clash. Deliberately a warning, not a block: on the day an
+  // organiser may genuinely need two things in one room briefly, and refusing
+  // the save would leave them stuck. They just need to know it happened.
+  const clash = await findClash(supabase, row.room, f.starts_at, f.ends_at, id);
+
   const { data: saved, error } = id
     ? await supabase.from("sessions").update(row).eq("id", id).select("*").maybeSingle()
     : await supabase.from("sessions").insert(row).select("*").maybeSingle();
@@ -85,7 +90,43 @@ export async function saveSession(
   revalidatePath("/");
   revalidatePath("/program");
   revalidatePath("/admin/schedule");
+
+  if (clash) {
+    return {
+      warning: `Saved — but ${clash.room} is also booked for "${clash.title}" at ${timeAt(clash.starts_at)}. Both are now showing.`,
+    };
+  }
+
   redirect("/admin/schedule");
+}
+
+/** Another scheduled session sharing a room and overlapping in time. */
+async function findClash(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  room: string | null,
+  startsAt: string,
+  endsAt: string | null,
+  excludeId: string | null,
+): Promise<Session | null> {
+  if (!room) return null;
+
+  const end = endsAt ?? new Date(new Date(startsAt).getTime() + 25 * 60_000).toISOString();
+
+  const { data } = await supabase
+    .from("sessions")
+    .select("*")
+    .eq("room", room)
+    .eq("status", "scheduled")
+    .lt("starts_at", end);
+
+  for (const other of (data ?? []) as Session[]) {
+    if (excludeId && other.id === excludeId) continue;
+    if (!other.speaker_name) continue; // breaks and lunch legitimately overlap
+    const otherEnd =
+      other.ends_at ?? new Date(new Date(other.starts_at).getTime() + 25 * 60_000).toISOString();
+    if (otherEnd > startsAt) return other;
+  }
+  return null;
 }
 
 export async function setCancelled(formData: FormData): Promise<void> {
