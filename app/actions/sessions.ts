@@ -94,7 +94,11 @@ export async function saveSession(
 
   if (clash) {
     return {
-      warning: `Saved — but ${clash.room} is also booked for "${clash.title}" at ${timeAt(clash.starts_at)}. Both are now showing.`,
+      warning:
+        `Your change was saved. ${clash.room} now has both this session and ` +
+        `"${clash.title}" (${timeAt(clash.starts_at)}` +
+        `${clash.ends_at ? `–${timeAt(clash.ends_at)}` : ""}) overlapping. ` +
+        `Both are showing to attendees — move or cancel one if that is wrong.`,
     };
   }
 
@@ -111,24 +115,36 @@ async function findClash(
 ): Promise<Session | null> {
   if (!room) return null;
 
-  const end = endsAt ?? new Date(new Date(startsAt).getTime() + 25 * 60_000).toISOString();
+  // Compare instants, never strings. timeToIso() builds "+02:00" timestamps
+  // while Postgres returns "+00:00", so comparing them as text put 12:40Z
+  // before 14:15+02:00 even though it is forty minutes later — which silently
+  // missed every clash.
+  const ms = (iso: string) => new Date(iso).getTime();
+  const DEFAULT_LENGTH = 25 * 60_000;
+
+  const from = ms(startsAt);
+  const to = endsAt ? ms(endsAt) : from + DEFAULT_LENGTH;
 
   const { data } = await supabase
     .from("sessions")
     .select("*")
     .eq("room", room)
-    .eq("status", "scheduled")
-    .lt("starts_at", end);
+    .eq("status", "scheduled");
 
   for (const other of (data ?? []) as Session[]) {
     if (excludeId && other.id === excludeId) continue;
     if (!other.speaker_name) continue; // breaks and lunch legitimately overlap
-    const otherEnd =
-      other.ends_at ?? new Date(new Date(other.starts_at).getTime() + 25 * 60_000).toISOString();
-    if (otherEnd > startsAt) return other;
+
+    const otherFrom = ms(other.starts_at);
+    const otherTo = other.ends_at ? ms(other.ends_at) : otherFrom + DEFAULT_LENGTH;
+
+    // Half-open intervals: a session ending exactly when another starts is
+    // back-to-back, not a clash.
+    if (otherFrom < to && otherTo > from) return other;
   }
   return null;
 }
+
 
 export async function setCancelled(formData: FormData): Promise<void> {
   const { supabase, user, allowed } = await organiserClient();

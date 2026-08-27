@@ -17,7 +17,8 @@
     "seed:program": "node scripts/seed-program.mjs",
     "seed:people": "node scripts/seed-people.mjs",
     "test:scan": "tsx scripts/test-scan.mts",
-    "test:announcer": "tsx scripts/test-announcer.mts"
+    "test:announcer": "tsx scripts/test-announcer.mts",
+    "test:clash": "tsx scripts/test-clash.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",

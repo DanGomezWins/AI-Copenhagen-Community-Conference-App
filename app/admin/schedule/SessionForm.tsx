@@ -165,13 +165,27 @@ export default function SessionForm({ session }: { session?: Session | null }) {
           </p>
         )}
 
+        {/* A clash warns rather than blocks — on the day an organiser may
+            genuinely need an overlap — but it has to be unmissable, and it has
+            to make clear the save DID go through. */}
         {state.warning && (
-          <p
+          <div
             role="status"
-            className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400"
+            className="rounded-lg border-2 border-amber-500 bg-amber-500/10 p-4"
           >
-            {state.warning}
-          </p>
+            <p className="font-semibold text-amber-700 dark:text-amber-400">
+              ⚠ Two sessions in the same room at the same time
+            </p>
+            <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+              {state.warning}
+            </p>
+            <Link
+              href="/admin/schedule"
+              className="mt-3 inline-block rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white"
+            >
+              Back to the schedule
+            </Link>
+          </div>
         )}
 
         <button
