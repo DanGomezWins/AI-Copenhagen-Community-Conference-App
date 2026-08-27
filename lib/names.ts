@@ -62,29 +62,35 @@ export function nameKey(s: string): string {
 /**
  * Title-cases a person's name for storage and display.
  *
- * Only touches words that are entirely one case: "daniel" and "DANIEL" both
- * become "Daniel", while genuinely mixed-case names like "McDonald" and
- * "van der Berg" are left exactly as the person typed them. Guessing at those
- * is worse than leaving them alone.
+ * Works per hyphen/apostrophe segment, and does two different things:
+ *   - the first letter of every segment is always capitalised, so
+ *     "Gomez-windshuttle" becomes "Gomez-Windshuttle"
+ *   - the rest of a segment is lowercased only when the segment is entirely
+ *     one case, so "DANIEL" becomes "Daniel" while "McDonald" and "MacLeod"
+ *     keep their interior capitals
  *
- * Capitalises after hyphens and apostrophes too, so "gomez-windshuttle" and
- * "o'brien" come out as "Gomez-Windshuttle" and "O'Brien".
+ * Dots and underscores are treated as separators, since people paste
+ * "daniel.gomez-windshuttle" from an email address or handle.
  */
 export function titleCaseName(input: string): string {
+  const capSegment = (seg: string): string => {
+    if (!seg) return seg;
+    const uniform = seg === seg.toLowerCase() || seg === seg.toUpperCase();
+    const body = uniform ? seg.toLowerCase() : seg;
+    return body.charAt(0).toUpperCase() + body.slice(1);
+  };
+
   return input
-    // Dots and underscores are separators, not part of a name: people paste
-    // "daniel.gomez-windshuttle" from an email or handle.
     .replace(/[._]+/g, " ")
     .trim()
     .replace(/\s+/g, " ")
     .split(" ")
-    .map((word) => {
-      if (!word) return word;
-      const isUniformCase = word === word.toLowerCase() || word === word.toUpperCase();
-      if (!isUniformCase) return word; // McDonald, MacLeod, iPhone — leave be
-      return word
-        .toLowerCase()
-        .replace(/(^|[-'’])(\p{L})/gu, (_m, sep, ch) => sep + ch.toUpperCase());
-    })
+    .map((word) =>
+      // Keep the separators by splitting with a capturing group.
+      word
+        .split(/([-'’])/)
+        .map((part) => (/^[-'’]$/.test(part) ? part : capSegment(part)))
+        .join(""),
+    )
     .join(" ");
 }

@@ -1,6 +1,6 @@
 # AIC Info
 
-**A phone app for the AI Meetup Copenhagen Community Conference #1 that keeps 200 attendees on the same page: live updates from the organisers, the full three-track programme, and a directory so people can find each other. No app store — attendees open a link and save it to their home screen.**
+**A phone app (PWA) for the AI Meetup Copenhagen Community Conference #1 that keeps 200 attendees on the same page: live updates from the organisers, the full three-track programme, and a directory so people can find each other. No app store — attendees open a link and save it to their home screen.**
 
 🔗 **[aic-info-production.up.railway.app](https://aic-info-production.up.railway.app)**
 
