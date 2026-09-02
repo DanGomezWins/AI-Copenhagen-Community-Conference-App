@@ -30,6 +30,8 @@ export type Session = {
   room: string | null;
   status: "scheduled" | "cancelled";
   notes: string | null;
+  description: string | null;
+  slides_url: string | null;
 };
 
 const TZ = "Europe/Copenhagen";

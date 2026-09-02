@@ -81,7 +81,10 @@ export function titleCaseName(input: string): string {
   };
 
   return input
-    .replace(/[._]+/g, " ")
+    // A dot or underscore *between two letters* is a separator, because people
+    // paste "daniel.gomez-windshuttle" from an email or handle. A dot followed
+    // by a space is an initial and must survive: "Berit D. Brouer".
+    .replace(/(?<=\p{L})[._](?=\p{L})/gu, " ")
     .trim()
     .replace(/\s+/g, " ")
     .split(" ")

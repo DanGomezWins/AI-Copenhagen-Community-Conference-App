@@ -10,7 +10,7 @@ type Profile = {
   company?: string | null;
   role?: string | null;
   linkedin_url?: string | null;
-  public_email?: string | null;
+  bio?: string | null;
 };
 
 const field =
@@ -116,19 +116,21 @@ export default function ProfileForm({
       </div>
 
       <div>
-        <label htmlFor="public_email" className="block text-sm font-medium">
-          Contact email <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+        <label htmlFor="bio" className="block text-sm font-medium">
+          About you{" "}
+          <span className="font-normal text-[var(--color-muted)]">(optional)</span>
         </label>
-        <input
-          id="public_email"
-          name="public_email"
-          type="email"
-          inputMode="email"
-          defaultValue={profile.public_email ?? ""}
+        <textarea
+          id="bio"
+          name="bio"
+          rows={4}
+          maxLength={600}
+          defaultValue={profile.bio ?? ""}
+          placeholder="A sentence or two about what you work on."
           className={field}
         />
         <p className="mt-1 text-xs text-[var(--color-muted)]">
-          Shown to other attendees. Leave blank to keep it private.
+          Shown on your profile. Speakers arrive with this already filled in.
         </p>
       </div>
 

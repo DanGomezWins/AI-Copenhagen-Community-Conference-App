@@ -19,7 +19,8 @@
     "test:scan": "tsx scripts/test-scan.mts",
     "test:announcer": "tsx scripts/test-announcer.mts",
     "test:clash": "tsx scripts/test-clash.mts",
-    "reset:demo": "tsx scripts/reset-demo.mts"
+    "reset:demo": "tsx scripts/reset-demo.mts",
+    "parse:speakers": "tsx scripts/parse-speakers.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",

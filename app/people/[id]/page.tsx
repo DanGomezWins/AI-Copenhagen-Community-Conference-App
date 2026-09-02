@@ -28,8 +28,8 @@ export default async function ProfilePage({
   const fullName = `${profile.first_name} ${profile.last_name}`;
 
   // Sessions link by profile id where known; otherwise they are matched on the
-  // speaker's name, since the programme and the open-sessions board both store
-  // speakers as free text.
+  // speaker's name, since the programme is imported as free text long before
+  // those people ever sign in.
   const { data: allSessions } = await supabase
     .from("sessions")
     .select("*")
@@ -38,8 +38,12 @@ export default async function ProfilePage({
   const key = nameKey(fullName);
   const sessions = ((allSessions ?? []) as Session[]).filter(
     (s) =>
-      s.speaker_profile_id === id ||
-      (s.speaker_name ? nameKey(s.speaker_name) === key : false),
+      // Cancelled sessions are omitted here entirely. A struck-through entry on
+      // someone's profile reads as "this person was dropped" rather than "this
+      // slot was cancelled", which is unfair to the speaker.
+      s.status !== "cancelled" &&
+      (s.speaker_profile_id === id ||
+        (s.speaker_name ? nameKey(s.speaker_name) === key : false)),
   );
 
   const isMe = user?.id === profile.id;
@@ -70,41 +74,28 @@ export default async function ProfilePage({
           </p>
         )}
         {profile.is_speaker && (
-          <span className="mt-3 rounded-full bg-[var(--color-accent)]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-accent)]">
+          <span className="mt-3 rounded-full bg-[var(--color-accent-soft)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-accent)]">
             Speaker
           </span>
         )}
       </div>
 
-      {(profile.linkedin_url || profile.public_email) && (
-        <div className="mt-8 space-y-2">
-          {profile.linkedin_url && (
-            <a
-              href={profile.linkedin_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between rounded-xl border border-[var(--color-line)] p-3.5"
-            >
-              <span className="text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
-                LinkedIn
-              </span>
-              <span className="text-sm text-[var(--color-accent)]">Open ↗</span>
-            </a>
-          )}
-          {profile.public_email && (
-            <a
-              href={`mailto:${profile.public_email}`}
-              className="flex items-center justify-between gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
-            >
-              <span className="shrink-0 text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
-                Email
-              </span>
-              <span className="truncate text-sm text-[var(--color-accent)]">
-                {profile.public_email}
-              </span>
-            </a>
-          )}
-        </div>
+      {profile.bio && (
+        <p className="mt-6 whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
+      )}
+
+      {profile.linkedin_url && (
+        <a
+          href={profile.linkedin_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 flex items-center justify-between rounded-xl border border-[var(--color-line)] p-3.5"
+        >
+          <span className="text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
+            LinkedIn
+          </span>
+          <span className="text-sm text-[var(--color-accent)]">Open ↗</span>
+        </a>
       )}
 
       {sessions.length > 0 && (
@@ -116,22 +107,21 @@ export default async function ProfilePage({
             {sessions.map((s) => (
               <li key={s.id}>
                 <Link
-                  href={`/program?track=${s.track}`}
+                  href={`/session/${s.id}`}
                   className="block rounded-xl border border-[var(--color-line)] p-3.5"
                 >
                   <p className="font-mono text-xs tabular-nums text-[var(--color-muted)]">
                     {timeRange(s.starts_at, s.ends_at)}
                   </p>
-                  <p
-                    className={`mt-1 font-medium leading-snug ${
-                      s.status === "cancelled" ? "line-through opacity-60" : ""
-                    }`}
-                  >
-                    {s.title}
-                  </p>
+                  <p className="mt-1 font-medium leading-snug">{s.title}</p>
                   <p className="mt-1 text-sm text-[var(--color-muted)]">
                     {TRACKS.find((t) => t.key === s.track)?.label}
                   </p>
+                  {s.slides_url && (
+                    <p className="mt-2 text-sm font-medium text-[var(--color-accent)]">
+                      Slides available ↓
+                    </p>
+                  )}
                 </Link>
               </li>
             ))}

@@ -88,7 +88,7 @@ function LoginForm() {
           className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]"
         />
         <p className="mt-2 text-xs text-[var(--color-muted)]">
-          Use the address you registered with. No password needed.
+          Use the same address you bought your ticket with. Your profile is already set up — no password, nothing to fill in.
         </p>
       </div>
 

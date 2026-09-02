@@ -19,3 +19,6 @@ railway-vars.txt
 
 # OCR agent test artefacts
 .scan-test/
+
+# Extracted intermediate — regenerate with npm run parse:speakers
+Assets/speakers-extracted.txt

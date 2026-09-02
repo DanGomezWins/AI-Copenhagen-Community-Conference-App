@@ -1,0 +1,164 @@
+[
+  {
+    "name": "Arun Prakash",
+    "title": "Risk Manager",
+    "company": "Novo Nordisk Engineering",
+    "linkedin_url": "https://www.linkedin.com/in/arunprakashmr/",
+    "bio": "is a Risk Manager at NNE Novo Nordisk Engineering) in Copenhagen, where he works on risk management for pharmaceutical facility projects. He is also co-founder of CPH Vibe Coders, a Copenhagen community for people building with AI coding tools, and serves as VP of Education at Frederiksberg Toastmasters. He is passionate about making AI tools practical and accessible for people outside traditional tech roles. Building CPH Vibe Coders: Grassroots AI Adoption Outside the Tech Bubble. Most AI adoption stories come from software teams. This talk is about the rest of us. Arun shares how he co-founded CPH Vibe Coders, a Copenhagen community helping non-traditional builders, engineers, consultants, career-switchers get hands-on with AI coding tools. He'll cover what actually gets people from curious to building, the mistakes that stalled early momentum, and what a grassroots AI community looks like when it's not run by a tech company.",
+    "talk": null,
+    "photo": "Arun.jfif"
+  },
+  {
+    "name": "Berit D. Brouer",
+    "title": "PhD, VP of Engineering, Data & AI",
+    "company": "ZeroNorth",
+    "linkedin_url": "https://www.linkedin.com/in/beritbrouer/",
+    "bio": "The golden era of decision science: bridging plan to execution. Decision science has always had a branding problem partly due to low adoption. Even though deterministic models has outperformed manual planning for decades, planners and operators keep overriding recommended plans and actions, because white-box models does not capture all the unstructured data signals caught in emails and pdfs, and planners cannot easily input tacit knowledge or preferences, that are not incorporated in the model from the beginning. Another major barrier to adoption is the inability to explain and compare a computer generated plan/recommendation to a user suggested plan and highlight where they differ. Agentic software closes that gap, letting users feed in unstructured data and tacit knowledge using natural language, as well as explain where and how plans differ. You will get a sneak peak of our newly launched agentic maritime platform Propel by ZeroNorth, and see how inputs for doing weather-routing can be adjusted and the solution inspected dynamically using natural language.",
+    "talk": null,
+    "photo": "Berit_1.png"
+  },
+  {
+    "name": "Casper Willer",
+    "title": "Founder",
+    "company": "Norma",
+    "linkedin_url": "https://www.linkedin.com/in/casperwiller/",
+    "bio": "Co-founder of \"norma - the brand agent for startups\", built with Henrik Werdelin and Sigurd Bæk. Before that: Creative Director, entrepreneur, storyteller, copywriter, strategist. Starting agencies, building new brands from scratch, revitalizing iconic ones. Three years as Creative Director and partner at Kontrapunkt. Co-founder of Damn Good Coffee Company, and Prehype ventures Crafted By (acquired by Carlsberg), Biofresh and Guardwash (backed by Novozymes), plus agencies Naked Communications, Another and La Familia. Start-up brand advisor for Bio Innovation Institute, Google Campus/Seedcamp, Dansk Industri, Canute, Danish Tech Start-up Association and more. An always-on brand agent. Introducing Norma, the brand agent for startups. The output of a top brand studio. The pace of a teammate who never sleeps.",
+    "talk": null,
+    "photo": "Casper Willer.jpg"
+  },
+  {
+    "name": "Christian Kjaer Laustsen",
+    "title": "CTO & Co-founder",
+    "company": "Yaay",
+    "linkedin_url": "https://www.linkedin.com/in/christian-kjaer-laustsen/",
+    "bio": "Christian has been a software engineer for more than 15 years, later on leading Factbird as acting CTO, and scaling Famly's engineering organization as Director of Engineering. He's now tackling travel as co-founder and CTO of Yaay, building the taste layer for the physical world. Scaling AI in the Consumer space. Do users care that you are using AI? In this talk we'll take a deeper look into how Yaay uses AI to seamlessly drive their core features without users needing to care, and what considerations to make when scaling AI in the consumer space.",
+    "talk": null,
+    "photo": "christian kjaer.jpeg"
+  },
+  {
+    "name": "Daniel Rothmann",
+    "title": "Technical Founder",
+    "company": "Eigin",
+    "linkedin_url": "https://www.linkedin.com/in/danielrothmann/",
+    "bio": "Daniel has spent a decade teaching computers to hear, then to see, and now to remember. He is co-creator of Eigin, open-source personal AI agent. Previously CTO at Kanda and a machine learning engineer at LEGO. He also builds electronic instruments, and has two platinum records. What would you tell an AI that's truly yours? People tell AI things they would not tell their friends, and almost all of it lives on someone else's computer. I want mine on my own computer. So we built Eigin, a local-first personal AI. I'll show how it works and make the case why more of us should build this way.",
+    "talk": null,
+    "photo": "daniel_rothmann_headshot.jpg"
+  },
+  {
+    "name": "Felix Wigand",
+    "title": "Co-founder & CPO",
+    "company": "Virtuall",
+    "linkedin_url": "https://www.linkedin.com/in/felix-wigand-81b641a1/",
+    "bio": "is co-founder and Chief Product Officer at Virtuall, a Copenhagen-based Creative AI platform for enterprise production. Before Virtuall he spent six years as an innovation consultant leading digital transformation programmes inside large railway and telecoms organisations, and headed business development at a Berlin sustainability scaleup. He works where design, technology and change management meet — helping creative teams get from AI experiments to actual production. Build your own AI content ordering platform for marketing — live, in 20 minutes. Picture a big retail brand: thousands of products, a dozen channels, a new campaign every month and it all has to look like one company made it. Nobody on that team wants to write prompts. That takes a platform that already knows the company before anyone types anything: we call this memory infrastructure, an OS that learns. Iʼll build one live in 20 minutes: use cases, moodboards, quality gates, a custom ordering interface. Models will keep changing and improving; your history, knowledge and workflows stay.",
+    "talk": null,
+    "photo": "Felix.PNG"
+  },
+  {
+    "name": "Henrik Werdelin",
+    "title": "Founder/Investor/Author",
+    "company": "BARK/Prehype/Audos",
+    "linkedin_url": "https://www.linkedin.com/in/werdelin/",
+    "bio": "Co-founder of BARK BarkBox / BARK Air), the NYSE-listed company bringing joy to dogs and their people, and Prehype, the startup studio behind AndCo, Ro, and ManagedByQ — and now Audos, an AI platform for first-time founders who want to start smarter. Henrik co-hosts “Beyond the Promptˮ with Stanfordʼs Jeremy Utley — a podcast about how AI is changing the way people create and build. He is the author of “The Acorn Methodˮ and co-author of “Me, My Customer & AI.ˮ",
+    "talk": "Keynote: Donkeycorns & Refounders. Henrik Werdelin coined “donkeycornˮ to describe the new shape of AI-first startups - high revenue, almost no headcount. He's since built the sequel, refounding, a framework for taking an existing company and rebuilding it as if you were starting it today. Henrik opens with an Audos introduction. Sigurd Bæk follows with the refounding of Bark as an AI-first company. Casper Willer closes with norma, the brand agent for startups. Three viewpoints, one arc: founding, refounding, and the brand in between.",
+    "photo": "Henrik_Werdelin_Press_Photo.jpg"
+  },
+  {
+    "name": "Jeppe Nørregaard",
+    "title": "PhD, CEO/CTO",
+    "company": "InReality",
+    "linkedin_url": "https://www.linkedin.com/in/jeppe-n%C3%B8rregaard/",
+    "bio": "in AI and misinformation detection from DTU, and later AI research at ITU. Passionate about countering all the fake content that circulates online. Defence Against Generative AI. What do we do when generative AI can fake anything? A passport, a live-call, an insurance claim, your voice in a scam-call with your parents? We defend reality by proving real content.",
+    "talk": null,
+    "photo": "jeppe_norregaard.jpg"
+  },
+  {
+    "name": "Lars Buur",
+    "title": "CTO",
+    "company": "Dreamplan.io",
+    "linkedin_url": null,
+    "bio": "Lars is CTO of Dreamplan, the FSA-licensed fintech behind WizFlow, the no-code platform Danish banks and pension companies use to build financial data collection flows. He builds agent fleets that ship production flows in a regulated business. Previously a four-time founder, starting with Denmark's first CMS product in the late nineties. 87% Agent, 13% Human: Shipping a Production Bank-Grade Flow With No Code. WizFlow is the no-code platform behind financial data collection flows running today at major Danish banks and pension providers. I will start from a plain text description and let agents take a new flow to 87% finished. Then the last 13%: compliance review, edge cases, and wording a customer understands. I will resolve those either with our WizFlow assistant or by hand in the no-code interface. Then styling, and launching in two places at once: a fresh WordPress install and WizFlow hosting. By the end you will have the finished flow open on your own phone, plus a candid account of what the agents got wrong on the way there.",
+    "talk": null,
+    "photo": "Lars_Buur.jpg"
+  },
+  {
+    "name": "Lishuai Jing",
+    "title": "PhD, Co-founder",
+    "company": "memtrace.io",
+    "linkedin_url": "https://www.linkedin.com/in/lishuaijing/",
+    "bio": "Memory as a Service: Cut Your AI Coding Bill 90% and Get the Best Code Reviewer on the Market — Running Locally. Every AI coding agent has the same hidden cost: it re-reads your codebase from scratch on every query, burning tokens on context it already saw, and vector search still returns the wrong function 87% of the time. In this live demo, we index a real multi-thousand-file codebase in seconds and swap semantic guessing for a structural knowledge graph. The result: a 90% token consumption cut — at 97.3% accurate caller recall instead of 12.8%. Then we show one of memtrace's secret weapon, the state of the art code reviewer agent which scores 0.7667 F1 in offline evaluation on Martian's independent Code Review Bench. A 20% jump on code review capability by beating vendors such as Cubic, CodeRabbit etc. Everything runs on the laptop in front of you — no repo upload, no cloud round-trip. Bring your own repo — you'll leave with the exact commands to run this tonight.",
+    "talk": null,
+    "photo": "Lishuai.jpeg"
+  },
+  {
+    "name": "Miriam Plon Sauer",
+    "title": "Global Chief Strategy Officer",
+    "company": "AKQA",
+    "linkedin_url": "https://www.linkedin.com/in/miriamplonsauer/",
+    "bio": "As Global Chief Strategy Officer at AKQA, Miriam Plon Sauer shapes strategic direction for world-renowned brands at the intersection of imagination and AI. Miriam's work centers on a fundamental conviction: AI is most powerful not as an efficiency tool but as a curiosity partner, one that helps ask braver questions and pursue more original solutions. She has developed proprietary methodology frameworks that embed AI-augmented thinking into strategy at scale, helping clients including Volvo, Samsung, and Google move from incremental thinking to genuine creative and commercial breakthroughs. The Case for Friction: Why Your AI Agents Should Slow You Down. Most AI agents are designed to remove friction. This talk makes the case for the opposite: agents deliberately built to make you pause, question, and exercise judgment, not skip it. Drawing on real examples from agents used daily in practice, this is a practical look at what \"designing for friction\" actually means, and why it might be the difference between agents that make you smarter and ones that quietly make you dumber.",
+    "talk": null,
+    "photo": "Miriam Plon Sauer.jpg"
+  },
+  {
+    "name": "Morten Busk",
+    "title": "Co-founder",
+    "company": "The Good Stuff Company",
+    "linkedin_url": "https://www.linkedin.com/in/mortenbusk/",
+    "bio": "Morten is a tech entrepreneur with 25+ years of experience. As former Chief Growth Officer at KAYAK, he led the rollout of AI-powered features and the integration of AI across marketing. Having previously co-founded several companies, he is currently launching a new venture Building an AI centric company. From a global tech company to building a new AI centric company.",
+    "talk": null,
+    "photo": "morten busk.png"
+  },
+  {
+    "name": "Nils Smed",
+    "title": "Partner & FDE",
+    "company": "Heyra",
+    "linkedin_url": "https://www.linkedin.com/in/nilssmed/",
+    "bio": "Builder. Ships AI projects in public. Partner at Heyra AI in Copenhagen. Been building companies and products the last 13 years. Building with a vibe. AI collapses the distance between idea and working software. That changes how we build, who builds, and what enterprises need to rethink to keep up. Live demos, lessons from building in public, and a take on where this is heading.",
+    "talk": null,
+    "photo": "Nils-Smed.jfif"
+  },
+  {
+    "name": "Sigurd Bæk",
+    "title": "Founder",
+    "company": "Drive/Kioski/Norma",
+    "linkedin_url": "https://www.linkedin.com/in/sigurdbaek/",
+    "bio": "Spent seven years building Drive Studios from a Copenhagen startup into a 50-person production company across Oslo, Stockholm, Berlin and New York, past DKK 100 million in revenue, and out the other side through an acquisition by Nordisk Film. What I do now is rebuild companies rather than advise them. Refounding. The refounding of Bark as an AI-first company. BARK, Inc. is a dog-centric company, provides products, services, and content for dogs. It is listed on the New York Stock Exchange NYSE.",
+    "talk": null,
+    "photo": "Sigurd Bæk.jpg"
+  },
+  {
+    "name": "Sofie Hvitved",
+    "title": null,
+    "company": null,
+    "linkedin_url": null,
+    "bio": null,
+    "talk": null,
+    "photo": "Sofie.PNG"
+  },
+  {
+    "name": "Thomas Martinsen",
+    "title": "Global Tech Evangelist",
+    "company": "Twoday",
+    "linkedin_url": "https://www.linkedin.com/in/thomasmartinsen/",
+    "bio": "is Global Principal Advisor at Twoday, Microsoft Regional Director, and Microsoft AI MVP. He helps organizations navigate AI, emerging technologies, and the future of software engineering — turning innovation into real business value. Using the right intelligence for the job. AI is already part of the engineering toolbox. The next challenge is using it deliberately. In this session, we will explore what it means to treat AI usage as an engineering discipline. That starts with choosing the right tool, model, and level of reasoning for the task instead of automatically reaching for the most capable option. But good decisions require visibility. We will demonstrate tools we have built internally in Twoday to capture usage across our engineering tools, and explore what the data can tell us about model choice, cost, efficiency, and engineering behavior. The goal is not to use less AI. It is to understand what we use, why we use it, and whether we are using the right intelligence for the job.",
+    "talk": null,
+    "photo": "Thomas.PNG"
+  },
+  {
+    "name": "Tim Granlund Marsden",
+    "title": "Tech Lead",
+    "company": "Enterprise AI, Novo Nordisk",
+    "linkedin_url": "https://www.linkedin.com/in/timgm/",
+    "bio": "Working as a Tech Lead within AI enablement and upskilling at Novo Nordisk. Adversarial Review: Getting Reliable Results from Your AI Harness on the first run. I will demonstrate how using other AI models as adversarial critics can significantly improve the quality and reliability of your results.",
+    "talk": null,
+    "photo": "tim granlund.jfif"
+  },
+  {
+    "name": "Xander Evangelidis",
+    "title": "Head of Digital Innovation Catalyst",
+    "company": "Ørsted",
+    "linkedin_url": "https://www.linkedin.com/in/alexanderevangelidis/",
+    "bio": null,
+    "talk": null,
+    "photo": "Xander.png"
+  }
+]

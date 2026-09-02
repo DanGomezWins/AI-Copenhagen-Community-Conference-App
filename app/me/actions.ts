@@ -64,7 +64,7 @@ export async function saveProfile(
     company: clean(formData.get("company")),
     role: clean(formData.get("role")),
     linkedin_url: linkedin,
-    public_email: clean(formData.get("public_email")),
+    bio: clean(formData.get("bio")),
   });
 
   if (error) return { error: error.message };
