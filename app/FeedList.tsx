@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { relativeAge, KIND_STYLE, type PostWithAuthor } from "@/lib/feed";
+import Avatar from "@/components/Avatar";
+import { relativeAge, type PostWithAuthor } from "@/lib/feed";
 import { TRACKS } from "@/lib/program";
 
 const trackLabel = (k: string | null) =>
@@ -10,15 +12,20 @@ const trackLabel = (k: string | null) =>
 
 export default function FeedList({
   initial,
+  organiserIds,
   isOrganiser,
+  userId,
 }: {
   initial: PostWithAuthor[];
+  organiserIds: string[];
   isOrganiser: boolean;
+  userId: string | null;
 }) {
   const [posts, setPosts] = useState(initial);
   const [arrived, setArrived] = useState(0);
-  // Re-render periodically so "2m ago" doesn't go stale on a page left open.
   const [, setTick] = useState(0);
+
+  const organisers = new Set(organiserIds);
 
   useEffect(() => {
     const id = setInterval(() => setTick((n) => n + 1), 30_000);
@@ -29,7 +36,7 @@ export default function FeedList({
     const supabase = createClient();
     const { data } = await supabase
       .from("posts")
-      .select("*, author:profiles(first_name, last_name)")
+      .select("*, author:profiles(id, first_name, last_name, photo_url)")
       .order("created_at", { ascending: false })
       .limit(100);
     if (data) setPosts(data as PostWithAuthor[]);
@@ -43,16 +50,11 @@ export default function FeedList({
         "postgres_changes",
         { event: "*", schema: "public", table: "posts" },
         (payload) => {
-          if (payload.eventType === "INSERT") {
-            setArrived((n) => n + 1);
-          }
-          // Refetch rather than patch: keeps the author join correct and the
-          // ordering authoritative, and the feed is small enough that it's free.
+          if (payload.eventType === "INSERT") setArrived((n) => n + 1);
           load();
         },
       )
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [load]);
 
@@ -60,7 +62,8 @@ export default function FeedList({
     return (
       <div className="mt-6 rounded-xl border border-dashed border-[var(--color-line)] p-6">
         <p className="text-sm text-[var(--color-muted)]">
-          No updates yet. Anything the organisers post during the day appears here.
+          Nothing here yet. Updates from the organisers and anything attendees
+          share will appear here.
         </p>
       </div>
     );
@@ -76,53 +79,96 @@ export default function FeedList({
           }}
           className="mt-4 w-full rounded-lg bg-[var(--color-accent)] px-4 py-2.5 text-sm font-medium text-white"
         >
-          {arrived} new update{arrived > 1 ? "s" : ""} — tap to see
+          {arrived} new post{arrived > 1 ? "s" : ""} — tap to see
         </button>
       )}
 
       <ol className="mt-4 space-y-3">
         {posts.map((p) => {
-          const style = KIND_STYLE[p.kind] ?? KIND_STYLE.info;
+          const official =
+            p.kind === "auto" || (p.author_id ? organisers.has(p.author_id) : false);
           const track = trackLabel(p.track);
+          const mine = p.author_id === userId;
+
           return (
-            <li key={p.id} className={`rounded-xl border p-4 ${style.className}`}>
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="text-[var(--color-muted)]">
-                  {relativeAge(p.created_at)}
-                </span>
-                {style.label && (
-                  <span className="rounded-full border border-current px-2 py-0.5 font-semibold uppercase tracking-wide opacity-80">
-                    {style.label}
+            <li
+              key={p.id}
+              className={`rounded-xl border p-4 ${
+                p.kind === "alert"
+                  ? "border-[var(--color-danger)] bg-[var(--color-danger-soft)]"
+                  : official
+                    // Official posts carry the brand accent so they are
+                    // separable from community chatter at a glance.
+                    ? "border-[var(--color-accent)]/40 bg-[var(--color-accent-soft)]"
+                    : "border-[var(--color-line)]"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {p.author ? (
+                  <Avatar
+                    firstName={p.author.first_name}
+                    lastName={p.author.last_name}
+                    photoUrl={p.author.photo_url}
+                    size={28}
+                  />
+                ) : (
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-xs text-white">
+                    ★
                   </span>
                 )}
-                {track && (
-                  <span className="rounded-full bg-[var(--color-line)] px-2 py-0.5 font-medium">
-                    {track}
-                  </span>
-                )}
-                {p.edited && (
-                  <span className="text-[var(--color-muted)]">edited</span>
-                )}
+
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    {p.author
+                      ? `${p.author.first_name} ${p.author.last_name}`
+                      : "AIMC-CC"}
+                    {official && (
+                      <span className="ml-1.5 rounded-full bg-[var(--color-accent)] px-1.5 py-0.5 align-middle text-[9px] font-semibold uppercase tracking-wide text-white">
+                        Organiser
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-[var(--color-muted)]">
+                    {relativeAge(p.created_at)}
+                    {p.edited && " · edited"}
+                    {p.kind === "alert" && " · Alert"}
+                    {track && ` · ${track}`}
+                  </p>
+                </div>
               </div>
 
-              <p className="mt-2 whitespace-pre-wrap leading-relaxed">{p.body}</p>
-
-              {p.author && (
-                <p className="mt-2 text-xs text-[var(--color-muted)]">
-                  {p.author.first_name} {p.author.last_name}
-                </p>
-              )}
-              {!p.author && p.kind === "auto" && (
-                <p className="mt-2 text-xs text-[var(--color-muted)]">Posted automatically</p>
+              {p.body && (
+                <p className="mt-2.5 whitespace-pre-wrap leading-relaxed">{p.body}</p>
               )}
 
-              {isOrganiser && (
+              {p.image_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={p.image_url}
+                  alt=""
+                  loading="lazy"
+                  className="mt-3 w-full rounded-lg object-cover"
+                />
+              )}
+
+              {p.link_url && (
                 <a
-                  href={`/admin/post?edit=${p.id}`}
+                  href={p.link_url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="mt-3 block truncate rounded-lg border border-[var(--color-line)] px-3 py-2 text-sm font-medium text-[var(--color-accent)]"
+                >
+                  {p.link_url.replace(/^https?:\/\//, "")} ↗
+                </a>
+              )}
+
+              {(mine || isOrganiser) && (
+                <Link
+                  href={`/post?edit=${p.id}`}
                   className="mt-3 inline-block text-xs font-medium text-[var(--color-accent)]"
                 >
-                  Edit
-                </a>
+                  {mine ? "Edit" : "Moderate"}
+                </Link>
               )}
             </li>
           );

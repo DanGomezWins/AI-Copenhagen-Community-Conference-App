@@ -4,7 +4,7 @@ import AnnouncerToggle from "./AnnouncerToggle";
 type Item = { href: string; title: string; desc: string; soon?: boolean };
 
 const ITEMS: Item[] = [
-  { href: "/admin/post", title: "Post an update", desc: "Goes to every attendee's feed instantly." },
+  { href: "/post", title: "Post an update", desc: "Goes to every attendee's feed instantly, badged as official." },
   { href: "/admin/schedule", title: "Edit the schedule", desc: "Change a time, room or speaker. Posts the notice for you." },
   { href: "/scan", title: "Scan the board", desc: "Photograph the open sessions board. Attendees can do this too." },
   { href: "/admin/organisers", title: "Who can post", desc: "Add or remove organisers." },

@@ -1,5 +1,8 @@
 import type { TrackKey } from "./program";
 
+/** Keeps the feed scannable on a phone. Long enough for a real message. */
+export const POST_MAX = 500;
+
 export type PostKind = "info" | "alert" | "schedule_change" | "auto";
 
 export type Post = {
@@ -10,12 +13,19 @@ export type Post = {
   author_id: string | null;
   session_id: string | null;
   edited: boolean;
+  image_url: string | null;
+  link_url: string | null;
   created_at: string;
   updated_at: string | null;
 };
 
 export type PostWithAuthor = Post & {
-  author: { first_name: string; last_name: string } | null;
+  author: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    photo_url: string | null;
+  } | null;
 };
 
 const TZ = "Europe/Copenhagen";
