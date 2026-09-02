@@ -42,62 +42,68 @@ const end = (hhmm) => {
 // The three tracks are the three rooms; there are no separate room numbers.
 const ROOM = { main: "Main stage", demos: "Demos", open: "Open sessions" };
 
-// 10 main-stage talks + 1 closing keynote
-const MAIN = [
-  ["Astrid", "Nørgaard-Bech", "Shipping Agents That Survive Contact With Users"],
-  ["Mikkel", "Thorvaldsen", "What We Learned Deploying LLMs to 4,000 Employees"],
-  ["Freja", "Lindqvist", "The Evaluation Problem Nobody Wants to Talk About"],
-  ["Rasmus", "Holmgaard Pedersen", "RAG Is Not a Strategy"],
-  ["Ingrid", "Sælandsdóttir", "Designing for Models That Are Confidently Wrong"],
-  ["Jonas", "Bruun-Villadsen", "From Prototype to Production in Regulated Industries"],
-  ["Sofie", "Ravnkilde", "Cutting Inference Costs by 80% Without Losing Quality"],
-  ["Emil", "Kristoffersen", "Why Your Agent Keeps Forgetting Things"],
-  ["Maja", "Overgaard Lund", "The Human in the Loop Is Also a Bottleneck"],
-  ["Anders", "Fritzøe", "Small Models, Sharp Edges: A Year on the Edge"],
-];
-const KEYNOTE = ["Henriette", "Dalsgaard-Mørch", "What Comes After the Chatbot"];
+// The placeholder programme now uses the REAL speakers, so a reviewer sees
+// actual names, photos and bios rather than invented ones. Talk titles remain
+// placeholders until the real programme arrives 24-48h before the event.
+const SPEAKERS = JSON.parse(
+  fs.readFileSync("Assets/speakers.json", "utf8"),
+).map((s) => s.name);
 
-// 9 demos
-const DEMOS = [
-  ["Oliver", "Brandt-Nissen", "Live: Building a Voice Agent in 20 Minutes"],
-  ["Camilla", "Ødegård", "Demo: Multimodal Search Across 2M Documents"],
-  ["Nikolaj", "Steenbæk", "Watch an Agent Debug Its Own Pipeline"],
-  ["Line", "Hvidberg", "Demo: Structured Extraction From Terrible PDFs"],
-  ["Tobias", "Ellegaard Sørensen", "Real-Time Translation on a Raspberry Pi"],
-  ["Katrine", "Bjerregaard", "Demo: Evals as a CI Gate"],
-  ["Simon", "Krogh-Ammitzbøll", "An Agent That Reads Your Calendar and Argues Back"],
-  ["Amalie", "Thygesen", "Demo: Fine-Tuning on 200 Examples"],
-  ["Villads", "Rosenkrantz", "Synthetic Data That Isn't Garbage"],
+const TITLES = [
+  "Shipping Agents That Survive Contact With Users",
+  "What We Learned Deploying LLMs to 4,000 Employees",
+  "The Evaluation Problem Nobody Wants to Talk About",
+  "RAG Is Not a Strategy",
+  "Designing for Models That Are Confidently Wrong",
+  "From Prototype to Production in Regulated Industries",
+  "Cutting Inference Costs by 80% Without Losing Quality",
+  "Why Your Agent Keeps Forgetting Things",
+  "The Human in the Loop Is Also a Bottleneck",
+  "Small Models, Sharp Edges: A Year on the Edge",
+  "Live: Building a Voice Agent in 20 Minutes",
+  "Demo: Multimodal Search Across 2M Documents",
+  "Watch an Agent Debug Its Own Pipeline",
+  "Demo: Structured Extraction From Terrible PDFs",
+  "Real-Time Translation on a Raspberry Pi",
+  "Demo: Evals as a CI Gate",
+  "An Agent That Reads Your Calendar and Argues Back",
+  "Demo: Fine-Tuning on 200 Examples",
+  "Synthetic Data That Isn't Garbage",
+  "Open: AI in Danish Public Sector",
+  "Open: Prompt Engineering Is Dead, Long Live Context",
+  "Open: Hiring for AI Teams in 2026",
+  "Open: Should We Be Building This At All?",
+  "Open: Show Us Your Worst Failure",
 ];
 
-// 5 open sessions pre-seeded; the rest are decided on the day, which is
-// exactly the case the photo/OCR flow exists to handle.
-const OPEN = [
-  ["Ida", "Munk-Jespersen", "Open: AI in Danish Public Sector — What Actually Ships?"],
-  ["Gustav", "Hillerød", "Open: Prompt Engineering Is Dead, Long Live Context"],
-  ["Signe", "Vestergaard Holm", "Open: Hiring for AI Teams in 2026"],
-  ["Frederik", "Aagaard", "Open: Should We Be Building This At All?"],
-  ["Nanna", "Løvgren", "Open: Show Us Your Worst Failure"],
-];
+const KEYNOTE_TITLE = "What Comes After the Chatbot";
+
+// Assign speakers round-robin so every real speaker appears at least once.
+const speakerAt = (i) => SPEAKERS[i % SPEAKERS.length];
+
+const MAIN = TITLES.slice(0, 10).map((t, i) => [speakerAt(i), t]);
+const KEYNOTE = [speakerAt(10), KEYNOTE_TITLE];
+const DEMOS = TITLES.slice(10, 19).map((t, i) => [speakerAt(i + 11), t]);
+const OPEN = TITLES.slice(19, 24).map((t, i) => [speakerAt(i + 20), t]);
 
 const rows = [];
-const push = (track, first, last, title, slot) =>
+const push = (track, name, title, slot) =>
   rows.push({
     track, title,
-    speaker_name: `${first} ${last}`,
+    speaker_name: name,
     starts_at: at(slot),
     ends_at: at(end(slot)),
     room: ROOM[track],
   });
 
-MAIN.forEach(([f, l, t], i) => push("main", f, l, t, SLOTS[i]));
-DEMOS.forEach(([f, l, t], i) => push("demos", f, l, t, SLOTS[i]));
-OPEN.forEach(([f, l, t], i) => push("open", f, l, t, SLOTS[i]));
+MAIN.forEach(([name, t], i) => push("main", name, t, SLOTS[i]));
+DEMOS.forEach(([name, t], i) => push("demos", name, t, SLOTS[i]));
+OPEN.forEach(([name, t], i) => push("open", name, t, SLOTS[i]));
 
 // Closing keynote, 15:30–16:15 on the main stage.
 rows.push({
-  track: "main", title: KEYNOTE[2],
-  speaker_name: `${KEYNOTE[0]} ${KEYNOTE[1]}`,
+  track: "main", title: KEYNOTE[1],
+  speaker_name: KEYNOTE[0],
   starts_at: at("15:30"), ends_at: at("16:15"), room: ROOM.main,
 });
 
