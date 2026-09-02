@@ -2,6 +2,8 @@
 
 import { useOptimistic, startTransition } from "react";
 import { toggleStar } from "@/app/actions/stars";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 /**
  * Star toggle for My Schedule.
@@ -28,6 +30,7 @@ export default function StarButton({
     <form
       action={(formData) => {
         startTransition(() => setOptimistic(!optimistic));
+        track(optimistic ? EVENTS.SESSION_UNSTARRED : EVENTS.SESSION_STARRED, { sessionId });
         return toggleStar(formData);
       }}
     >

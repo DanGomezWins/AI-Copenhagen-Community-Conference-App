@@ -2,6 +2,8 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { saveRating, type RatingState } from "@/app/actions/ratings";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 /**
  * Star rating plus an optional comment. Used for the app and for each session —
@@ -28,10 +30,11 @@ export default function RatingModal({
 
   useEffect(() => {
     if (state.ok) {
+      track(sessionId ? EVENTS.SESSION_RATED : EVENTS.APP_RATED, { stars });
       const t = setTimeout(() => setOpen(false), 1200);
       return () => clearTimeout(t);
     }
-  }, [state.ok]);
+  }, [state.ok, sessionId, stars]);
 
   // Escape closes, as people expect from anything modal.
   useEffect(() => {

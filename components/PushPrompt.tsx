@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 type State =
   | "checking"
@@ -95,6 +97,7 @@ export default function PushPrompt() {
       if (!res.ok) throw new Error("Could not save your subscription.");
 
       setState("subscribed");
+      track(EVENTS.NOTIFICATIONS_ENABLED);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not turn notifications on.");
     } finally {

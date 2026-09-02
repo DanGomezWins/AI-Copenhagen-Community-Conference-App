@@ -4,6 +4,8 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { EVENT } from "@/lib/event";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 const DEV_SIGNIN = process.env.NEXT_PUBLIC_ENABLE_DEV_SIGNIN === "true";
 
@@ -19,6 +21,7 @@ function LoginForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setState("sending");
+    track(EVENTS.SIGN_IN_STARTED);
     const address = email.trim().toLowerCase();
 
     // Dev mode: sign in directly, no email round-trip. Still a real session.

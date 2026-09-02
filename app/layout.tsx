@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import TabBar from "@/components/TabBar";
 import AppHeader from "@/components/AppHeader";
 import RegisterServiceWorker from "@/components/RegisterServiceWorker";
+import AnalyticsProvider from "@/components/AnalyticsProvider";
 import { EVENT } from "@/lib/event";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
         </noscript>
         <TabBar />
         <RegisterServiceWorker />
+        <AnalyticsProvider />
       </body>
     </html>
   );

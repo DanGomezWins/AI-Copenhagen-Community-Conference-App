@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState, useDeferredValue } from "react";
+import { useEffect, useMemo, useState, useDeferredValue } from "react";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { normalise, searchKey } from "@/lib/names";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 export type DirectoryPerson = {
   id: string;
@@ -48,6 +50,18 @@ export default function Directory({ people }: { people: DirectoryPerson[] }) {
       .filter(({ haystack }) => (q ? haystack.includes(q) : true))
       .map(({ person }) => person);
   }, [indexed, deferred, filter]);
+
+  // Only record a search once the query has settled, so typing one word does
+  // not log six searches.
+  useEffect(() => {
+    const q = deferred.trim();
+    if (q.length < 2) return;
+    const t = setTimeout(
+      () => track(EVENTS.DIRECTORY_SEARCHED, { length: q.length, results: results.length }),
+      800,
+    );
+    return () => clearTimeout(t);
+  }, [deferred, results.length]);
 
   const speakerCount = people.filter((p) => p.is_speaker).length;
 
