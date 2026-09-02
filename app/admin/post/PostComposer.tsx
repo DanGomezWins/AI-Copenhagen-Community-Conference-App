@@ -86,7 +86,7 @@ export default function PostComposer({
               type="checkbox"
               checked={alert}
               onChange={(e) => setAlert(e.target.checked)}
-              className="size-4 accent-amber-500"
+              className="size-4 accent-[var(--color-danger)]"
             />
             <span className="text-sm">
               <span className="font-medium">Mark as an alert</span>
@@ -99,7 +99,7 @@ export default function PostComposer({
       )}
 
       {state.error && (
-        <p className="text-sm text-red-600" role="alert">{state.error}</p>
+        <p className="text-sm text-[var(--color-danger-ink)]" role="alert">{state.error}</p>
       )}
 
       <button

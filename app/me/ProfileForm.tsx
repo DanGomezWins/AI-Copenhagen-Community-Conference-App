@@ -132,8 +132,8 @@ export default function ProfileForm({
         </p>
       </div>
 
-      {state.error && <p className="text-sm text-red-600" role="alert">{state.error}</p>}
-      {state.ok && <p className="text-sm text-green-600" role="status">Profile saved.</p>}
+      {state.error && <p className="text-sm text-[var(--color-danger-ink)]" role="alert">{state.error}</p>}
+      {state.ok && <p className="text-sm text-[var(--color-positive-ink)]" role="status">Profile saved.</p>}
 
       <button
         type="submit"

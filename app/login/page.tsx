@@ -68,7 +68,7 @@ function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       {DEV_SIGNIN && (
-        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+        <p className="rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] px-3 py-2 text-sm">
           <strong>Test mode.</strong> Entering an email signs you straight in —
           no email is sent. Turn this off before the event.
         </p>
@@ -93,7 +93,7 @@ function LoginForm() {
       </div>
 
       {(state === "error" || urlError) && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-[var(--color-danger-ink)]" role="alert">
           {message || urlError}
         </p>
       )}

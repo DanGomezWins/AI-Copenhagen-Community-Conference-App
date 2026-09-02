@@ -40,7 +40,7 @@ export default async function AdminPostPage({
         <div className="mt-8 border-t border-[var(--color-line)] pt-6">
           <form action={deletePost}>
             <input type="hidden" name="id" value={editing.id} />
-            <button type="submit" className="text-sm font-medium text-red-600">
+            <button type="submit" className="text-sm font-medium text-[var(--color-danger-ink)]">
               Delete this update
             </button>
           </form>

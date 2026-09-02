@@ -37,7 +37,7 @@ export default async function OrganisersPage() {
               <form action={removeOrganiser}>
                 <input type="hidden" name="email" value={o.email} />
                 <SubmitButton
-                  className="shrink-0 text-xs font-medium text-red-600"
+                  className="shrink-0 text-xs font-medium text-[var(--color-danger-ink)]"
                   pendingLabel="Removing…"
                 >
                   Remove

@@ -77,7 +77,7 @@ export default async function ProgramPage({
       )}
 
       {error && (
-        <p className="mt-6 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm">
+        <p className="mt-6 rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-4 text-sm">
           Couldn’t load the program. {error.message}
         </p>
       )}
@@ -154,7 +154,7 @@ function SessionRow({
           </span>
         )}
         {cancelled && (
-          <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600">
+          <span className="rounded-full bg-[var(--color-danger-soft)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-danger-ink)]">
             Cancelled
           </span>
         )}

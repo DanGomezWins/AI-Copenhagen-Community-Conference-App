@@ -1,13 +1,13 @@
 {
-  "name": "AI Meetup Copenhagen Community Conference #1",
-  "short_name": "AI Meetup CPH",
-  "description": "Live program, updates and networking for AI Meetup Copenhagen Community Conference #1",
+  "name": "AIMC-CC — AI Meetup Copenhagen Community Conference #1",
+  "short_name": "AIMC-CC",
+  "description": "Live programme, updates and networking for AI Meetup Copenhagen Community Conference #1",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f1115",
-  "theme_color": "#0f1115",
+  "background_color": "#ffffff",
+  "theme_color": "#4309ff",
   "icons": [
     {
       "src": "/icon-192.png",

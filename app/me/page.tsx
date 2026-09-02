@@ -69,7 +69,7 @@ export default async function MePage({
         {profile && (
           <form action={deleteMyProfile} className="mt-4">
             <SubmitButton
-              className="text-sm text-red-600 underline"
+              className="text-sm text-[var(--color-danger-ink)] underline"
               pendingLabel="Removing…"
               confirm="Remove your profile from the Networking directory? You can create it again any time."
             >

@@ -121,7 +121,7 @@ export default function SessionForm({ session }: { session?: Session | null }) {
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className={`${field} ${endsBeforeStart ? "border-red-500" : ""}`}
+              className={`${field} ${endsBeforeStart ? "border-[var(--color-danger)]" : ""}`}
             />
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function SessionForm({ session }: { session?: Session | null }) {
         </p>
 
         {endsBeforeStart && (
-          <p className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm font-medium text-red-600">
+          <p className="rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm font-medium text-[var(--color-danger-ink)]">
             The end time is before the start time. Fix it before saving.
           </p>
         )}
@@ -159,7 +159,7 @@ export default function SessionForm({ session }: { session?: Session | null }) {
         {state.error && (
           <p
             role="alert"
-            className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm font-medium text-red-600"
+            className="rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm font-medium text-[var(--color-danger-ink)]"
           >
             {state.error}
           </p>
@@ -171,17 +171,17 @@ export default function SessionForm({ session }: { session?: Session | null }) {
         {state.warning && (
           <div
             role="status"
-            className="rounded-lg border-2 border-amber-500 bg-amber-500/10 p-4"
+            className="rounded-lg border-2 border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-4"
           >
-            <p className="font-semibold text-amber-700 dark:text-amber-400">
+            <p className="font-semibold text-[var(--color-danger-ink)]">
               ⚠ Two sessions in the same room at the same time
             </p>
-            <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+            <p className="mt-1 text-sm text-[var(--color-danger-ink)]">
               {state.warning}
             </p>
             <Link
               href="/admin/schedule"
-              className="mt-3 inline-block rounded-lg bg-amber-600 px-3.5 py-2 text-sm font-medium text-white"
+              className="mt-3 inline-block rounded-lg bg-[var(--color-danger-ink)] px-3.5 py-2 text-sm font-medium text-white"
             >
               Back to the schedule
             </Link>
@@ -201,7 +201,7 @@ export default function SessionForm({ session }: { session?: Session | null }) {
         <div className="mt-8 border-t border-[var(--color-line)] pt-6">
           <form action={deleteSession}>
             <input type="hidden" name="id" value={session.id} />
-            <button type="submit" className="text-sm font-medium text-red-600">
+            <button type="submit" className="text-sm font-medium text-[var(--color-danger-ink)]">
               Delete this session
             </button>
           </form>

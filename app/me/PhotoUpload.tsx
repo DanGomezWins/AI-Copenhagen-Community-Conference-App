@@ -149,7 +149,7 @@ export default function PhotoUpload({
         <p className="mt-1 text-xs text-[var(--color-muted)]">
           Optional. Helps people recognise you.
         </p>
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-sm text-[var(--color-danger-ink)]">{error}</p>}
       </div>
     </div>
   );

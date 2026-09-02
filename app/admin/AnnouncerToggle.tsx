@@ -13,7 +13,7 @@ export default async function AnnouncerToggle() {
   return (
     <div
       className={`mt-6 rounded-xl border p-4 ${
-        on ? "border-[var(--color-line)]" : "border-amber-500/50 bg-amber-500/5"
+        on ? "border-[var(--color-line)]" : "border-[var(--color-danger)] bg-[var(--color-danger-soft)]"
       }`}
     >
       <div className="flex items-start justify-between gap-3">

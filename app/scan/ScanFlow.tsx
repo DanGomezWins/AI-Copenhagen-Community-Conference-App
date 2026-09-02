@@ -11,14 +11,14 @@ type Stage = "capture" | "working" | "review" | "publishing";
 
 const CONFIDENCE_STYLE: Record<ProposedSession["confidence"], string> = {
   high: "",
-  medium: "border-amber-500/50 bg-amber-500/5",
-  low: "border-red-500/50 bg-red-500/5",
+  medium: "border-[var(--color-danger)] bg-[var(--color-danger-soft)]",
+  low: "border-[var(--color-danger)] bg-[var(--color-danger-soft)]",
 };
 
 const KIND_META: Record<DiffRow["kind"], { label: string; cls: string }> = {
-  new: { label: "New", cls: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" },
-  changed: { label: "Changed", cls: "bg-amber-500/15 text-amber-700 dark:text-amber-400" },
-  removed: { label: "Removed", cls: "bg-red-500/15 text-red-700 dark:text-red-400" },
+  new: { label: "New", cls: "bg-[var(--color-positive-soft)] text-[var(--color-positive-ink)]" },
+  changed: { label: "Changed", cls: "bg-[var(--color-danger-soft)] text-[var(--color-danger-ink)]" },
+  removed: { label: "Removed", cls: "bg-[var(--color-danger-soft)] text-[var(--color-danger-ink)]" },
   unchanged: { label: "Unchanged", cls: "bg-[var(--color-line)] text-[var(--color-muted)]" },
 };
 
@@ -147,7 +147,7 @@ export default function ScanFlow({
         </label>
 
         {error && (
-          <p className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm" role="alert">
+          <p className="mt-4 rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-3 text-sm" role="alert">
             {error}
           </p>
         )}
@@ -192,13 +192,13 @@ export default function ScanFlow({
   return (
     <div className="mt-6">
       {result?.unreadable && (
-        <p className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm">
+        <p className="rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-3 text-sm">
           That photo couldn’t be read. Try again with more light, or closer.
         </p>
       )}
 
       {unmatched.length > 0 && (
-        <p className="mt-3 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+        <p className="mt-3 rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-3 text-sm">
           <strong>
             {unmatched.length === 1 ? "This name doesn’t" : "These names don’t"} match
             anyone with a profile:
@@ -209,17 +209,17 @@ export default function ScanFlow({
       )}
 
       {result?.remarks && (
-        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+        <p className="rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-3 text-sm">
           {result.remarks}
         </p>
       )}
 
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
-        <Stat n={stats.added} label="new" cls="text-emerald-600" />
-        <Stat n={stats.changed} label="changed" cls="text-amber-600" />
-        <Stat n={stats.removed} label="removed" cls="text-red-600" />
+        <Stat n={stats.added} label="new" cls="text-[var(--color-positive-ink)]" />
+        <Stat n={stats.changed} label="changed" cls="text-[var(--color-danger-ink)]" />
+        <Stat n={stats.removed} label="removed" cls="text-[var(--color-danger-ink)]" />
         {flagged.length > 0 && (
-          <span className="rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+          <span className="rounded-full bg-[var(--color-danger-soft)] px-2.5 py-1 text-xs font-medium text-[var(--color-danger-ink)]">
             {flagged.length} to check
           </span>
         )}
@@ -262,7 +262,7 @@ export default function ScanFlow({
       </div>
 
       {error && (
-        <p className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm" role="alert">
+        <p className="mt-4 rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-3 text-sm" role="alert">
           {error}
         </p>
       )}
@@ -304,7 +304,7 @@ function DiffCard({ row }: { row: DiffRow }) {
   return (
     <li
       className={`rounded-xl border p-3.5 ${
-        row.kind === "removed" ? "border-red-500/40" : CONFIDENCE_STYLE[conf] || "border-[var(--color-line)]"
+        row.kind === "removed" ? "border-[var(--color-danger)]/60" : CONFIDENCE_STYLE[conf] || "border-[var(--color-line)]"
       }`}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -315,7 +315,7 @@ function DiffCard({ row }: { row: DiffRow }) {
           {p?.start_time ?? "—"}
         </span>
         {conf !== "high" && (
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-amber-600">
+          <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-danger-ink)]">
             {conf} confidence
           </span>
         )}
@@ -343,7 +343,7 @@ function DiffCard({ row }: { row: DiffRow }) {
       )}
 
       {p?.note && (
-        <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">{p.note}</p>
+        <p className="mt-2 text-xs text-[var(--color-danger-ink)]">{p.note}</p>
       )}
     </li>
   );

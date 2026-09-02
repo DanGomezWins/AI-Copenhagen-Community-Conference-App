@@ -1,8 +1,9 @@
 /** Single source of truth for how the event is named and linked. */
 export const EVENT = {
-  name: "AI Meetup Copenhagen Community Conference #1",
-  /** For the sticky header and the browser tab, where the full name won't fit. */
-  short: "AI Meetup Copenhagen",
+  name: "AIMC-CC",
+  /** Spelled out where there is room to explain what the initials mean. */
+  fullName: "AI Meetup Copenhagen Community Conference #1",
+  short: "AIMC-CC",
   date: "Thursday 10 September",
   venue: "twoday København",
   meetupUrl:

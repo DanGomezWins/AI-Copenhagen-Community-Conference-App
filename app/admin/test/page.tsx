@@ -81,7 +81,7 @@ export default async function TestToolsPage() {
                 </span>
                 <span
                   className={
-                    s.announced_at ? "shrink-0 text-green-600" : "shrink-0 text-[var(--color-muted)]"
+                    s.announced_at ? "shrink-0 text-[var(--color-positive-ink)]" : "shrink-0 text-[var(--color-muted)]"
                   }
                 >
                   {s.announced_at ? "announced ✓" : "waiting"}
@@ -118,7 +118,7 @@ export default async function TestToolsPage() {
         <p className="font-semibold">2. Test notifications</p>
 
         {!pushConfigured ? (
-          <p className="mt-2 rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm">
+          <p className="mt-2 rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm">
             <strong>Not configured.</strong> The VAPID keys are missing from this
             deployment, so nobody can subscribe and nothing will send. Paste the
             contents of <code>railway-vars.txt</code> into Railway &rarr; Variables
@@ -149,7 +149,7 @@ export default async function TestToolsPage() {
         </p>
         <form action={clearTestData} className="mt-3">
           <SubmitButton
-            className={`${btn} text-red-600`}
+            className={`${btn} text-[var(--color-danger-ink)]`}
             pendingLabel="Removing…"
             confirm="Remove all test sessions and the posts they generated?"
           >

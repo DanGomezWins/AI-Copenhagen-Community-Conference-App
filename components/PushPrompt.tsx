@@ -176,7 +176,7 @@ export default function PushPrompt() {
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         Room changes, delays and what’s next — without keeping the app open.
       </p>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-[var(--color-danger-ink)]">{error}</p>}
       <button
         type="button"
         onClick={subscribe}
