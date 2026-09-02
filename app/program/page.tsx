@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import SessionCard from "@/components/SessionCard";
 import {
-  TRACKS, isTrackKey, timeRange, isStructural, liveness,
-  type Session, type TrackKey,
+  TRACKS, MY_SCHEDULE, isProgramView, liveness,
+  type Session, type ProgramView,
 } from "@/lib/program";
-import { nameKey } from "@/lib/names";
 import { EVENT } from "@/lib/event";
 
 export const dynamic = "force-dynamic";
+
+const VIEWS = [
+  ...TRACKS.map((t) => ({ key: t.key as ProgramView, label: t.label })),
+  { key: MY_SCHEDULE as ProgramView, label: "My Schedule" },
+];
 
 export default async function ProgramPage({
   searchParams,
@@ -15,24 +20,32 @@ export default async function ProgramPage({
   searchParams: Promise<{ track?: string }>;
 }) {
   const { track: raw } = await searchParams;
-  const track: TrackKey = isTrackKey(raw) ? raw : "main";
+  const view: ProgramView = isProgramView(raw) ? raw : "main";
 
   const supabase = await createClient();
-  const [{ data, error }, { data: profiles }] = await Promise.all([
-    supabase.from("sessions").select("*").eq("track", track)
-      .order("starts_at", { ascending: true }),
-    supabase.from("profiles").select("id, first_name, last_name"),
-  ]);
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const sessions = (data ?? []) as Session[];
+  const [{ data: sessionRows }, { data: starRows }, { data: settings }] =
+    await Promise.all([
+      view === MY_SCHEDULE
+        ? supabase.from("sessions").select("*").order("starts_at", { ascending: true })
+        : supabase.from("sessions").select("*").eq("track", view)
+            .order("starts_at", { ascending: true }),
+      user
+        ? supabase.from("session_stars").select("session_id").eq("profile_id", user.id)
+        : Promise.resolve({ data: [] as { session_id: string }[] }),
+      supabase.from("app_settings").select("open_sessions_url").maybeSingle(),
+    ]);
+
+  const starred = new Set((starRows ?? []).map((r) => r.session_id));
+  const all = (sessionRows ?? []) as Session[];
+
+  // My Schedule draws from every room, in one chronological run.
+  const sessions =
+    view === MY_SCHEDULE ? all.filter((s) => starred.has(s.id)) : all;
+
   const state = liveness(sessions);
-
-  // Speakers are stored as free text — the programme is imported long before
-  // those people ever sign in — so link a name to a profile when one exists.
-  const byName = new Map<string, string>();
-  for (const p of profiles ?? []) {
-    byName.set(nameKey(`${p.first_name} ${p.last_name}`), p.id);
-  }
+  const openUrl = settings?.open_sessions_url ?? null;
 
   return (
     <section>
@@ -42,140 +55,81 @@ export default async function ProgramPage({
       </p>
 
       <nav className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1">
-        {TRACKS.map((t) => (
+        {VIEWS.map((v) => (
           <Link
-            key={t.key}
-            href={`/program?track=${t.key}`}
+            key={v.key}
+            href={`/program?track=${v.key}`}
             scroll={false}
-            aria-current={t.key === track ? "page" : undefined}
+            aria-current={v.key === view ? "page" : undefined}
             className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
-              t.key === track
+              v.key === view
                 ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
                 : "border-[var(--color-line)] text-[var(--color-muted)]"
             }`}
           >
-            {t.label}
+            {v.key === MY_SCHEDULE ? `★ ${v.label}` : v.label}
           </Link>
         ))}
       </nav>
 
-      {track === "open" && (
-        <Link
-          href="/scan"
-          className="mt-4 flex items-center justify-between rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/5 p-3.5"
-        >
-          <span className="text-sm">
-            <span className="font-medium">Added your session to the board?</span>
-            <span className="block text-xs text-[var(--color-muted)]">
-              Photograph it and it goes live for everyone.
-            </span>
-          </span>
-          <span className="shrink-0 text-sm font-medium text-[var(--color-accent)]">
-            Scan ↗
-          </span>
-        </Link>
+      {/* Open Sessions are scheduled on a separate site, so this tab points
+          out rather than listing anything of its own. */}
+      {view === "open" && (
+        <div className="mt-4 rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
+          <p className="font-semibold">Open Sessions are published separately</p>
+          <p className="mt-1 text-sm text-[var(--color-muted)]">
+            The open sessions schedule is decided during the day and lives on its
+            own page.
+          </p>
+          {openUrl ? (
+            <a
+              href={openUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-block rounded-lg bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white"
+            >
+              Open the schedule ↗
+            </a>
+          ) : (
+            <p className="mt-3 text-sm font-medium">
+              The link will appear here as soon as that page is live.
+            </p>
+          )}
+        </div>
       )}
 
-      {error && (
-        <p className="mt-6 rounded-lg border border-[var(--color-danger)]/60 bg-[var(--color-danger-soft)] p-4 text-sm">
-          Couldn’t load the program. {error.message}
-        </p>
-      )}
-
-      {!error && sessions.length === 0 && (
+      {view === MY_SCHEDULE && sessions.length === 0 && (
         <div className="mt-6 rounded-xl border border-dashed border-[var(--color-line)] p-6">
-          <p className="text-sm text-[var(--color-muted)]">
-            Nothing scheduled on this track yet.
-            {track === "open" && " Open sessions are set during the day — check back."}
+          <p className="text-sm font-medium">Nothing starred yet</p>
+          <p className="mt-1 text-sm text-[var(--color-muted)]">
+            Tap the ☆ on any session and it appears here, across all rooms, in
+            the order you&rsquo;ll attend them.
           </p>
         </div>
       )}
 
-      <ol className="mt-4 space-y-2">
-        {sessions.map((s) => (
-          <SessionRow
-            key={s.id}
-            session={s}
-            state={state.get(s.id) ?? "upcoming"}
-            profileId={
-              s.speaker_profile_id ??
-              (s.speaker_name ? byName.get(nameKey(s.speaker_name)) ?? null : null)
-            }
-          />
-        ))}
-      </ol>
+      {view !== "open" && view !== MY_SCHEDULE && sessions.length === 0 && (
+        <div className="mt-6 rounded-xl border border-dashed border-[var(--color-line)] p-6">
+          <p className="text-sm text-[var(--color-muted)]">
+            Nothing scheduled on this track yet.
+          </p>
+        </div>
+      )}
+
+      {sessions.length > 0 && (
+        <ol className="mt-4 space-y-2">
+          {sessions.map((s) => (
+            <SessionCard
+              key={s.id}
+              session={s}
+              state={state.get(s.id) ?? "upcoming"}
+              starred={starred.has(s.id)}
+              showTrack={view === MY_SCHEDULE}
+              from={view === MY_SCHEDULE ? "mine" : view}
+            />
+          ))}
+        </ol>
+      )}
     </section>
-  );
-}
-
-function SessionRow({
-  session: s,
-  state,
-  profileId,
-}: {
-  session: Session;
-  state: "past" | "now" | "next" | "upcoming";
-  profileId: string | null;
-}) {
-  const cancelled = s.status === "cancelled";
-
-  if (isStructural(s)) {
-    return (
-      <li className="flex items-center gap-3 px-1 py-2">
-        <span className="shrink-0 font-mono text-xs tabular-nums text-[var(--color-muted)]">
-          {timeRange(s.starts_at, s.ends_at)}
-        </span>
-        <span className="text-sm text-[var(--color-muted)]">{s.title}</span>
-        <span className="h-px flex-1 bg-[var(--color-line)]" />
-      </li>
-    );
-  }
-
-  return (
-    <li
-      className={`rounded-xl border p-3.5 transition-opacity ${
-        state === "now"
-          ? "border-[var(--color-accent)] bg-[var(--color-accent)]/5"
-          : "border-[var(--color-line)]"
-      } ${state === "past" ? "opacity-55" : ""}`}
-    >
-      <div className="flex items-baseline gap-3">
-        <span className="shrink-0 font-mono text-xs tabular-nums text-[var(--color-muted)]">
-          {timeRange(s.starts_at, s.ends_at)}
-        </span>
-        {state === "now" && (
-          <span className="rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-            Now
-          </span>
-        )}
-        {state === "next" && (
-          <span className="rounded-full border border-[var(--color-accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-accent)]">
-            Next
-          </span>
-        )}
-        {cancelled && (
-          <span className="rounded-full bg-[var(--color-danger-soft)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-danger-ink)]">
-            Cancelled
-          </span>
-        )}
-      </div>
-
-      <h2 className={`mt-1.5 font-semibold leading-snug ${cancelled ? "line-through opacity-60" : ""}`}>
-        {s.title}
-      </h2>
-
-      <p className="mt-1 text-sm text-[var(--color-muted)]">
-        {profileId ? (
-          <Link
-            href={`/people/${profileId}?from=program&track=${s.track}`}
-            className="font-medium text-[var(--color-accent)] underline underline-offset-2"
-          >
-            {s.speaker_name}
-          </Link>
-        ) : (
-          s.speaker_name
-        )}
-      </p>
-    </li>
   );
 }

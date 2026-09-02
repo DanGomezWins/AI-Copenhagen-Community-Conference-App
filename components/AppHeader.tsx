@@ -35,6 +35,14 @@ export default async function AppHeader() {
           <span className="truncate text-sm sm:hidden">{EVENT.short}</span>
         </Link>
 
+        <Link
+          href="/about"
+          aria-label="About this app"
+          className="shrink-0 text-sm font-medium text-[var(--color-muted)]"
+        >
+          About
+        </Link>
+
         {organiser === true && (
           <Link
             href="/admin"

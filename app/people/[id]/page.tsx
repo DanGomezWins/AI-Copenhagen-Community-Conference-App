@@ -107,7 +107,7 @@ export default async function ProfilePage({
             {sessions.map((s) => (
               <li key={s.id}>
                 <Link
-                  href={`/session/${s.id}`}
+                  href={`/session/${s.id}?from=people`}
                   className="block rounded-xl border border-[var(--color-line)] p-3.5"
                 >
                   <p className="font-mono text-xs tabular-nums text-[var(--color-muted)]">

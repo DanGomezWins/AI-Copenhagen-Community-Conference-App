@@ -19,6 +19,17 @@ export function isTrackKey(v: string | undefined): v is TrackKey {
   return TRACKS.some((t) => t.key === v);
 }
 
+/**
+ * The Program's fourth view. Not a track: it draws from every room and is
+ * personal to the viewer, so it lives beside the tracks rather than among them.
+ */
+export const MY_SCHEDULE = "mine" as const;
+export type ProgramView = TrackKey | typeof MY_SCHEDULE;
+
+export function isProgramView(v: string | undefined): v is ProgramView {
+  return v === MY_SCHEDULE || isTrackKey(v);
+}
+
 export type Session = {
   id: string;
   track: TrackKey;
