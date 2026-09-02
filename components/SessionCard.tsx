@@ -1,6 +1,6 @@
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
-import { timeRange, TRACKS, type Session } from "@/lib/program";
+import { timeRange, isStructural, TRACKS, type Session } from "@/lib/program";
 import type { Liveness } from "@/lib/program";
 
 /**
@@ -89,7 +89,11 @@ export default function SessionCard({
         )}
       </Link>
 
-      {!cancelled && <StarButton sessionId={s.id} starred={starred} />}
+      {/* Breaks, lunch and registration are day structure, not something you
+          choose to attend, so they carry no star. */}
+      {!cancelled && !isStructural(s) && (
+        <StarButton sessionId={s.id} starred={starred} />
+      )}
     </li>
   );
 }
