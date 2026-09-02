@@ -100,6 +100,44 @@ export default function SessionForm({ session }: { session?: Session | null }) {
           />
         </div>
 
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium">
+            Description{" "}
+            <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            rows={4}
+            maxLength={1200}
+            defaultValue={session?.description ?? ""}
+            placeholder="What this session covers."
+            className={field}
+          />
+          <p className="mt-1 text-xs text-[var(--color-muted)]">
+            Shown on the session&rsquo;s own page.
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="slides_url" className="block text-sm font-medium">
+            Slides URL{" "}
+            <span className="font-normal text-[var(--color-muted)]">(optional, PDF)</span>
+          </label>
+          <input
+            id="slides_url"
+            name="slides_url"
+            inputMode="url"
+            defaultValue={session?.slides_url ?? ""}
+            placeholder="https://…/slides.pdf"
+            className={field}
+          />
+          <p className="mt-1 text-xs text-[var(--color-muted)]">
+            Attendees can download this once the session has finished, and the
+            feed announces it automatically. Leave blank and nothing is posted.
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label htmlFor="start_time" className="block text-sm font-medium">Starts</label>

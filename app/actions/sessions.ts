@@ -6,6 +6,21 @@ import { createClient } from "@/lib/supabase/server";
 import { isTrackKey, timeToIso, timeAt, describeChange, roomForTrack, type Session } from "@/lib/program";
 import { titleCaseName } from "@/lib/names";
 
+/**
+ * Slide links are http(s) only. Anything else in a field that later becomes a
+ * download button for two hundred people is not worth the risk.
+ */
+function cleanPdfUrl(raw: string): string | null {
+  const v = raw.trim();
+  if (!v) return null;
+  try {
+    const u = new URL(/^https?:[/][/]/i.test(v) ? v : `https://${v}`);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export type SessionFormState = { error?: string; warning?: string };
 
 async function organiserClient() {
@@ -23,6 +38,8 @@ function readForm(formData: FormData) {
     track: isTrackKey(track) ? track : null,
     title: String(formData.get("title") ?? "").trim(),
     speaker_name: titleCaseName(String(formData.get("speaker_name") ?? "")) || null,
+    description: String(formData.get("description") ?? "").trim() || null,
+    slides_url: cleanPdfUrl(String(formData.get("slides_url") ?? "")),
     starts_at: startTime ? timeToIso(startTime) : null,
     ends_at: endTime ? timeToIso(endTime) : null,
     announce: formData.get("announce") === "on",
@@ -56,6 +73,8 @@ export async function saveSession(
     track: f.track,
     title: f.title,
     speaker_name: f.speaker_name,
+    description: f.description,
+    slides_url: f.slides_url,
     // Always derived: the track is the room.
     room: roomForTrack(f.track),
     starts_at: f.starts_at,

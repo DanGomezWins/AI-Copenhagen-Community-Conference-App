@@ -21,7 +21,8 @@
     "test:clash": "tsx scripts/test-clash.mts",
     "reset:demo": "tsx scripts/reset-demo.mts",
     "parse:speakers": "tsx scripts/parse-speakers.mts",
-    "import:people": "tsx scripts/import-people.mts"
+    "import:people": "tsx scripts/import-people.mts",
+    "test:slides": "tsx scripts/test-slides.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
