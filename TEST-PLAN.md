@@ -10,6 +10,30 @@ everything it does.
 
 ---
 
+## 🔗 Start here — the link an attendee gets
+
+This is what an attendee will find in the email inviting them to the app. Tap
+it and you arrive **already signed in as Test Guy**, exactly as they will.
+
+**[Sign in as Test Guy →](https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%2Btest_guy%40gmail.com)**
+
+```
+https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%2Btest_guy%40gmail.com
+```
+
+> **Test Guy** is a guest, not a speaker and not an organiser — the plain
+> attendee experience. His email is `dangomezwindshuttle+test_guy@gmail.com`,
+> a plus-alias on your own inbox, so any real email to him actually arrives.
+>
+> **Sections 9–12 need organiser rights**, which Test Guy does not have. Sign
+> in with your own address for those.
+>
+> **Nine other test guests** exist for the directory — same pattern:
+> `dangomezwindshuttle+first_last@gmail.com`. Sign in as any of them the same
+> way by swapping the email in that link.
+
+---
+
 ## How to record results
 
 Put a mark in the **Result** column and anything you noticed in **Notes**.
@@ -52,7 +76,8 @@ Rough notes are fine — half a sentence is enough to act on.
 |---|---|---|---|---|
 | 1.1 | Open the link | A sign-in screen appears, titled with the conference name | | |
 | 1.2 | Test-mode notice | An amber box explains no email will be sent yet | | |
-| 1.3 | Sign in with your email | You go straight in — no email, no password | | |
+| 1.3 | **Arrive via the link above** | You land signed in as **Test Guy**, no password | | |
+| 1.3b | Sign in normally | Signing out and entering an email also works | | |
 | 1.4 | Where you land | The Feed, with the event name and a Meetup link at the top | | |
 | 1.5 | Add to home screen | iPhone: Share → Add to Home Screen. Android: Chrome offers to install | | |
 | 1.6 | Icon | Purple square, white ring, mint centre | | |
@@ -99,8 +124,12 @@ have to create anything.
 | 3.9 | **Open Sessions** | Links out to a separate page — a notice explains it's published there | | |
 | 3.10 | No stars on breaks | Lunch and breaks have no ☆ — you don't choose to attend lunch | | |
 
-> The programme is still placeholder titles. The real one arrives 24–48 hours
-> before the event. The **speakers** are real.
+> **About the programme.** Speakers, times and rooms come from the two
+> availability CSVs — those are real. **Talk titles do not exist in that source
+> material at all**, so every session reads "Session — title to be confirmed"
+> rather than carrying an invented one. The pairing of speaker to slot is
+> derived from who said they were available when, so treat it as a plausible
+> draft, not the final running order.
 
 ---
 
@@ -319,5 +348,13 @@ Things you might flag that are intentional:
 - **Open Sessions has no listing.** It links out; the URL is still to come.
 - **Two speakers are incomplete.** Sofie Hvitved has no title or bio, Xander
   Evangelidis has no bio — neither is in the source material.
-- **Attendees aren't loaded yet.** Waiting on the checkin.no export with emails.
+- **Attendees aren't loaded yet.** Ten test guests stand in until the
+  checkin.no export arrives. They are the only accounts with a `+` in the
+  address, so they are easy to remove.
+- **Talk titles all read "Session — title to be confirmed".** The two
+  programme CSVs are availability forms — which slots each speaker *could*
+  do — and contain no titles at all. Times and speakers are real; the pairing
+  is derived, and the titles are honestly blank rather than invented.
+- **Two speakers are not on the programme.** Arun Prakash and Thomas Martinsen
+  gave no availability in either CSV.
 - **The icon is a placeholder** until brand assets arrive.

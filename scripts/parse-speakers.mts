@@ -154,6 +154,11 @@ for (const page of pages) {
 
   if (!body) continue;
 
+  // Some bios read "Arun Prakash is a Risk Manager at ...", where the name is
+  // the sentence's subject rather than a header. Stripping it left a dangling
+  // "is a Risk Manager ...", so put it back when what follows starts lowercase.
+  if (/^\p{Ll}/u.test(body)) body = `${name} ${body}`;
+
   const marker = body.search(/\b(Keynote|Talk|Session|Demo)\s*:/);
   const bio = (marker > 0 ? body.slice(0, marker) : body).trim();
   const talk = marker > 0 ? body.slice(marker).trim() : null;
