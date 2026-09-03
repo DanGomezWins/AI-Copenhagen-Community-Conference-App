@@ -10,40 +10,49 @@ everything it does.
 
 ---
 
-## 🔗 Start here — the link an attendee gets
+## 🔗 Start here
 
-This is what an attendee will find in the email inviting them to the app. Tap
-it and you arrive **already signed in as Test Guy**, exactly as they will.
+**Open the app on your phone:**
 
-**[Sign in as Test Guy →](https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%2Btest_guy%40gmail.com)**
+**[https://aic-info-production.up.railway.app](https://aic-info-production.up.railway.app)**
 
-```
-https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%2Btest_guy%40gmail.com
-```
+That is exactly what the invitation email will contain — a plain link to the
+app, nothing more. You sign in from inside the app, with a code.
 
-> **Test Guy** is a guest, not a speaker and not an organiser — the plain
-> attendee experience. His email is `dangomezwindshuttle+test_guy@gmail.com`,
-> a plus-alias on your own inbox, so any real email to him actually arrives.
+> ### If you are already signed in
+> Tap your avatar (top right) → **Sign out**, so you start where an attendee
+> starts. Section 1 assumes you are signed out.
+
+### Who to sign in as
+
+| Use               | Email                                    | Why                                                          |
+| ----------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| **Sections 1–8**  | `dangomezwindshuttle+test_guy@gmail.com` | Test Guy is a plain guest — the ordinary attendee experience |
+| **Sections 9–12** | your own address                         | Those need organiser rights, which Test Guy does not have    |
+
+Nine other test guests exist for the directory, same pattern:
+`dangomezwindshuttle+first_last@gmail.com`.
+
+> **A shortcut, for later sections only.** This link skips the sign-in screen
+> and drops you straight in as Test Guy. Handy when you want to jump between
+> test users without signing in each time — but **do not use it for section 1**,
+> which is about the sign-in itself.
 >
-> **Sections 9–12 need organiser rights**, which Test Guy does not have. Sign
-> in with your own address for those.
->
-> **Nine other test guests** exist for the directory — same pattern:
-> `dangomezwindshuttle+first_last@gmail.com`. Sign in as any of them the same
-> way by swapping the email in that link.
+> ```
+> https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%2Btest_guy%40gmail.com
+> ```
 
-> ### ⚠️ On iPhone, that link opens Safari — not the installed app
+> ### ⚠️ On iPhone, an emailed link opens Safari — not the installed app
 >
 > Apple has never allowed a link in an email to open a Home Screen web app, and
-> there is no way to build around it. Worse, an installed iPhone web app keeps
-> **its own sign-in, separate from Safari's** — so signing in via the link and
-> installing afterwards means signing in *twice*.
+> an installed iPhone app keeps **its own sign-in, separate from Safari's**.
 >
-> **So the order matters, and the app now says so.** Install first, then sign in
-> from the icon. Test 1.5 checks that guidance appears.
+> That is why sign-in uses a **code** rather than a link: a code is typed into
+> whichever copy of the app asked for it, so it works wherever you are. And it
+> is why the app tells iPhone users to **install first, then sign in** — doing
+> it in that order means signing in once, in the place it needs to stick.
 >
-> **On Android none of this applies:** an installed app handles its own links,
-> and the sign-in carries over.
+> **On Android none of this applies.**
 
 ---
 
@@ -62,7 +71,8 @@ Rough notes are fine — half a sentence is enough to act on.
 
 | # | Section | What it covers |
 |---|---|---|
-| [1](#1-getting-in) | Getting in | Sign-in, install to home screen |
+| [1](#1-getting-in) | Getting in | Install to home screen |
+| [1a](#1a-signing-in-with-a-code) | Signing in | The real code flow, simulated |
 | [2](#2-your-profile) | Your profile | Prefilled profile, editing, photo |
 | [3](#3-the-programme) | The programme | Tracks, times, dimming, Open Sessions |
 | [4](#4-my-schedule) | My Schedule | Starring, personal chronological list |
@@ -85,51 +95,48 @@ Rough notes are fine — half a sentence is enough to act on.
 
 ## 1. Getting in
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 1.1 | Open the link | A sign-in screen appears, titled with the conference name | | |
-| 1.2 | Test-mode notice | An amber box explains no email will be sent yet | | |
-| 1.3 | **Arrive via the link above** | You land signed in as **Test Guy**, no password | | |
-| 1.3b | Sign in normally | Signing out and entering an email also works. **In test mode you go straight in; with real email live you'd type a six-digit code** | | |
-| 1.4 | Where you land | The Feed, with the event name and a Meetup link at the top | | |
-| 1.5 | **Install-first guidance** | On the **sign-in** screen, an iPhone shows a purple box: "Add to your home screen first" and explains you'd otherwise sign in twice | | |
-| 1.5b | Install banner when signed in | Already signed in **in Safari**, the Feed shows "Add this to your home screen" and warns about the second sign-in. "Got it" dismisses it for good | | |
-| 1.5c | Add to home screen | iPhone: Share → Add to Home Screen. Android: Chrome offers to install | | |
-| 1.5d | **Sign in inside the app** | Opening from the icon on iPhone, you're asked to sign in again — expected, and only once | | |
-| 1.5e | Banner gone once installed | Neither box appears inside the installed app | | |
-| 1.6 | Icon | Purple square, white ring, mint centre | | |
-| 1.7 | Launch from the icon | Opens full screen, no browser bar, still signed in | | |
-| 1.8 | Loading | A spinner, never a blank white screen | | |
-
-> **Why no email arrives yet:** sign-in is in test mode until a real email
-> provider is approved. Deliberately a code, not a link: on iPhone a link would
-> open Safari and leave the installed app signed out. See
-> [the README](README.md#1-email-for-sign-in--the-blocker).
-
-### 1a. The real sign-in, simulated
-
-You can test the actual code flow right now. The code is genuine and is
-verified by Supabase exactly as an attendee's would be — **only the email
-delivery is simulated**, so it appears on screen instead of in an inbox.
+Start signed out. If you are not, tap your avatar → **Sign out**.
 
 | # | Test | Expected | Result | Notes |
 |---|---|---|---|---|
-| 1a.1 | Sign out, then open **/login** | The email form | | |
-| 1a.2 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears with a real code in it | | |
-| 1a.3 | Type that code into the box below it | | | |
-| 1a.4 | Tap **Sign in** | You're signed in as Test Guy and land on the Feed | | |
-| 1a.5 | Wrong code | Type any wrong number — "That code isn't right", and you stay put | | |
-| 1a.6 | Send a new code | "Send a new code" is throttled for 30 seconds, then issues a fresh one | | |
-| 1a.7 | Unknown address | Try `nobody@example.com` — "No account for that address", and no account is created | | |
-| 1a.8 | Numeric keypad | On a phone the code box brings up digits, not letters | | |
-
-> **The code is 8 digits, not 6.** That is this Supabase project's setting.
-> Testing caught it — the form originally required exactly six, which would
-> have left the button permanently disabled for every attendee. It now accepts
-> 6–8.
+| 1.1 | Open the app link | A **sign-in screen**, titled with the conference name | | |
+| 1.2 | Test-mode notice | A red box explains no email will really be sent | | |
+| 1.3 | **Install-first guidance** | On iPhone, a purple box says "Add to your home screen first" and explains why | | |
+| 1.4 | Add to home screen | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | | |
+| 1.5 | Icon | Purple square, white ring, mint centre | | |
+| 1.6 | Open from the icon | Full screen, no browser bar | | |
+| 1.7 | Loading | A spinner, never a blank white screen | | |
 
 ---
 
+## 1a. Signing in with a code
+
+**Do this from the installed app**, as an attendee would.
+
+The code is genuine and Supabase verifies it exactly as it will on the day —
+**only the email delivery is simulated**, so it appears on screen instead of in
+an inbox.
+
+| # | Test | Expected | Result | Notes |
+|---|---|---|---|---|
+| 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears, with a real code in it | | |
+| 1a.2 | Numeric keypad | Tapping the code box brings up digits, not letters | | |
+| 1a.3 | Type the code, tap **Sign in** | You are signed in as Test Guy and land on the Feed | | |
+| 1a.4 | Wrong code | Type any wrong number — "That code isn't right", and you stay put | | |
+| 1a.5 | Send a new code | "Send a new code" is throttled for 30 seconds, then issues a fresh one | | |
+| 1a.6 | Unknown address | Try `nobody@example.com` — "No account for that address", and no account is created | | |
+| 1a.7 | Stays signed in | Close the app fully and reopen from the icon — still signed in | | |
+| 1a.8 | Install banner gone | Inside the installed app, neither install box appears any more | | |
+
+> **The code is 8 digits, not 6** — that is this Supabase project's setting.
+> Testing caught it: the form originally required exactly six, which would have
+> left the Sign in button permanently disabled for every attendee.
+
+> **Why a code and not a link:** on iPhone a link would open Safari and leave
+> the installed app signed out. See
+> [the README](README.md#1-email-for-sign-in--the-blocker).
+
+---
 ## 2. Your profile
 
 **Tap your avatar, top right.** Your profile already exists — you shouldn't
