@@ -79,7 +79,9 @@ if (fs.existsSync(speakersPath)) {
       company: s.company ?? null,
       role: s.title ?? null,
       is_speaker: true,
-      bio: [s.bio, s.talk].filter(Boolean).join("\n\n") || null,
+      // The talk title and description live on the session now, not the
+      // profile, so a bio stays a bio.
+      bio: s.bio ?? null,
       linkedin_url: s.linkedin_url ?? null,
       photo: s.photo ?? null,
     });

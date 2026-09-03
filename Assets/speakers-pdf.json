@@ -1,0 +1,130 @@
+[
+  {
+    "name": "Henrik Werdelin",
+    "title": "Founder/Investor/Author",
+    "company": "BARK/Prehype/Audos",
+    "talk_title": "Keynote: Donkeycorns & Refounders",
+    "talk_description": "Henrik Werdelin coined “donkeycornˮ to describe the new shape of AI-first startups - high revenue, almost no headcount. He's since built the sequel, refounding, a framework for taking an existing company and rebuilding it as if you were starting it today. Henrik opens with an Audos introduction. Sigurd Bæk follows with the refounding of Bark as an AI-first company. Casper Willer closes with norma, the brand agent for startups. Three viewpoints, one arc: founding, refounding, and the brand in between.",
+    "bio": "Co-founder of BARK BarkBox / BARK Air), the NYSE-listed company bringing joy to dogs and their people, and Prehype, the startup studio behind AndCo, Ro, and ManagedByQ — and now Audos, an AI platform for first-time founders who want to start smarter. Henrik co-hosts “Beyond the Promptˮ with Stanfordʼs Jeremy Utley — a podcast about how AI is changing the way people create and build. He is the author of “The Acorn Methodˮ and co-author of “Me, My Customer & AI.ˮ"
+  },
+  {
+    "name": "Nils Smed",
+    "title": "Partner & FDE",
+    "company": "Heyra",
+    "talk_title": "Building with a vibe",
+    "talk_description": "AI collapses the distance between idea and working software. That changes how we build, who builds, and what enterprises need to rethink to keep up. Live demos, lessons from building in public, and a take on where this is heading.",
+    "bio": "Builder. Ships AI projects in public. Partner at Heyra AI in Copenhagen. Been building companies and products the last 13 years."
+  },
+  {
+    "name": "Berit D. Brouer",
+    "title": "PhD, VP of Engineering, Data & AI",
+    "company": "ZeroNorth",
+    "talk_title": "The golden era of decision science:",
+    "talk_description": "Decision science has always had a branding problem partly due to low adoption. Even though deterministic models has outperformed manual planning for decades, planners and operators keep overriding recommended plans and actions, because white-box models does not capture all the unstructured data signals caught in emails and pdfs, and planners cannot easily input tacit knowledge or preferences, that are not incorporated in the model from the beginning. Another major barrier to adoption is the inability to explain and compare a computer generated plan/recommendation to a user suggested plan and highlight where they differ. Agentic software closes that gap, letting users feed in unstructured data and tacit knowledge using natural language, as well as explain where and how plans differ. You will get a sneak peak of our newly launched agentic maritime platform Propel by ZeroNorth, and see how inputs for doing weather-routing can be adjusted and the solution inspected dynamically using natural language.",
+    "bio": "Dr. Berit Dangaard Brouer holds a PhD in Operations Research from the Technical University of Denmark, where she specialized in optimizing liner shipping networks for reduced energy consumption. Her doctoral work produced the LinerLib benchmark set, now a foundational resource for maritime optimization problems. As Director of Models and AI at ZeroNorth, Dr. Brouer leads AI-driven initiatives in voyage optimization, weather routing, and fuel performance. She is currently expanding the companyʼs capabilities in Generative AI to enable natural language interaction with operational data, models and introducing zeroTouch workflows. With over 15 years in supply chain and logistics, including senior roles at Maersk as Principal Decision Scientist and Head of Decision Science, Dr. Brouer champions establishing clear baselines to ensure measurable ROI from AI initiatives. Her approach prioritizes solutions that accelerate workflows and automate back-office tasks, emphasizing that AIʼs scalable impact depends on rigorous advances in business outcomes, data quality, standardization, and digital infrastructure"
+  },
+  {
+    "name": "Morten Busk",
+    "title": "Co-founder",
+    "company": "The Good Stuff Company",
+    "talk_title": "Building an AI centric company",
+    "talk_description": "From a global tech company to building a new AI centric company.",
+    "bio": "Morten is a tech entrepreneur with 25+ years of experience. As former Chief Growth Officer at KAYAK, he led the rollout of AI-powered features and the integration of AI across marketing. Having previously co-founded several companies, he is currently launching a new venture"
+  },
+  {
+    "name": "Miriam Plon Sauer",
+    "title": "Global Chief Strategy Officer",
+    "company": "AKQA",
+    "talk_title": "The Case for Friction: Why Your AI Agents",
+    "talk_description": "Most AI agents are designed to remove friction. This talk makes the case for the opposite: agents deliberately built to make you pause, question, and exercise judgment, not skip it. Drawing on real examples from agents used daily in practice, this is a practical look at what \"designing for friction\" actually means, and why it might be the difference between agents that make you smarter and ones that quietly make you dumber.",
+    "bio": "As Global Chief Strategy Officer at AKQA, Miriam Plon Sauer shapes strategic direction for world-renowned brands at the intersection of imagination and AI. Miriam's work centers on a fundamental conviction: AI is most powerful not as an efficiency tool but as a curiosity partner, one that helps ask braver questions and pursue more original solutions. She has developed proprietary methodology frameworks that embed AI-augmented thinking into strategy at scale, helping clients including Volvo, Samsung, and Google move from incremental thinking to genuine creative and commercial breakthroughs."
+  },
+  {
+    "name": "Thomas Martinsen",
+    "title": "Global Tech Evangelist",
+    "company": "Twoday",
+    "talk_title": "Using the right intelligence for the job",
+    "talk_description": "AI is already part of the engineering toolbox. The next challenge is using it deliberately. In this session, we will explore what it means to treat AI usage as an engineering discipline. That starts with choosing the right tool, model, and level of reasoning for the task instead of automatically reaching for the most capable option. But good decisions require visibility. We will demonstrate tools we have built internally in Twoday to capture usage across our engineering tools, and explore what the data can tell us about model choice, cost, efficiency, and engineering behavior. The goal is not to use less AI. It is to understand what we use, why we use it, and whether we are using the right intelligence for the job.",
+    "bio": "Thomas Martinsen is Global Principal Advisor at Twoday, Microsoft Regional Director, and Microsoft AI MVP. He helps organizations navigate AI, emerging technologies, and the future of software engineering — turning innovation into real business value."
+  },
+  {
+    "name": "Lishuai Jing",
+    "title": "PhD, Co-founder",
+    "company": "memtrace.io",
+    "talk_title": "Memory as a Service: Cut Your AI Coding",
+    "talk_description": "Every AI coding agent has the same hidden cost: it re-reads your codebase from scratch on every query, burning tokens on context it already saw, and vector search still returns the wrong function 87% of the time. In this live demo, we index a real multi-thousand-file codebase in seconds and swap semantic guessing for a structural knowledge graph. The result: a 90% token consumption cut — at 97.3% accurate caller recall instead of 12.8%. Then we show one of memtrace's secret weapon, the state of the art code reviewer agent which scores 0.7667 F1 in offline evaluation on Martian's independent Code Review Bench. A 20% jump on code review capability by beating vendors such as Cubic, CodeRabbit etc. Everything runs on the laptop in front of you — no repo upload, no cloud round-trip. Bring your own repo — you'll leave with the exact commands to run this tonight.",
+    "bio": "Lishuai is co-founder of Memtrace.io, a Copenhagen startup building a structured memory and knowledge graph layer for AI coding agents. Memtrace compiles deterministic knowledge graphs from codebases, cutting token costs by 90% and improving code quality for developers. Lishuai holds a PhD from Aalborg University and an MSc from Chalmers University of Technology, where he received the award for best master's thesis, with a decade of enterprise AI experience as Chief Data Scientist at VELUX, Grundfos, and Ønskeskyen. He is also a mentor at the Danish Data Science Academy DDSA."
+  },
+  {
+    "name": "Arun Prakash",
+    "title": "Risk Manager",
+    "company": "Novo Nordisk Engineering",
+    "talk_title": "Building CPH Vibe Coders: Grassroots AI",
+    "talk_description": "Most AI adoption stories come from software teams. This talk is about the rest of us. Arun shares how he co-founded CPH Vibe Coders, a Copenhagen community helping non-traditional builders, engineers, consultants, career-switchers get hands-on with AI coding tools. He'll cover what actually gets people from curious to building, the mistakes that stalled early momentum, and what a grassroots AI community looks like when it's not run by a tech company.",
+    "bio": "Arun Prakash is a Risk Manager at NNE Novo Nordisk Engineering) in Copenhagen, where he works on risk management for pharmaceutical facility projects. He is also co-founder of CPH Vibe Coders, a Copenhagen community for people building with AI coding tools, and serves as VP of Education at Frederiksberg Toastmasters. He is passionate about making AI tools practical and accessible for people outside traditional tech roles."
+  },
+  {
+    "name": "Jeppe Nørregaard",
+    "title": "PhD, CEO/CTO",
+    "company": "InReality",
+    "talk_title": "Defence Against Generative AI",
+    "talk_description": "What do we do when generative AI can fake anything? A passport, a live-call, an insurance claim, your voice in a scam-call with your parents? We defend reality by proving real content.",
+    "bio": "PhD in AI and misinformation detection from DTU, and later AI research at ITU. Passionate about countering all the fake content that circulates online."
+  },
+  {
+    "name": "Christian Kjaer Laustsen",
+    "title": "CTO & Co-founder",
+    "company": "Yaay",
+    "talk_title": "Scaling AI in the Consumer space",
+    "talk_description": "Do users care that you are using AI? In this talk we'll take a deeper look into how Yaay uses AI to seamlessly drive their core features without users needing to care, and what considerations to make when scaling AI in the consumer space.",
+    "bio": "Christian has been a software engineer for more than 15 years, later on leading Factbird as acting CTO, and scaling Famly's engineering organization as Director of Engineering. He's now tackling travel as co-founder and CTO of Yaay, building the taste layer for the physical world."
+  },
+  {
+    "name": "Tim Granlund Marsden",
+    "title": "Tech Lead, Enterprise AI",
+    "company": "Novo Nordisk",
+    "talk_title": "Adversarial Review: Getting Reliable",
+    "talk_description": "I will demonstrate how using other AI models as adversarial critics can significantly improve the quality and reliability of your results.",
+    "bio": "Working as a Tech Lead within AI enablement and upskilling at Novo Nordisk."
+  },
+  {
+    "name": "Lars Buur",
+    "title": "CTO",
+    "company": "Dreamplan.io",
+    "talk_title": "87% Agent, 13% Human: Shipping a",
+    "talk_description": "WizFlow is the no-code platform behind financial data collection flows running today at major Danish banks and pension providers. I will start from a plain text description and let agents take a new flow to 87% finished. Then the last 13%: compliance review, edge cases, and wording a customer understands. I will resolve those either with our WizFlow assistant or by hand in the no-code interface. Then styling, and launching in two places at once: a fresh WordPress install and WizFlow hosting. By the end you will have the finished flow open on your own phone, plus a candid account of what the agents got wrong on the way there.",
+    "bio": "Lars is CTO of Dreamplan, the FSA-licensed fintech behind WizFlow, the no-code platform Danish banks and pension companies use to build financial data collection flows. He builds agent fleets that ship production flows in a regulated business. Previously a four-time founder, starting with Denmark's first CMS product in the late nineties."
+  },
+  {
+    "name": "Felix Wigand",
+    "title": "Co-founder & CPO",
+    "company": "Virtuall",
+    "talk_title": "Build your own AI content ordering",
+    "talk_description": "Picture a big retail brand: thousands of products, a dozen channels, a new campaign every month and it all has to look like one company made it. Nobody on that team wants to write prompts. That takes a platform that already knows the company before anyone types anything: we call this memory infrastructure, an OS that learns. Iʼll build one live in 20 minutes: use cases, moodboards, quality gates, a custom ordering interface. Models will keep changing and improving; your history, knowledge and workflows stay.",
+    "bio": "Felix Wigand is co-founder and Chief Product Officer at Virtuall, a Copenhagen-based Creative AI platform for enterprise production. Before Virtuall he spent six years as an innovation consultant leading digital transformation programmes inside large railway and telecoms organisations, and headed business development at a Berlin sustainability scaleup. He works where design, technology and change management meet — helping creative teams get from AI experiments to actual production."
+  },
+  {
+    "name": "Daniel Rothmann",
+    "title": "Technical Founder",
+    "company": "Eigin",
+    "talk_title": "What would you tell an AI that's truly",
+    "talk_description": "People tell AI things they would not tell their friends, and almost all of it lives on someone else's computer. I want mine on my own computer. So we built Eigin, a local-first personal AI. I'll show how it works and make the case why more of us should build this way.",
+    "bio": "Daniel has spent a decade teaching computers to hear, then to see, and now to remember. He is co-creator of Eigin, open-source personal AI agent. Previously CTO at Kanda and a machine learning engineer at LEGO. He also builds electronic instruments, and has two platinum records."
+  },
+  {
+    "name": "Sigurd Bæk",
+    "title": "Founder",
+    "company": "Drive/Kioski/Norma",
+    "talk_title": "Refounding",
+    "talk_description": "The refounding of Bark as an AI-first company. BARK, Inc. is a dog-centric company, provides products, services, and content for dogs. It is listed on the New York Stock Exchange NYSE.",
+    "bio": "Spent seven years building Drive Studios from a Copenhagen startup into a 50-person production company across Oslo, Stockholm, Berlin and New York, past DKK 100 million in revenue, and out the other side through an acquisition by Nordisk Film. What I do now is rebuild companies rather than advise them."
+  },
+  {
+    "name": "Casper Willer",
+    "title": "Founder",
+    "company": "Norma",
+    "talk_title": "An always-on brand agent",
+    "talk_description": "Introducing Norma, the brand agent for startups. The output of a top brand studio. The pace of a teammate who never sleeps.",
+    "bio": "Co-founder of \"norma - the brand agent for startups\", built with Henrik Werdelin and Sigurd Bæk. Before that: Creative Director, entrepreneur, storyteller, copywriter, strategist. Starting agencies, building new brands from scratch, revitalizing iconic ones. Three years as Creative Director and partner at Kontrapunkt. Co-founder of Damn Good Coffee Company, and Prehype ventures Crafted By (acquired by Carlsberg), Biofresh and Guardwash (backed by Novozymes), plus agencies Naked Communications, Another and La Familia. Start-up brand advisor for Bio Innovation Institute, Google Campus/Seedcamp, Dansk Industri, Canute, Danish Tech Start-up Association and more."
+  }
+]

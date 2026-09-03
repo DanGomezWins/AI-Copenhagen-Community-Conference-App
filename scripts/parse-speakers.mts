@@ -23,7 +23,8 @@ type Speaker = {
   company: string | null;
   linkedin_url: string | null;
   bio: string | null;
-  talk: string | null;
+  talk_title: string | null;
+  talk_description: string | null;
   photo: string | null;
 };
 
@@ -68,102 +69,31 @@ for (const r of csvRows.slice(1)) {
   });
 }
 
-// ---------- PDF pages ----------
-const pages = fs
-  .readFileSync(path.join(ASSETS, "speakers-extracted.txt"), "utf8")
-  .split(/^===== PAGE \d+ =====$/m)
-  .map((p) => p.replace(HEADER, "").trim())
-  .filter(Boolean);
+// ---------- PDF (structured, from extract-speakers-pdf.py) ----------
+// The deck marks structure by font weight, so the Python extractor reads it
+// directly rather than guessing from punctuation. That is what finally
+// separated each speaker's talk title and description from their bio.
+type PdfEntry = {
+  name: string;
+  title: string | null;
+  company: string | null;
+  talk_title: string | null;
+  talk_description: string | null;
+  bio: string | null;
+};
 
-const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-/**
- * Accepts a line as a title/company header only if it reads like one — short,
- * and not a sentence. Without this, a bio's opening line gets mistaken for a
- * job title ("Lars is CTO of Dreamplan, the FSA-licensed fintech").
- */
-function splitHeaderLine(line: string): string[] {
-  const clean = line.replace(/,\s*$/, "").trim();
-  if (!clean || clean.length > 60) return [];
-  if (clean.split(/\s+/).length > 7) return [];
-  if (/\b(is|was|has|the|a|an|and)\b/i.test(clean.split(/\s*,\s*/)[0])) return [];
-  return clean.split(/\s*,\s*/);
+const pdfPath = path.join(ASSETS, "speakers-pdf.json");
+if (!fs.existsSync(pdfPath)) {
+  console.error(
+    "Assets/speakers-pdf.json is missing. " +
+      "Run:  python3 scripts/extract-speakers-pdf.py",
+  );
+  process.exit(1);
 }
 
-const fromPdf = new Map<
-  string,
-  { bio: string; talk: string | null; title: string | null; company: string | null }
->();
-for (const page of pages) {
-  const lines = page.split("\n").map((l) => l.trim()).filter(Boolean);
-  if (lines.length < 2) continue;
-
-  const name = lines[0].split(",")[0].trim();
-  if (!name || name.length > 60) continue;
-
-  // Strip the name/title/organisation block using the exact strings from the
-  // CSV rather than guessing where the header ends. Guessing broke on speakers
-  // whose job title wraps across lines — one bio began "Engineering, Data & AI,
-  // ZeroNorth" because half a job title had been read as prose.
-  const known = fromCsv.get(nameKey(name));
-  let body = lines.join(" ").replace(/\s+/g, " ").trim();
-
-  // Speakers absent from the CSV still carry a title line on their PDF page:
-  // "Lars Buur" / "CTO, Dreamplan.io". Read it so they aren't left blank, and
-  // so the same string can be stripped out of the bio below.
-  let pdfTitle: string | null = null;
-  let pdfCompany: string | null = null;
-  if (!known) {
-    // Two layouts appear in the deck: the header wrapped onto its own line
-    // ("Lars Buur" / "CTO, Dreamplan.io"), or all on one ("Lars Buur, CTO,
-    // Dreamplan.io"). Reading line 1 blindly picked up a bio sentence.
-    const inline = lines[0].split(/\s*,\s*/).slice(1);
-    const header =
-      inline.length > 0 ? inline : splitHeaderLine(lines[1] ?? "");
-
-    if (header.length > 1) {
-      pdfCompany = header[header.length - 1].trim() || null;
-      pdfTitle = header.slice(0, -1).join(", ").trim() || null;
-    } else if (header.length === 1) {
-      pdfTitle = header[0].trim() || null;
-    }
-  }
-
-  const headerBits = [
-    name,
-    known?.title ?? pdfTitle ?? "",
-    known?.company ?? pdfCompany ?? "",
-  ]
-    .filter(Boolean)
-    .flatMap((x) => [x, ...x.split(/\s*,\s*/)])
-    .map((x) => x.trim())
-    .filter((x) => x.length > 1)
-    .sort((a, b) => b.length - a.length);
-
-  // Repeat until nothing more comes off. A single sorted pass is not enough:
-  // the longest bit is usually the job title, but at that point the body still
-  // starts with the name, so it fails to match and is never retried.
-  for (let pass = 0; pass < headerBits.length + 1; pass++) {
-    const before = body;
-    for (const bit of headerBits) {
-      // Anchored, so a company mentioned mid-sentence in the bio survives.
-      body = body.replace(new RegExp("^[\\s,]*" + escapeRe(bit) + "[\\s,]*", "i"), "").trim();
-    }
-    if (body === before) break;
-  }
-
-  if (!body) continue;
-
-  // Some bios read "Arun Prakash is a Risk Manager at ...", where the name is
-  // the sentence's subject rather than a header. Stripping it left a dangling
-  // "is a Risk Manager ...", so put it back when what follows starts lowercase.
-  if (/^\p{Ll}/u.test(body)) body = `${name} ${body}`;
-
-  const marker = body.search(/\b(Keynote|Talk|Session|Demo)\s*:/);
-  const bio = (marker > 0 ? body.slice(0, marker) : body).trim();
-  const talk = marker > 0 ? body.slice(marker).trim() : null;
-
-  if (bio) fromPdf.set(nameKey(name), { bio, talk, title: pdfTitle, company: pdfCompany });
+const fromPdf = new Map<string, PdfEntry>();
+for (const e of JSON.parse(fs.readFileSync(pdfPath, "utf8")) as PdfEntry[]) {
+  if (e.name) fromPdf.set(nameKey(e.name), e);
 }
 
 // ---------- photos ----------
@@ -194,7 +124,8 @@ for (const key of keys) {
     company: c.company ?? p?.company ?? null,
     linkedin_url: c.linkedin_url ?? null,
     bio: p?.bio ?? null,
-    talk: p?.talk ?? null,
+    talk_title: p?.talk_title ?? null,
+    talk_description: p?.talk_description ?? null,
     photo: findPhoto(name),
   });
 }
@@ -207,19 +138,24 @@ fs.writeFileSync(
 );
 
 console.log(`${speakers.length} speakers -> Assets/speakers.json\n`);
-console.log("NAME                          TITLE  BIO  TALK  PHOTO");
+console.log("NAME                        TALK TITLE                       BIO PHOTO");
 for (const s of speakers) {
   console.log(
-    `  ${s.name.slice(0, 27).padEnd(28)} ` +
-      `${s.title ? "  y  " : "  -  "} ${s.bio ? " y " : " - "}  ` +
-      `${s.talk ? " y  " : " -  "}  ${s.photo ? "y" : "MISSING"}`,
+    `  ${s.name.slice(0, 25).padEnd(26)} ` +
+      `${(s.talk_title ?? "— none —").slice(0, 30).padEnd(32)}` +
+      `${s.bio ? " y " : " - "} ${s.photo ? "y" : "MISSING"}`,
   );
 }
-const gaps = speakers.filter((s) => !s.bio || !s.photo || !s.title);
+const gaps = speakers.filter((s) => !s.bio || !s.photo || !s.title || !s.talk_title);
 if (gaps.length) {
   console.log(`\n${gaps.length} with gaps:`);
   for (const g of gaps) {
-    const missing = [!g.title && "title", !g.bio && "bio", !g.photo && "photo"]
+    const missing = [
+      !g.title && "title",
+      !g.bio && "bio",
+      !g.photo && "photo",
+      !g.talk_title && "talk title",
+    ]
       .filter(Boolean)
       .join(", ");
     console.log(`  ${g.name.padEnd(26)} missing ${missing}`);

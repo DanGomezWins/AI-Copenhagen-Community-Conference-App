@@ -274,8 +274,11 @@ npm run dev
 | `npm run build` | Production build and typecheck |
 | `npm run migrate` | Apply database migrations |
 | `npm run db:verify` | Print tables, policies and buckets |
-| `npm run parse:speakers` | Turn the supplied assets into `Assets/speakers.json` |
+| `npm run extract:deck` | Read the speaker deck PDF into `Assets/speakers-pdf.json` (talk titles, descriptions, bios) |
+| `npm run parse:speakers` | Merge the deck, the overview CSV and the headshots into `Assets/speakers.json` |
 | `npm run import:people` | Create accounts and profiles from that (`--attendees file.csv` for the guest list) |
+| `npm run import:programme` | Solve the running order from the availability CSVs and write it (`--write`; omit to preview) |
+| `npm run seed:guests` | Ten test attendees on `+alias` addresses |
 | `npm run seed:program` | Load the placeholder programme (`--clear` removes) |
 | `npm run reset:demo` | Empty the feed and restore a clean demo state |
 | `npm run test:scan` | Whiteboard reader, against a generated board |

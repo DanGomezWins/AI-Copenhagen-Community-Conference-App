@@ -22,3 +22,6 @@ railway-vars.txt
 
 # Extracted intermediate — regenerate with npm run parse:speakers
 Assets/speakers-extracted.txt
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo

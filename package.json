@@ -20,6 +20,7 @@
     "test:announcer": "tsx scripts/test-announcer.mts",
     "test:clash": "tsx scripts/test-clash.mts",
     "reset:demo": "tsx scripts/reset-demo.mts",
+    "extract:deck": "python3 scripts/extract-speakers-pdf.py",
     "parse:speakers": "tsx scripts/parse-speakers.mts",
     "import:people": "tsx scripts/import-people.mts",
     "test:slides": "tsx scripts/test-slides.mts",
