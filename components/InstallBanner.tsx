@@ -56,9 +56,10 @@ export default function InstallBanner() {
             <strong>Add to Home Screen</strong>.
           </p>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            You&rsquo;ll be asked to sign in once more inside the app — iPhone keeps
-            the installed app&rsquo;s sign-in separate from Safari&rsquo;s. After that
-            it stays signed in, and notifications only work there.
+            You&rsquo;ll sign in once more inside the app — iPhone keeps the
+            installed app&rsquo;s sign-in separate from Safari&rsquo;s. It emails you a
+            six-digit code, so you never have to leave the app. After that it
+            stays signed in, and notifications only work there.
           </p>
         </>
       ) : (

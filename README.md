@@ -114,18 +114,20 @@ Five minutes, on your phone.
 
 **1. Open it** → [aic-info-production.up.railway.app](https://aic-info-production.up.railway.app)
 
-**2. Sign in** with your email. Your profile is already there — nothing to fill in.
+**2. Sign in** with your email. A six-digit code arrives; type it in. Your
+profile is already there — nothing to fill in.
 
 **3. Add it to your home screen — ideally *before* signing in.** iPhone:
 **Share** → **Add to Home Screen**. Android: Chrome offers to install it.
 
-> **Worth knowing for the invitation email.** On iPhone a link in an email
-> always opens Safari; Apple has never allowed one to open an installed Home
-> Screen app. And the installed app keeps its **own sign-in, separate from
-> Safari's** — so anyone who signs in from the email and installs afterwards
-> signs in twice. The app now tells people to install first. Android is
-> unaffected: installed apps handle their own links and the sign-in carries
-> over. **The email should say "add it to your home screen, then sign in".**
+> **What the invitation email should say.** *"Open this link, add it to your
+> home screen, then open it from there and sign in."* In that order.
+>
+> On iPhone a link in an email always opens Safari — Apple has never allowed
+> one to open an installed Home Screen app — and the installed app keeps its
+> own sign-in, separate from Safari's. Signing in from the icon means doing it
+> once, in the place it needs to stick. Sign-in uses a six-digit code precisely
+> so nobody has to leave the app to finish. Android is unaffected.
 
 **4. Turn on notifications** — your avatar, top right, below the form.
 
@@ -141,8 +143,8 @@ doubles as a checklist, about 25 minutes.
 
 ### 1. Email for sign-in — the blocker
 
-Attendees sign in with a **magic link**: enter your email, click the link in
-your inbox, you're in. No passwords.
+Attendees sign in with a **six-digit code**: enter your email, a code arrives,
+type it into the app. No passwords, and no leaving the app.
 
 **The problem:** the free email service bundled with our database allows only a
 couple of messages an hour. Useless when 200 people arrive between 08:30 and
@@ -157,13 +159,26 @@ could sign in as anyone.
 
 *Decision: approve the ~$20, or tell me who to invoice.*
 
-> **On the emailed sign-in link.** The plan was for the Brevo email to contain
-> a link that signs each person straight in. I'd advise against it and have
-> built the safer version: the email links to the app, the person enters their
-> address, and the magic link goes to *their* inbox. A pre-made sign-in link
-> sitting in a bulk email can be forwarded, screenshotted, or left open on a
-> shared laptop — it *is* the credential. This way the email carries nothing
-> sensitive, and it's still two taps.
+> **Why a code and not a link.** Two reasons, and the second is the decisive one.
+>
+> The plan was for the Brevo email to carry a link that signs each person
+> straight in. A pre-made sign-in link in a bulk email *is* the credential — it
+> can be forwarded, screenshotted, or left open on a shared laptop.
+>
+> More importantly, **a link cannot work on iPhone at all**. Tapping a link in
+> Mail opens Safari, and an installed Home Screen app keeps its own sign-in
+> separate from Safari's. So an attendee who installs the app, asks to sign in,
+> and then taps the link in their email ends up signed into *Safari* while the
+> app they just installed stays signed out. There is no way to fix that from
+> our side.
+>
+> A code has neither problem. It is typed into whichever copy of the app asked
+> for it, so the session lands exactly where the person is — identical on
+> iPhone, Android, browser or installed.
+
+> **One Supabase setting is needed for this.** Authentication → Emails → Magic
+> Link: the template must include `{{ .Token }}` so the email shows the code.
+> I'll do it when Resend is connected; noting it so it isn't missed.
 
 ### 2. The AI key
 

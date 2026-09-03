@@ -41,9 +41,9 @@ export default function InstallFirst() {
         in there.
       </p>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        On iPhone the installed app keeps its own sign-in, so doing it this way
-        round saves you signing in twice. It&rsquo;s also the only way
-        notifications work.
+        On iPhone the installed app keeps its own sign-in, separate from
+        Safari&rsquo;s. Signing in from the icon means you only do it once — and
+        it&rsquo;s the only way notifications work.
       </p>
     </div>
   );

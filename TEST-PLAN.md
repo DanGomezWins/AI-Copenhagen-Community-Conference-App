@@ -90,7 +90,7 @@ Rough notes are fine — half a sentence is enough to act on.
 | 1.1 | Open the link | A sign-in screen appears, titled with the conference name | | |
 | 1.2 | Test-mode notice | An amber box explains no email will be sent yet | | |
 | 1.3 | **Arrive via the link above** | You land signed in as **Test Guy**, no password | | |
-| 1.3b | Sign in normally | Signing out and entering an email also works | | |
+| 1.3b | Sign in normally | Signing out and entering an email also works. **In test mode you go straight in; with real email live you'd type a six-digit code** | | |
 | 1.4 | Where you land | The Feed, with the event name and a Meetup link at the top | | |
 | 1.5 | **Install-first guidance** | On the **sign-in** screen, an iPhone shows a purple box: "Add to your home screen first" and explains you'd otherwise sign in twice | | |
 | 1.5b | Install banner when signed in | Already signed in **in Safari**, the Feed shows "Add this to your home screen" and warns about the second sign-in. "Got it" dismisses it for good | | |
@@ -102,7 +102,10 @@ Rough notes are fine — half a sentence is enough to act on.
 | 1.8 | Loading | A spinner, never a blank white screen | | |
 
 > **Why no email arrives yet:** sign-in is in test mode until a real email
-> provider is approved. See [the README](README.md#1-email-for-sign-in--the-blocker).
+> provider is approved. When it goes live the flow becomes: enter your email →
+> a **six-digit code** arrives → type it into the app. Deliberately a code, not
+> a link: on iPhone a link would open Safari and leave the installed app signed
+> out. See [the README](README.md#1-email-for-sign-in--the-blocker).
 
 ---
 
