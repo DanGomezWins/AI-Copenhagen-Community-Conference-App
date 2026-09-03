@@ -102,10 +102,31 @@ Rough notes are fine — half a sentence is enough to act on.
 | 1.8 | Loading | A spinner, never a blank white screen | | |
 
 > **Why no email arrives yet:** sign-in is in test mode until a real email
-> provider is approved. When it goes live the flow becomes: enter your email →
-> a **six-digit code** arrives → type it into the app. Deliberately a code, not
-> a link: on iPhone a link would open Safari and leave the installed app signed
-> out. See [the README](README.md#1-email-for-sign-in--the-blocker).
+> provider is approved. Deliberately a code, not a link: on iPhone a link would
+> open Safari and leave the installed app signed out. See
+> [the README](README.md#1-email-for-sign-in--the-blocker).
+
+### 1a. The real sign-in, simulated
+
+You can test the actual code flow right now. The code is genuine and is
+verified by Supabase exactly as an attendee's would be — **only the email
+delivery is simulated**, so it appears on screen instead of in an inbox.
+
+| # | Test | Expected | Result | Notes |
+|---|---|---|---|---|
+| 1a.1 | Sign out, then open **/login** | The email form | | |
+| 1a.2 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears with a real code in it | | |
+| 1a.3 | Type that code into the box below it | | | |
+| 1a.4 | Tap **Sign in** | You're signed in as Test Guy and land on the Feed | | |
+| 1a.5 | Wrong code | Type any wrong number — "That code isn't right", and you stay put | | |
+| 1a.6 | Send a new code | "Send a new code" is throttled for 30 seconds, then issues a fresh one | | |
+| 1a.7 | Unknown address | Try `nobody@example.com` — "No account for that address", and no account is created | | |
+| 1a.8 | Numeric keypad | On a phone the code box brings up digits, not letters | | |
+
+> **The code is 8 digits, not 6.** That is this Supabase project's setting.
+> Testing caught it — the form originally required exactly six, which would
+> have left the button permanently disabled for every attendee. It now accepts
+> 6–8.
 
 ---
 

@@ -8,6 +8,12 @@ import { EVENTS } from "@/lib/analytics";
 
 const DEV_SIGNIN = process.env.NEXT_PUBLIC_ENABLE_DEV_SIGNIN === "true";
 
+// Supabase's code length is a project setting, and this project issues eight
+// digits, not the six the docs assume. Testing caught it: a hard-coded six
+// would have left the Sign in button permanently disabled. Accept the range.
+const CODE_MIN = 6;
+const CODE_MAX = 8;
+
 /**
  * Sign-in by six-digit code, not by clicking a link.
  *
@@ -32,6 +38,8 @@ export default function LoginForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [resentAt, setResentAt] = useState<number | null>(null);
+  // Test mode only: the code that would have been emailed, shown on screen.
+  const [simulatedCode, setSimulatedCode] = useState<string | null>(null);
 
   const codeInput = useRef<HTMLInputElement>(null);
 
@@ -47,12 +55,24 @@ export default function LoginForm() {
 
     const address = email.trim().toLowerCase();
 
-    // Test mode: straight in, no email round-trip. Still a real session.
+    // Test mode: mint a real code server-side and show it, rather than sending
+    // mail. The code and the verification below are genuine — only delivery is
+    // simulated — so this exercises the same path attendees will use.
     if (DEV_SIGNIN) {
-      const url = new URL("/dev/signin", window.location.origin);
-      url.searchParams.set("email", address);
-      url.searchParams.set("next", next);
-      window.location.href = url.toString();
+      const res = await fetch("/api/dev/code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: address }),
+      });
+      const json = await res.json();
+      setBusy(false);
+      if (!res.ok) {
+        setError(json.error ?? "Could not create a code.");
+        return;
+      }
+      setSimulatedCode(json.code);
+      setResentAt(Date.now());
+      setStep("code");
       return;
     }
 
@@ -122,14 +142,29 @@ export default function LoginForm() {
         <div>
           <p className="font-semibold">Check your email</p>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            We sent a six-digit code to <strong>{email}</strong>. Type it in
-            below — you don&rsquo;t need to leave this app.
+            We sent a code to <strong>{email}</strong>. Type it in below — you
+            don&rsquo;t need to leave this app.
           </p>
         </div>
 
+        {simulatedCode && (
+          <div className="rounded-xl border-2 border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-4 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-danger-ink)]">
+              Test mode — no email was sent
+            </p>
+            <p className="mt-2 font-mono text-3xl font-bold tracking-[0.3em]">
+              {simulatedCode}
+            </p>
+            <p className="mt-2 text-xs text-[var(--color-muted)]">
+              This is a real code. Type it in below exactly as an attendee
+              would — only the email delivery is simulated.
+            </p>
+          </div>
+        )}
+
         <div>
           <label htmlFor="code" className="block text-sm font-medium">
-            Six-digit code
+            Sign-in code
           </label>
           <input
             ref={codeInput}
@@ -138,9 +173,9 @@ export default function LoginForm() {
             inputMode="numeric"
             autoComplete="one-time-code"
             pattern="[0-9]*"
-            maxLength={6}
+            maxLength={CODE_MAX}
             value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, CODE_MAX))}
             placeholder="123456"
             className={`${field} text-center font-mono text-2xl tracking-[0.4em]`}
           />
@@ -157,7 +192,7 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          disabled={busy || code.length < 6}
+          disabled={busy || code.length < CODE_MIN}
           className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3.5 font-semibold text-white disabled:opacity-50"
         >
           {busy ? "Checking…" : "Sign in"}
@@ -166,7 +201,12 @@ export default function LoginForm() {
         <div className="flex justify-between text-sm">
           <button
             type="button"
-            onClick={() => { setStep("email"); setCode(""); setError(""); }}
+            onClick={() => {
+              setStep("email");
+              setCode("");
+              setError("");
+              setSimulatedCode(null);
+            }}
             className="text-[var(--color-muted)] underline"
           >
             Use a different email

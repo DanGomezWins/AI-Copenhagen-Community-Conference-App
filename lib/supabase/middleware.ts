@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
   "/login",
   "/auth",
   "/dev", // dev sign-in; the route itself 404s unless the flag is on
+  "/api/dev", // mints a test code; also 404s unless the flag is on
   "/api/health",
   "/manifest.json",
   "/sw.js",
