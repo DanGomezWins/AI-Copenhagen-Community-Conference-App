@@ -94,15 +94,23 @@ export async function saveSession(
 
   // Announce only real, attendee-visible changes, and only when asked.
   // A typo fix should not buzz 200 phones.
-  if (f.announce && before && saved) {
-    const notice = describeChange(before, saved as Session);
+  if (f.announce && saved) {
+    const after = saved as Session;
+    // A brand new session has nothing to diff against, but adding one to the
+    // programme is exactly the kind of thing attendees need to hear about.
+    const notice = before
+      ? describeChange(before, after)
+      : `Added to the programme: ${after.title}${
+          after.speaker_name ? ` — ${after.speaker_name}` : ""
+        } (${timeAt(after.starts_at)}${after.room ? `, ${after.room}` : ""}).`;
+
     if (notice) {
       await supabase.from("posts").insert({
         body: notice,
         kind: "schedule_change",
         track: f.track,
         author_id: user.id,
-        session_id: (saved as Session).id,
+        session_id: after.id,
       });
     }
   }

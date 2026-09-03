@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { titleCaseName } from "@/lib/names";
@@ -97,4 +98,9 @@ export async function deleteMyProfile(): Promise<void> {
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+
+  // Without this the action returns to /me, which now has no user behind it.
+  // In the installed app that surfaced as a bare "this page couldn't load"
+  // rather than the sign-in screen. Send them somewhere that exists.
+  redirect("/login");
 }

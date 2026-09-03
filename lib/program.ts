@@ -126,6 +126,15 @@ export function describeChange(
     })`;
   }
 
+  // Un-cancelling has to be announced too. Without this, anyone who saw the
+  // cancellation in the feed goes on believing it — the correction never
+  // reaches them, and they skip a session that is running after all.
+  if (before.status === "cancelled" && after.status !== "cancelled") {
+    return `Back on: ${after.title} (${timeAt(after.starts_at)}${
+      after.room ? `, ${after.room}` : ""
+    })`;
+  }
+
   const parts: string[] = [];
   const movedTime = before.starts_at !== after.starts_at;
   const movedRoom = before.room !== after.room;

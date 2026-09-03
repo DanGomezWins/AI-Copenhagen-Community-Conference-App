@@ -12,10 +12,10 @@ export default async function ProfilePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ from?: string; track?: string }>;
+  searchParams: Promise<{ from?: string; track?: string; session?: string }>;
 }) {
   const { id } = await params;
-  const { from, track } = await searchParams;
+  const { from, track, session: fromSession } = await searchParams;
   const supabase = await createClient();
 
   const [{ data: profile }, { data: { user } }] = await Promise.all([
@@ -50,9 +50,11 @@ export default async function ProfilePage({
 
   // Come back to where you actually were, rather than always to Networking.
   const back =
-    from === "program"
-      ? { href: `/program${track ? `?track=${track}` : ""}`, label: "Program" }
-      : { href: "/people", label: "Networking" };
+    from === "session" && fromSession
+      ? { href: `/session/${fromSession}`, label: "Session" }
+      : from === "program"
+        ? { href: `/program${track ? `?track=${track}` : ""}`, label: "Program" }
+        : { href: "/people", label: "Networking" };
 
   return (
     <section>

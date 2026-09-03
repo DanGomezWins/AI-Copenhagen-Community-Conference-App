@@ -96,10 +96,11 @@ export default async function SessionPage({
           </h1>
         </div>
 
-        {s.status !== "cancelled" && (
-          <StarButton sessionId={s.id} starred={Boolean(star)} />
-        )}
       </div>
+
+      {s.status !== "cancelled" && (
+        <StarButton sessionId={s.id} starred={Boolean(star)} labelled />
+      )}
 
       {s.description && (
         <p className="mt-5 whitespace-pre-wrap leading-relaxed">{s.description}</p>
@@ -107,7 +108,9 @@ export default async function SessionPage({
 
       {speaker ? (
         <Link
-          href={`/people/${speaker.id}`}
+          // Carry where we are, so Back on their profile returns to this
+          // session rather than dumping you in the directory.
+          href={`/people/${speaker.id}?from=session&session=${s.id}`}
           className="mt-6 flex items-center gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
         >
           <Avatar

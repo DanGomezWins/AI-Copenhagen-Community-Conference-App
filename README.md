@@ -238,6 +238,60 @@ address.
 
 *Needs a free PostHog account and its project key adding to the environment.*
 
+### Setting up the PostHog dashboard
+
+The CSV is the plan; PostHog is where the numbers come from. There is no
+"import a CSV and get a dashboard" button — PostHog builds insights from events
+the app sends, not from rows in a spreadsheet. So the CSV stays the reference
+document, and you build the matching insights once. It takes about half an hour.
+
+**1. Create the project.** Sign up at
+[eu.posthog.com](https://eu.posthog.com) — the **EU** region specifically, which
+is what keeps the data in Frankfurt. Create a project called `AIMC-CC`.
+
+**2. Put the key in the environment.** Project settings → *Project API key*.
+Add both of these to `.env.local` and to Railway → Variables, then redeploy:
+
+```
+NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxxxxxxxxxx
+NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+**3. Use a separate project for testing.** This is worth doing before you test
+again, so today's clicking around doesn't end up in the real numbers. Create a
+second PostHog project called `AIMC-CC (test)` and use *its* key locally, while
+Railway keeps the production key. Same events, two buckets, nothing to clean up
+afterwards. PostHog's free tier covers both comfortably.
+
+**4. Send some events.** Open the app and click around. Within a minute or two
+they appear under *Activity* → *Live events*. Nothing can be charted until
+PostHog has seen an event at least once, so do this before step 5.
+
+**5. Build the insights.** Every metric in the CSV is one of three shapes, and
+each maps onto a PostHog insight type:
+
+| Shape in the CSV | PostHog insight | How to build it |
+|---|---|---|
+| A count ("feed views per attendee") | **Trends** | Pick the event, set *Chart type* to Trends, and under the event choose **Unique users** or **Total count** to match the formula |
+| A ratio of one step to another ("completed sign-ins / started sign-ins") | **Funnel** | Add the two events in order — e.g. `sign_in_started` then `sign_in_completed`. The conversion rate PostHog shows *is* the metric |
+| "Attendees who did X at all" | **Trends**, Unique users | Pick the event, set Unique users, and read it against the signed-in total |
+
+**6. Name each insight after its CSV row**, e.g. *Task Success — Sign-in
+completion*. That is what keeps the spreadsheet and the dashboard describing the
+same thing. Save each one to a dashboard called **HEART**.
+
+**7. Read it against the hypotheses.** The *Hypotheses* column already says what
+counts as good or bad, so on the day after the event you fill in *Results* and
+*Learnings* rather than staring at a number wondering whether 34% is good.
+
+The event names the app actually sends are listed in
+[`lib/analytics.ts`](lib/analytics.ts) — that file and the CSV are meant to stay
+in step, so if you add a row to one, add it to the other.
+
+**Two metrics are not in PostHog.** Average star ratings for the app and for
+sessions live in the database, because the ratings themselves do. Read those
+from **Organiser → Ratings & feedback** in the app, not from the dashboard.
+
 ---
 
 ## How it's built

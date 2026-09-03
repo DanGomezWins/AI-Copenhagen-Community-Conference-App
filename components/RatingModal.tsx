@@ -44,6 +44,34 @@ export default function RatingModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  /**
+   * Height of the *visible* part of the screen.
+   *
+   * On a phone, opening the keyboard shrinks the visual viewport but leaves the
+   * layout viewport alone. A `fixed inset-0` overlay therefore keeps its full
+   * height and the bottom of the sheet — Cancel and Send — ends up underneath
+   * the keyboard, unreachable. Testing found exactly that: you could type a
+   * comment and then had no way to submit it.
+   *
+   * Matching the overlay to visualViewport keeps the buttons on screen while
+   * the keyboard is up.
+   */
+  const [viewport, setViewport] = useState<number | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const sync = () => setViewport(vv.height);
+    sync();
+    vv.addEventListener("resize", sync);
+    vv.addEventListener("scroll", sync);
+    return () => {
+      vv.removeEventListener("resize", sync);
+      vv.removeEventListener("scroll", sync);
+      setViewport(null);
+    };
+  }, [open]);
+
   const already = existingStars != null;
 
   return (
@@ -58,7 +86,8 @@ export default function RatingModal({
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+          className="fixed inset-x-0 top-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+          style={{ height: viewport ? `${viewport}px` : "100dvh" }}
           onClick={(e) => e.target === dialog.current?.parentElement && setOpen(false)}
         >
           <div
@@ -66,7 +95,9 @@ export default function RatingModal({
             role="dialog"
             aria-modal="true"
             aria-label={label}
-            className="w-full max-w-sm rounded-t-2xl bg-[var(--color-surface)] p-5 pb-8 sm:rounded-2xl sm:pb-5"
+            // max-h + scroll so the sheet can never be taller than what's
+            // visible; the buttons stay reachable however small that gets.
+            className="max-h-full w-full max-w-sm overflow-y-auto overscroll-contain rounded-t-2xl bg-[var(--color-surface)] p-5 pb-8 sm:rounded-2xl sm:pb-5"
           >
             {state.ok ? (
               <div className="py-6 text-center">

@@ -11,7 +11,12 @@ export const dynamic = "force-dynamic";
 const btn =
   "rounded-lg border border-[var(--color-line)] px-3.5 py-2.5 text-sm font-medium";
 
-export default async function TestToolsPage() {
+export default async function TestToolsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ push?: string }>;
+}) {
+  const { push: pushResult } = await searchParams;
   const admin = createAdminClient();
   const [{ data: pending }, { count: subs }, { data: autoPosts }] = await Promise.all([
     admin
@@ -136,6 +141,8 @@ export default async function TestToolsPage() {
             Send a test notification
           </SubmitButton>
         </form>
+
+        {pushResult && <PushResult value={pushResult} />}
       </div>
 
       {/* --- cleanup --- */}
@@ -158,5 +165,45 @@ export default async function TestToolsPage() {
         </form>
       </div>
     </section>
+  );
+}
+
+/**
+ * What the push service said, rather than silence. "Sent" means the service
+ * accepted it — Apple or Google then decides whether the phone shows it, so a
+ * sent-but-not-seen result points at the device (notification permission, Focus
+ * mode, or the app being open at the time), not at the server.
+ */
+function PushResult({ value }: { value: string }) {
+  if (value === "notallowed") {
+    return (
+      <p className="mt-3 rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm">
+        You are not an organiser, so nothing was sent.
+      </p>
+    );
+  }
+
+  const [sent = "0", failed = "0", removed = "0"] = value.split("-");
+  const nothing = sent === "0" && failed === "0" && removed === "0";
+
+  return (
+    <p className="mt-3 rounded-lg border border-[var(--color-line)] p-3 text-sm">
+      {nothing ? (
+        <>
+          <strong>Nothing was sent.</strong> No device is subscribed, or the
+          VAPID keys are missing from this deployment.
+        </>
+      ) : (
+        <>
+          <strong>Accepted for {sent} device{sent === "1" ? "" : "s"}.</strong>{" "}
+          {failed !== "0" && `${failed} rejected by the push service. `}
+          {removed !== "0" && `${removed} dead subscription(s) removed. `}
+          {sent !== "0" &&
+            "If nothing appeared on the phone, the push service took it but the " +
+              "device chose not to show it — check notification permission, Focus " +
+              "mode, and that the app was not open in the foreground."}
+        </>
+      )}
+    </p>
   );
 }

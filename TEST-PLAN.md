@@ -56,6 +56,57 @@ Nine other test guests exist for the directory, same pattern:
 
 ---
 
+---
+
+## Round 2 — what to retest
+
+You worked through everything once and found 14 real problems. All but two are
+fixed; those two I could not reproduce and have questions about.
+
+**Everything below is set back to `-` in the tables, so you can work down this
+list and nothing else.** About 15 minutes.
+
+### Fixed — please confirm
+
+| # | What was wrong | Where |
+|---|---|---|
+| 5.8, 8.6 | **Every rating had been silently failing to save.** The biggest find of the round | [5](#5-session-pages), [8](#8-about-and-rating-the-app) |
+| 5.7, 8.4, 14.8 | Cancel and Send sat underneath the phone keyboard | [5](#5-session-pages), [8](#8-about-and-rating-the-app), [14](#14-design-and-general) |
+| 11.1–11.5 | Feedback review had nothing in it, because nothing ever saved | [11](#11-organiser-feedback-review) |
+| 1a.4 | Wrong code said "expired" instead of "incorrect" | [1a](#1a-signing-in-with-a-code) |
+| 1a.3 | Sign-in sometimes went nowhere; now always lands on your profile | [1a](#1a-signing-in-with-a-code) |
+| 5.5 | No visible star on a session page | [5](#5-session-pages) |
+| 5.1 | Back from a speaker's profile went to Networking, not the session | [5](#5-session-pages) |
+| 9.2 | Adding a session announced nothing in the Feed | [9](#9-organiser-schedule-editing) |
+| 7.x | Cancelling a session announced it; restoring it did not | [7](#7-the-feed) |
+| — | Signing out gave "this page couldn't load" | [2](#2-your-profile) |
+| 1.7 | White screen on cold launch — now brand purple | [1](#1-getting-in) |
+| 3.1 | Session titles said "to be confirmed" | [3](#3-the-programme) |
+
+### Not a bug after all
+
+| # | What it was |
+|---|---|
+| 12.3, 12.9 | **Do Not Disturb.** The push service accepted all of them; your phone chose not to show them. The test button now reports how many devices accepted, so you can tell the difference next time |
+| 2.10 | Answered in full under section 2 |
+
+### I need something from you
+
+| # | What I need |
+|---|---|
+| 7.3 | **The 199-character cap.** The limit is 500 in the form, the server and the database, and nothing in the code caps at 199. Retest, and tell me the number under the box and whether Post was greyed out |
+| 12.10 | **Announcer posting three times.** Each session is claimed before it posts, so this should be impossible. Check whether there were three *test sessions* rather than three posts for one |
+
+### Still never tested
+
+| # | What | Why |
+|---|---|---|
+| 3.7, 3.8 | Finished / happening-now styling | You asked how — [instructions are now under section 3](#3-the-programme) |
+| 10.2–10.6 | Slides | You asked how — [instructions are now under section 10](#10-organiser-slides) |
+| 13.1, 13.2 | Whiteboard scanner | Deliberately skipped; the feature is switched off |
+
+---
+
 ## How to record results
 
 Put a mark in the **Result** column and anything you noticed in **Notes**.
@@ -77,6 +128,7 @@ Rough notes are fine — half a sentence is enough to act on.
 
 | # | Section | What it covers |
 |---|---|---|
+| [R2](#round-2--what-to-retest) | **Round 2** | **Start here — what to retest** |
 | [1](#1-getting-in) | Getting in | Install to home screen |
 | [1a](#1a-signing-in-with-a-code) | Signing in | The real code flow, simulated |
 | [2](#2-your-profile) | Your profile | Prefilled profile, editing, photo |
@@ -111,8 +163,11 @@ Start signed out. If you are not, tap your avatar → **Sign out**.
 | 1.4 | Add to home screen         | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | :)     |                                        |
 | 1.5 | Icon                       | Purple square, white ring, mint centre                                        | :)     |                                        |
 | 1.6 | Open from the icon         | Full screen, no browser bar                                                   | :)     |                                        |
-| 1.7 | Loading                    | A spinner, never a blank white screen                                         | x      | still see white screen until full load |
-%%When I sign out from the settings page, I get a "this page couldn't load" error. error 3812484992. It should just go back to the sign-in page%%
+| 1.7 | Loading                    | A spinner, never a blank screen                                               | -      | PARTLY FIXED - retest. The launch screen is now brand purple rather than white, so a cold start reads as loading rather than broken. Navigation inside the app already showed a spinner. A fully branded iOS splash needs a generated image per device size - say the word if the purple is not enough. |
+> **Your note: signing out gave "this page couldn't load" (error 3812484992).**
+> FIXED - please retest. The sign-out action cleared the session and then let
+> the page re-render itself, but that page needs a signed-in user, so there was
+> nothing to show. It sends you to the sign-in screen now, as you expected.
 
 ---
 
@@ -128,8 +183,8 @@ an inbox.
 | ---- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears, with a real code in it         | :)     |                                                                                                                                                                                                                                                                                                                                      |
 | 1a.2 | Numeric keypad                                                     | Tapping the code box brings up digits, not letters                                  | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.3 | Type the code, tap **Sign in**                                     | You are signed in as Test Guy and land on the Feed                                  | x      | Sometimes when I tried this, it did go to the profile page, and other times it simply stayed on the sign-in page and didn't go anywhere. It should go to the profile page so the user can review and update the profile if needed before they get started.                                                                           |
-| 1a.4 | Wrong code                                                         | Type any wrong number — "That code isn't right", and you stay put                   | x      | Typing an incorrect code actually gives the message that the code has expired. Send a new one, which isn't entirely true because the problem is not that the code expired. It's that it was incorrect, and we don't need to send a new one. I think the message should be that the code is incorrect. Try again, or send a new code. |
+| 1a.3 | Type the code, tap **Sign in**                                     | You are signed in and land on **your profile**, ready to check it                   | -      | FIXED - retest. Now lands on the profile, as you asked. The intermittent "stayed on the sign-in page" was a soft navigation racing the session cookie; it does a full page load now, which always sees it. |
+| 1a.4 | Wrong code                                                         | "That code isn't right. Check it and try again, or send a new one."                 | -      | FIXED - retest. You were right: Supabase returns "expired or invalid" for both cases and the app only read the "expired" half. One honest message now covers both. |
 | 1a.5 | Send a new code                                                    | "Send a new code" is throttled for 30 seconds, then issues a fresh one              | :)     |                                                                                                                                                                                                                                                                                                                                      |
 | 1a.6 | Unknown address                                                    | Try `nobody@example.com` — "No account for that address", and no account is created | :)     |                                                                                                                                                                                                                                                                                                                                      |
 | 1a.7 | Stays signed in                                                    | Close the app fully and reopen from the icon — still signed in                      | :)     |                                                                                                                                                                                                                                                                                                                                      |
@@ -160,7 +215,7 @@ have to create anything.
 | 2.7  | Add a photo         | Appears within a few seconds, replacing your initials              | :)     |                                                                                                                                                                         |
 | 2.8  | Remove the photo    | Falls back to initials on a coloured circle                        | :)     |                                                                                                                                                                         |
 | 2.9  | Blank name refused  | Clearing your first name and saving is rejected                    | :)     |                                                                                                                                                                         |
-| 2.10 | Leave the directory | "Remove me from the directory" — you stay signed in, just unlisted | :)     | Answered below the table. |
+| 2.10 | Leave the directory | "Remove me from the directory" - you stay signed in, just unlisted | :)     | Your question is answered below the table. |
 
 ---
 
@@ -189,6 +244,22 @@ have to create anything.
 | 3.8  | Happening now             | The current session is outlined and badged "Now"                      |        | how can I test this since all the events are in the future?                                                                                                                                                                                                                                                                                        |
 | 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | :)     |                                                                                                                                                                                                                                                                                                                                                    |
 | 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | :)     |                                                                                                                                                                                                                                                                                                                                                    |
+
+> ### "How can I test 3.7 and 3.8 when everything is in the future?"
+>
+> Move a session to now. **Organiser → Edit the schedule**, pick anything, and:
+>
+> - **For 3.8 (happening now):** set the start to a few minutes ago and the end
+>   to a few minutes ahead. Untick *Tell attendees* so it does not post to the
+>   Feed. Open the Program — it should be outlined and badged **Now**.
+> - **For 3.7 (finished):** set both start and end to earlier today. It should
+>   fade back and read **Finished**.
+>
+> Put the times back afterwards, or just leave it — the whole programme is a
+> draft and gets replaced when the real running order arrives.
+>
+> This is also how you test **10.2–10.6**, so it is worth doing once and using
+> the same session for both.
 
 > **About the programme.** Speakers, times and rooms come from the two
 > availability CSVs; talk titles and descriptions come from the conference
@@ -220,37 +291,53 @@ have to create anything.
 
 ## 5. Session pages
 
-| #    | Test               | Expected                                                                 | Result | Notes                                                                                                                                                                                                                                        |
-| ---- | ------------------ | ------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5.1  | Open a session     | Tapping a session card opens its own page                                | :)     | this worked, but when I click through to the speaker for that session from that session page and I'm on the speaker's profile page, when I press back, it takes me back to the networking page rather than the session page that I came from |
-| 5.2  | Details            | Time, room, title, and description if set                                |        |                                                                                                                                                                                                                                              |
-| 5.3  | Speaker card       | The speaker as a tappable card with photo and title                      |        |                                                                                                                                                                                                                                              |
-| 5.4  | Through to profile | Tapping it opens their full profile                                      |        |                                                                                                                                                                                                                                              |
-| 5.5  | Star from here     | The ☆ works on this page too                                             |        |                                                                                                                                                                                                                                              |
-| 5.6  | Back goes back     | Returns where you came from — Program *or* My Schedule                   |        |                                                                                                                                                                                                                                              |
-| 5.7  | Rate this session  | Opens a modal: five stars plus an optional comment                       |        |                                                                                                                                                                                                                                              |
-| 5.8  | Send a rating      | Confirms, then closes                                                    |        |                                                                                                                                                                                                                                              |
-| 5.9  | Revise it          | Reopening shows your rating; changing it replaces rather than duplicates |        |                                                                                                                                                                                                                                              |
-| 5.10 | Anonymity stated   | The page says the rating is anonymous                                    |        |                                                                                                                                                                                                                                              |
+| #    | Test               | Expected                                                                 | Result | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---- | ------------------ | ------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.1  | Open a session     | Tapping a session card opens its own page                                | -      | FIXED - retest. Back from a speaker's profile now returns to the session you came from, not the directory. |
+| 5.2  | Details            | Time, room, title, and description if set                                | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 5.3  | Speaker card       | The speaker as a tappable card with photo and title                      | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 5.4  | Through to profile | Tapping it opens their full profile                                      | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 5.5  | Star from here     | A full-width **"Add to My Schedule"** button under the speaker card      | -      | FIXED - retest. The star was there, but drawn as a pale outline glyph in the border colour, which reads as decoration. It is a labelled button now. |
+| 5.6  | Back goes back     | Returns where you came from — Program *or* My Schedule                   | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 5.7  | Rate this session  | Opens a modal: five stars, a comment, **Cancel and Send both visible**    | -      | FIXED - retest **with the keyboard up**. The sheet was full-screen-height, but a keyboard only shrinks the *visible* viewport, so the buttons sat underneath it. It now matches the visible area and scrolls. |
+| 5.8  | Send a rating      | Confirms with a thank-you, then closes                                   | -      | FIXED - retest. This was not only the hidden button: **every rating had been failing to save since the feature was built.** See the note under this table. |
+| 5.9  | Revise it          | Reopening shows your rating *and your comment*; changing it replaces it   | -      | Retest - this could not have worked before, since nothing saved. |
+| 5.10 | Anonymity stated   | The page says the rating is anonymous                                    | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+
+---
+
+> ### Why no rating ever saved
+>
+> The table enforced "one rating per person per thing" with two *partial*
+> database indexes. Postgres cannot work out which index an upsert means when
+> the index only covers some rows, so every single save was rejected with
+> `there is no unique or exclusion constraint matching the ON CONFLICT
+> specification` — the error you saw. The ratings table had **zero rows in it**,
+> which is how I confirmed it had never once worked, for anyone, for sessions
+> or the app.
+>
+> One ordinary index replaces both, and revising a rating now updates it
+> instead of adding a second. Worth a proper look tomorrow, since it is the
+> only feature that was completely broken rather than merely awkward.
 
 ---
 
 ## 6. Networking
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 6.1 | Open Networking | The directory lists everyone with a profile | | |
-| 6.2 | You're listed | Find yourself | | |
-| 6.3 | Speaker photos | Real speakers show their headshots | | |
-| 6.4 | Filters | Everyone / Speakers / Guests, each with a count | | |
-| 6.5 | Search by name | Type `werdelin` | | |
-| 6.6 | Search by company | Type `zeronorth` | | |
-| 6.7 | **Danish, plain** | `norgaard` (no ø) still finds Nørregaard | | |
-| 6.8 | **Danish, accented** | `ødegård` also works | | |
-| 6.9 | No results | A friendly message, not a blank screen | | |
-| 6.10 | Speaker profile | Photo, title, company, **bio**, LinkedIn, their sessions | | |
-| 6.11 | **No email shown** | No email address anywhere on anyone's profile | | |
-| 6.12 | **Cancelled sessions hidden** | A cancelled session does **not** appear struck through on a profile | | |
+| #    | Test                          | Expected                                                            | Result | Notes |
+| ---- | ----------------------------- | ------------------------------------------------------------------- | ------ | ----- |
+| 6.1  | Open Networking               | The directory lists everyone with a profile                         | :)     |       |
+| 6.2  | You're listed                 | Find yourself                                                       | :)     |       |
+| 6.3  | Speaker photos                | Real speakers show their headshots                                  | :)     |       |
+| 6.4  | Filters                       | Everyone / Speakers / Guests, each with a count                     | :)     |       |
+| 6.5  | Search by name                | Type `werdelin`                                                     | :)     |       |
+| 6.6  | Search by company             | Type `zeronorth`                                                    | :)     |       |
+| 6.7  | **Danish, plain**             | `norgaard` (no ø) still finds Nørregaard                            | :)     |       |
+| 6.8  | **Danish, accented**          | `ødegård` also works                                                | :)     |       |
+| 6.9  | No results                    | A friendly message, not a blank screen                              | :)     |       |
+| 6.10 | Speaker profile               | Photo, title, company, **bio**, LinkedIn, their sessions            | :)     |       |
+| 6.11 | **No email shown**            | No email address anywhere on anyone's profile                       | :)     |       |
+| 6.12 | **Cancelled sessions hidden** | A cancelled session does **not** appear struck through on a profile | :)     |       |
 
 ---
 
@@ -258,35 +345,41 @@ have to create anything.
 
 **Anyone can post now** — not just organisers.
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 7.1 | Post button | Visible to everyone, top right of the Feed | | |
-| 7.2 | Post text | Appears at the top of the feed with your name and photo | | |
-| 7.3 | Character limit | Counter caps at 500 and the button disables past it | | |
-| 7.4 | **Post a photo** | Pick one; it uploads and appears in the feed | | |
-| 7.5 | **Post a link** | Type `example.com`; it renders as a tappable link | | |
-| 7.6 | Edit your own | Edit, save — marked "edited" | | |
-| 7.7 | Delete your own | Deleting returns you to the Feed | | |
-| 7.8 | **Organiser posts differ** | Organiser posts are tinted and badged "Organiser" | | |
-| 7.9 | Alert style | *Organisers:* "Mark as an alert" highlights it in red | | |
-| 7.10 | Alerts are restricted | A non-organiser sees no alert option | | |
-| 7.11 | **Moderation** | *Organisers:* every post has a "Moderate" link to delete it | | |
-| 7.12 | Live update *(2 devices)* | Post on one, it appears on the other **without refreshing** | | |
-| 7.13 | Empty post refused | Submitting nothing is rejected | | |
+| #    | Test                       | Expected                                                    | Result | Notes                                                                                            |
+| ---- | -------------------------- | ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| 7.1  | Post button                | Visible to everyone, top right of the Feed                  | :)     |                                                                                                  |
+| 7.2  | Post text                  | Appears at the top of the feed with your name and photo     | :)     |                                                                                                  |
+| 7.3  | Character limit            | Counter caps at 500 and the button disables past it         | -      | COULD NOT REPRODUCE - please retest and tell me more. The limit is 500 in the form, the server and the database, and there is no cap at 199 anywhere. If it happens again, tell me the count shown under the box and whether Post was greyed out. |
+| 7.4  | **Post a photo**           | Pick one; it uploads and appears in the feed                | :)     |                                                                                                  |
+| 7.5  | **Post a link**            | Type `example.com`; it renders as a tappable link           | :)     |                                                                                                  |
+| 7.6  | Edit your own              | Edit, save — marked "edited"                                | :)     |                                                                                                  |
+| 7.7  | Delete your own            | Deleting returns you to the Feed                            | :)     |                                                                                                  |
+| 7.8  | **Organiser posts differ** | Organiser posts are tinted and badged "Organiser"           | :)     |                                                                                                  |
+| 7.9  | Alert style                | *Organisers:* "Mark as an alert" highlights it in red       | :)     |                                                                                                  |
+| 7.10 | Alerts are restricted      | A non-organiser sees no alert option                        | :)     |                                                                                                  |
+| 7.11 | **Moderation**             | *Organisers:* every post has a "Moderate" link to delete it | :)     |                                                                                                  |
+| 7.12 | Live update *(2 devices)*  | Post on one, it appears on the other **without refreshing** | :)     |                                                                                                  |
+| 7.13 | Empty post refused         | Submitting nothing is rejected                              | :)     |                                                                                                  |
+| 7.14 | **Restore is announced**   | Cancel a session, then restore it - the Feed says "Back on"  | -      | NEW - from your note below. Organiser -> Edit the schedule.                                      |
+> **Your note: a cancelled session announced itself, a restored one did not.**
+> FIXED - and you were right about why it matters: anyone who saw the
+> cancellation would never learn it was back on, and would skip a session that
+> was running. Restoring now posts "Back on: ...". Test 7.14 below covers it.
+
 
 ---
 
 ## 8. About and rating the app
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 8.1 | Open About | "About" in the top bar | | |
-| 8.2 | The blurb | Explains what the app is and that it's an experiment | | |
-| 8.3 | Both names linked | Your name and Martin's link to your profiles | | |
-| 8.4 | Rate this app | Opens the same star modal | | |
-| 8.5 | Free text | Labelled "We'd love to hear your feedback or suggestions — it's anonymous" | | |
-| 8.6 | Submit | Confirms and closes | | |
-| 8.7 | Revise | Reopening shows your rating and lets you change it | | |
+| #   | Test              | Expected                                                                   | Result | Notes                                                                                                                        |
+| --- | ----------------- | -------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| 8.1 | Open About        | "About" in the top bar                                                     | :)     |                                                                                                                              |
+| 8.2 | The blurb         | Explains what the app is and that it's an experiment                       | :)     |                                                                                                                              |
+| 8.3 | Both names linked | Your name and Martin's link to your profiles                               | :)     |                                                                                                                              |
+| 8.4 | Rate this app     | Opens the same star modal, Cancel and Send both visible                    | -      | FIXED - retest. Same two fixes as 5.7 and 5.8. |
+| 8.5 | Free text         | Labelled "We'd love to hear your feedback or suggestions — it's anonymous" | :)     |                                                                                                                              |
+| 8.6 | Submit            | Confirms and closes; your comment is still there if you reopen             | -      | FIXED - retest. The comment vanished because the whole save failed - see the note under section 5. |
+| 8.7 | Revise            | Reopening shows your rating and lets you change it                         | -      | Retest - nothing saved before, so this could not have worked. |
 
 ---
 
@@ -294,37 +387,55 @@ have to create anything.
 
 **Organiser → Edit the schedule.**
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 9.1 | Open it | All rooms listed, grouped | | |
-| 9.2 | Add a session | Room, title, speaker, start time | | |
-| 9.3 | End time follows | Setting a start fills the end automatically; moving the start moves it | | |
-| 9.4 | Room is a choice | Three fixed rooms, no free-text box | | |
-| 9.5 | **Description** | A description field, shown on the session page | | |
-| 9.6 | Move a session | Change the time, leave "Tell attendees" ticked | | |
-| 9.7 | Change announced | The Feed shows what moved and what it was before | | |
-| 9.8 | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate | | |
-| 9.9 | Opt out | Unticking "Tell attendees" posts nothing | | |
-| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | | |
-| 9.11 | Cancel | Stays visible struck through in the Program | | |
-| 9.12 | Restore | Puts it back | | |
-| 9.13 | Delete | Removes it entirely | | |
+| #    | Test                 | Expected                                                                       | Result | Notes                                                                         |
+| ---- | -------------------- | ------------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------- |
+| 9.1  | Open it              | All rooms listed, grouped                                                      | :)     |                                                                               |
+| 9.2  | Add a session        | Room, title, speaker, start time - **and the Feed announces it**               | -      | FIXED - retest. Good catch: only *changes* were announced, so a session added to the programme appeared silently. A new session now posts "Added to the programme: ..." when Tell attendees is ticked. |
+| 9.3  | End time follows     | Setting a start fills the end automatically; moving the start moves it         | :)     |                                                                               |
+| 9.4  | Room is a choice     | Three fixed rooms, no free-text box                                            | :)     |                                                                               |
+| 9.5  | **Description**      | A description field, shown on the session page                                 | :)     |                                                                               |
+| 9.6  | Move a session       | Change the time, leave "Tell attendees" ticked                                 | :)     |                                                                               |
+| 9.7  | Change announced     | The Feed shows what moved and what it was before                               | :)     |                                                                               |
+| 9.8  | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate                  | :)     |                                                                               |
+| 9.9  | Opt out              | Unticking "Tell attendees" posts nothing                                       | :)     |                                                                               |
+| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | :)     |                                                                               |
+| 9.11 | Cancel               | Stays visible struck through in the Program                                    | :)     |                                                                               |
+| 9.12 | Restore              | Puts it back                                                                   | :)     |                                                                               |
+| 9.13 | Delete               | Removes it entirely                                                            | :)     |                                                                               |
 
 ---
 
 ## 10. Organiser: slides
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 10.1 | Slides field | The session form has a "Slides URL (PDF)" box | | |
-| 10.2 | Before it ends | Add a URL to a **future** session. Its page says slides will appear once it's finished — no download yet | | |
-| 10.3 | **After it ends** | Add a URL to a session already finished. Within a minute the Feed says the slides are available | | |
-| 10.4 | Download appears | That session's page now shows a download button | | |
-| 10.5 | **No URL, no post** | A finished session **without** a URL never announces anything | | |
-| 10.6 | No double-posting | It announces once, not repeatedly | | |
+| #    | Test                | Expected                                                                                                 | Result | Notes                                                                      |
+| ---- | ------------------- | -------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------- |
+| 10.1 | Slides field        | The session form has a "Slides URL (PDF)" box                                                            | :)     |                                                                            |
+| 10.2 | Before it ends      | Add a URL to a **future** session. Its page says slides will appear once it's finished — no download yet | -      | Couldn't test this as the session is in the future, but I need to test it. |
+| 10.3 | **After it ends**   | Add a URL to a session already finished. Within a minute the Feed says the slides are available          | -      |                                                                            |
+| 10.4 | Download appears    | That session's page now shows a download button                                                          | -      |                                                                            |
+| 10.5 | **No URL, no post** | A finished session **without** a URL never announces anything                                            | -      |                                                                            |
+| 10.6 | No double-posting   | It announces once, not repeatedly                                                                        | -      |                                                                            |
 
-> Use **Organiser → Edit the schedule** to set a session's end time to a few
-> minutes ago, and give it any PDF link, to test 10.3.
+> ### How to test the slides, step by step
+>
+> You need one session that has already finished. Five minutes.
+>
+> 1. **Organiser → Edit the schedule.** Pick any session and add a *Slides URL* —
+>    any PDF link will do, e.g. `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`.
+>    Leave its time alone for now and save.
+> 2. **Test 10.2:** open that session's page. It should say slides will appear
+>    once it has finished, with **no** download button.
+> 3. Go back and set its **end time to five minutes ago** (and the start before
+>    that). Untick *Tell attendees* — the announcer does this part itself.
+> 4. **Test 10.3:** wait a minute, then open the Feed. It should say the slides
+>    are available, badged as automatic. (Impatient? **Organiser → Testing
+>    tools → Run announcer now**.)
+> 5. **Test 10.4:** open the session page again — the download button is there.
+> 6. **Test 10.6:** run the announcer twice more. Still one post, not three.
+> 7. **Test 10.5:** pick a *different* finished session with **no** slides URL
+>    and run the announcer. It must say nothing at all about that one.
+>
+> Then put the times back.
 
 ---
 
@@ -332,13 +443,15 @@ have to create anything.
 
 **Organiser → Ratings & feedback.**
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 11.1 | Open it | Averages for the app and for sessions | | |
-| 11.2 | Two-column table | Stars beside the comment | | |
-| 11.3 | Your ratings | The ones you left in 5.8 and 8.6 appear | | |
-| 11.4 | Grouped by session | Session ratings grouped under each session, busiest first | | |
-| 11.5 | **Anonymous** | No name anywhere — you can't tell who said what | | |
+| #    | Test               | Expected                                                  | Result | Notes                                                                                                                                                               |
+| ---- | ------------------ | --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 11.1 | Open it            | Averages for the app and for sessions                     | -      | UNBLOCKED - retest. You could not submit anything, so there was nothing here to see. Leave a rating in 5.8 and 8.6 first, then come back. |
+| 11.2 | Two-column table   | Stars beside the comment                                  | -      |                                                                                                                                                                     |
+| 11.3 | Your ratings       | The ones you left in 5.8 and 8.6 appear                   | -      |                                                                                                                                                                     |
+| 11.4 | Grouped by session | Session ratings grouped under each session, busiest first | -      | UNBLOCKED - retest. Same cause. |
+| 11.5 | **Anonymous**      | No name anywhere — you can't tell who said what           | -      |                                                                                                                                                                     |
+When I rated the app and submitted some feedback, logged in as test guy on the website in a desktop browser, I got the error message: 'there is no unique or exclusion constraint matching the ON CONFLICT specification' - what does that mean?
+
 
 ---
 
@@ -347,23 +460,23 @@ have to create anything.
 ⚠️ **Do this from the home-screen app**, not the browser — on iPhone
 notifications only work once installed.
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 12.1 | Turn on notifications | Avatar → scroll down → allow | | |
-| 12.2 | Confirms | "Notifications are on" | | |
-| 12.3 | Test notification | Organiser → Testing tools → Send a test — it arrives | | |
-| 12.4 | Tapping opens the app | | | |
-| 12.5 | Create a test session | Testing tools → **+3 min**, listed as "waiting" | | |
-| 12.6 | Wait a minute | Reload — it says "announced ✓" | | |
-| 12.7 | Correct time | The time shown is Copenhagen time, not two hours out | | |
-| 12.8 | In the Feed | "Next up at HH:MM …" appears, badged as automatic | | |
-| 12.9 | Notification arrived | | | |
-| 12.10 | **No double-posting** | Tap "Run announcer now" three times — still only one post | | |
-| 12.11 | Not-yet-due | **+30 min**, run it — nothing posts, too far out | | |
-| 12.12 | **Kill switch** | Organiser → turn announcements off; create +3 min and run — nothing posts | | |
-| 12.13 | Back on | Toggling back on, it posts again | | |
-| 12.14 | Buttons show they're pressed | Every organiser button shows a spinner while working | | |
-| 12.15 | Clean up | "Remove test sessions" clears them *(check the Feed first)* | | |
+| #     | Test                         | Expected                                                                  | Result | Notes                                                                                |
+| ----- | ---------------------------- | ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| 12.1  | Turn on notifications        | Avatar → scroll down → allow                                              | :)     |                                                                                      |
+| 12.2  | Confirms                     | "Notifications are on"                                                    | :)     |                                                                                      |
+| 12.3  | Test notification            | Organiser -> Testing tools -> Send a test - it arrives                    | -      | NOT A BUG - retest with Do Not Disturb off. The button now also reports how many devices accepted it, so a server problem is distinguishable from a phone setting. |
+| 12.4  | Tapping opens the app        |                                                                           | :)     |                                                                                      |
+| 12.5  | Create a test session        | Testing tools → **+3 min**, listed as "waiting"                           | :)     |                                                                                      |
+| 12.6  | Wait a minute                | Reload — it says "announced ✓"                                            | :)     |                                                                                      |
+| 12.7  | Correct time                 | The time shown is Copenhagen time, not two hours out                      | :)     |                                                                                      |
+| 12.8  | In the Feed                  | "Next up at HH:MM …" appears, badged as automatic                         | :)     |                                                                                      |
+| 12.9  | Notification arrived         |                                                                           | -      | NOT A BUG - same cause. Retest with Do Not Disturb off. |
+| 12.10 | **No double-posting**        | Tap "Run announcer now" three times - still only one post                 | -      | COULD NOT REPRODUCE - please retest carefully. Each session is claimed before it posts, so a second run should find nothing to do. Most likely there were three *test sessions* (from tapping +3 min more than once) rather than three posts for one. Check the pending list first. |
+| 12.11 | Not-yet-due                  | **+30 min**, run it — nothing posts, too far out                          | :)     |                                                                                      |
+| 12.12 | **Kill switch**              | Organiser → turn announcements off; create +3 min and run — nothing posts | :)     |                                                                                      |
+| 12.13 | Back on                      | Toggling back on, it posts again                                          | :)     |                                                                                      |
+| 12.14 | Buttons show they're pressed | Every organiser button shows a spinner while working                      | :)     |                                                                                      |
+| 12.15 | Clean up                     | "Remove test sessions" clears them *(check the Feed first)*               | :)     |                                                                                      |
 
 ---
 
@@ -373,26 +486,26 @@ notifications only work once installed.
 scanner still works at `/scan` and can be switched back on. Only test if you're
 curious.
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 13.1 | Reach it | `/scan` still loads | | |
-| 13.2 | Read a board | Photograph a handwritten list; it reads it | | |
+| #    | Test         | Expected                                   | Result | Notes                                               |
+| ---- | ------------ | ------------------------------------------ | ------ | --------------------------------------------------- |
+| 13.1 | Reach it     | `/scan` still loads                        | -      | This functionality is disabled, so not testing it.  |
+| 13.2 | Read a board | Photograph a handwritten list; it reads it | -      |                                                     |
 
 ---
 
 ## 14. Design and general
 
-| # | Test | Expected | Result | Notes |
-|---|---|---|---|---|
-| 14.1 | **Light throughout** | No dark mode anywhere, even with your phone in dark mode | | |
-| 14.2 | Brand purple | Buttons and links are `#4309FF` | | |
-| 14.3 | Readable | Text is high contrast and comfortable in daylight | | |
-| 14.4 | Inter font | Clean sans-serif throughout | | |
-| 14.5 | App name | **AIMC-CC** in the top bar and on the home-screen icon | | |
-| 14.6 | Full name | Spelled out on the Feed and the sign-in screen | | |
-| 14.7 | Tap targets | Nothing fiddly to hit one-handed | | |
-| 14.8 | No overflow | Nothing spills off the side of the screen | | |
-| 14.9 | Speed | Screens open quickly on mobile data | | |
+| #    | Test                 | Expected                                                 | Result | Notes                                                                                                                                                          |
+| ---- | -------------------- | -------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14.1 | **Light throughout** | No dark mode anywhere, even with your phone in dark mode | :)     |                                                                                                                                                                |
+| 14.2 | Brand purple         | Buttons and links are `#4309FF`                          | :)     |                                                                                                                                                                |
+| 14.3 | Readable             | Text is high contrast and comfortable in daylight        | :)     |                                                                                                                                                                |
+| 14.4 | Inter font           | Clean sans-serif throughout                              | :)     |                                                                                                                                                                |
+| 14.5 | App name             | **AIMC-CC** in the top bar and on the home-screen icon   | :)     |                                                                                                                                                                |
+| 14.6 | Full name            | Spelled out on the Feed and the sign-in screen           | :)     |                                                                                                                                                                |
+| 14.7 | Tap targets          | Nothing fiddly to hit one-handed                         | :)     |                                                                                                                                                                |
+| 14.8 | No overflow          | Nothing spills off the side, and no modal button is cut off | -      | FIXED - retest. The rating modal was the only case; see 5.7. |
+| 14.9 | Speed                | Screens open quickly on mobile data                      | :)     |                                                                                                                                                                |
 
 ---
 
@@ -413,11 +526,7 @@ a button doesn't say what you'd expect, that's worth knowing.
 Things you might flag that are intentional:
 
 - **No email arrives when signing in.** Test mode until Resend is approved.
-- **Talk titles are placeholders.** The speakers, photos and bios are real; the
-  programme arrives 24–48h before.
 - **Open Sessions has no listing.** It links out; the URL is still to come.
-- **Two speakers are incomplete.** Sofie Hvitved has no title or bio, Xander
-  Evangelidis has no bio — neither is in the source material.
 - **Attendees aren't loaded yet.** Ten test guests stand in until the
   checkin.no export arrives. They are the only accounts with a `+` in the
   address, so they are easy to remove.

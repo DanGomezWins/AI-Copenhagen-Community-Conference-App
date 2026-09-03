@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { track } from "@/lib/track";
 import { EVENTS } from "@/lib/analytics";
@@ -27,7 +27,6 @@ const CODE_MAX = 8;
  * email still carries a link as a fallback for anyone reading it on a laptop.
  */
 export default function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") ?? "/";
   const urlError = params.get("error");
@@ -119,17 +118,23 @@ export default function LoginForm() {
     setBusy(false);
 
     if (err) {
-      setError(
-        /expired/i.test(err.message)
-          ? "That code has expired. Send a new one."
-          : "That code isn't right. Check it and try again.",
-      );
+      // Supabase returns "Token has expired or is invalid" for BOTH a wrong
+      // code and a stale one, so matching on /expired/ told people to request a
+      // new code when they had simply mistyped the one in front of them.
+      // Testing caught it. One message covers both cases honestly.
+      setError("That code isn't right. Check it and try again, or send a new one.");
       return;
     }
 
     track(EVENTS.SIGN_IN_COMPLETED);
-    router.push(next);
-    router.refresh();
+
+    // Land on the profile, so the first thing you do is check what the ticket
+    // list already filled in about you. router.push alone was unreliable here:
+    // the session cookie is set by the client library moments earlier, and a
+    // soft navigation sometimes re-rendered against the old (signed-out) state
+    // and bounced straight back to this page. A full load always sees the
+    // cookie.
+    window.location.assign(next === "/" ? "/me?welcome=1" : next);
   }
 
   const field =

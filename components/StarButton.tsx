@@ -16,10 +16,18 @@ export default function StarButton({
   sessionId,
   starred,
   size = "md",
+  labelled = false,
 }: {
   sessionId: string;
   starred: boolean;
   size?: "sm" | "md";
+  /**
+   * Spell out what the star does. In a dense list the glyph alone is fine
+   * because it repeats down the page and the pattern is obvious. On a session
+   * page it appears exactly once, and testing showed people simply did not see
+   * it — a pale outline star in the corner reads as decoration. There, say so.
+   */
+  labelled?: boolean;
 }) {
   const [optimistic, setOptimistic] = useOptimistic(starred);
 
@@ -33,6 +41,7 @@ export default function StarButton({
         track(optimistic ? EVENTS.SESSION_UNSTARRED : EVENTS.SESSION_STARRED, { sessionId });
         return toggleStar(formData);
       }}
+      className={labelled ? "mt-5" : undefined}
     >
       <input type="hidden" name="session_id" value={sessionId} />
       <input type="hidden" name="starred" value={String(optimistic)} />
@@ -40,15 +49,24 @@ export default function StarButton({
         type="submit"
         aria-pressed={optimistic}
         aria-label={optimistic ? "Remove from My Schedule" : "Add to My Schedule"}
-        className={`${dimension} flex shrink-0 items-center justify-center rounded-full transition-colors ${
-          optimistic
-            ? "text-[var(--color-accent)]"
-            : "text-[var(--color-line)] hover:text-[var(--color-muted)]"
-        }`}
+        className={
+          labelled
+            ? `flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-semibold transition-colors ${
+                optimistic
+                  ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                  : "border-[var(--color-line)] text-[var(--color-ink)]"
+              }`
+            : `${dimension} flex shrink-0 items-center justify-center rounded-full transition-colors ${
+                optimistic
+                  ? "text-[var(--color-accent)]"
+                  : "text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+              }`
+        }
       >
-        <span className={glyph} aria-hidden="true">
+        <span className={labelled ? "text-lg" : glyph} aria-hidden="true">
           {optimistic ? "★" : "☆"}
         </span>
+        {labelled && (optimistic ? "In My Schedule" : "Add to My Schedule")}
       </button>
     </form>
   );

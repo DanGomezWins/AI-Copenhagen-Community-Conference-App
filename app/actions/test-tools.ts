@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runAnnouncerTick } from "@/lib/announcer";
@@ -58,15 +59,29 @@ export async function runAnnouncerNow(): Promise<void> {
   revalidatePath("/admin/test");
 }
 
+/**
+ * Sends a test notification and reports what the push service actually said.
+ *
+ * sendToAll deliberately swallows failures — a push that doesn't land must
+ * never break the action that triggered it. That is right in production and
+ * useless while testing: the button appeared to do nothing whether it had sent
+ * to five devices or failed on all of them. The counts come back in the URL so
+ * there is something to read.
+ */
 export async function sendTestPush(): Promise<void> {
   const { ok } = await guard();
-  if (!ok) return;
-  await sendToAll({
+  if (!ok) redirect("/admin/test?push=notallowed");
+
+  const result = await sendToAll({
     title: "AIC Info — test",
     body: "If you can see this, notifications are working.",
     url: "/",
     tag: "test-push",
   });
+
+  redirect(
+    `/admin/test?push=${result.sent}-${result.failed}-${result.removed}`,
+  );
 }
 
 export async function clearTestData(): Promise<void> {

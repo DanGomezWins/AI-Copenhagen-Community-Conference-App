@@ -29,12 +29,22 @@ export async function saveRating(
   const subject = sessionId ? "session" : "app";
   const comment = String(formData.get("comment") ?? "").trim().slice(0, 1000) || null;
 
+  // One conflict target for both cases. An app rating has session_id = null,
+  // and the index behind this is NULLS NOT DISTINCT so that still resolves to
+  // a single row per person. See migration 0012 — the previous version named
+  // partial indexes here, which Postgres cannot infer from, so every save
+  // failed.
   const { error } = await supabase.from("ratings").upsert(
     { subject, session_id: sessionId, stars, comment, profile_id: user.id },
-    { onConflict: sessionId ? "profile_id,session_id" : "profile_id" },
+    { onConflict: "profile_id,session_id" },
   );
 
-  if (error) return { error: error.message };
+  if (error) {
+    // The raw Postgres text ("no unique or exclusion constraint matching the
+    // ON CONFLICT specification") means nothing to someone rating a talk.
+    console.error("saveRating failed:", error.message);
+    return { error: "That didn't save. Try again in a moment." };
+  }
 
   revalidatePath("/about");
   if (sessionId) revalidatePath(`/session/${sessionId}`);
