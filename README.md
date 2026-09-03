@@ -116,9 +116,16 @@ Five minutes, on your phone.
 
 **2. Sign in** with your email. Your profile is already there — nothing to fill in.
 
-**3. Add it to your home screen.** iPhone: **Share** → **Add to Home Screen**.
-Android: Chrome offers to install it. Do this before testing notifications — on
-iPhone they only work once installed.
+**3. Add it to your home screen — ideally *before* signing in.** iPhone:
+**Share** → **Add to Home Screen**. Android: Chrome offers to install it.
+
+> **Worth knowing for the invitation email.** On iPhone a link in an email
+> always opens Safari; Apple has never allowed one to open an installed Home
+> Screen app. And the installed app keeps its **own sign-in, separate from
+> Safari's** — so anyone who signs in from the email and installs afterwards
+> signs in twice. The app now tells people to install first. Android is
+> unaffected: installed apps handle their own links and the sign-in carries
+> over. **The email should say "add it to your home screen, then sign in".**
 
 **4. Turn on notifications** — your avatar, top right, below the form.
 

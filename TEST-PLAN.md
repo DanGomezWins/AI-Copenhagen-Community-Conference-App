@@ -32,6 +32,19 @@ https://aic-info-production.up.railway.app/dev/signin?email=dangomezwindshuttle%
 > `dangomezwindshuttle+first_last@gmail.com`. Sign in as any of them the same
 > way by swapping the email in that link.
 
+> ### ⚠️ On iPhone, that link opens Safari — not the installed app
+>
+> Apple has never allowed a link in an email to open a Home Screen web app, and
+> there is no way to build around it. Worse, an installed iPhone web app keeps
+> **its own sign-in, separate from Safari's** — so signing in via the link and
+> installing afterwards means signing in *twice*.
+>
+> **So the order matters, and the app now says so.** Install first, then sign in
+> from the icon. Test 1.5 checks that guidance appears.
+>
+> **On Android none of this applies:** an installed app handles its own links,
+> and the sign-in carries over.
+
 ---
 
 ## How to record results
@@ -79,7 +92,11 @@ Rough notes are fine — half a sentence is enough to act on.
 | 1.3 | **Arrive via the link above** | You land signed in as **Test Guy**, no password | | |
 | 1.3b | Sign in normally | Signing out and entering an email also works | | |
 | 1.4 | Where you land | The Feed, with the event name and a Meetup link at the top | | |
-| 1.5 | Add to home screen | iPhone: Share → Add to Home Screen. Android: Chrome offers to install | | |
+| 1.5 | **Install-first guidance** | On the **sign-in** screen, an iPhone shows a purple box: "Add to your home screen first" and explains you'd otherwise sign in twice | | |
+| 1.5b | Install banner when signed in | Already signed in **in Safari**, the Feed shows "Add this to your home screen" and warns about the second sign-in. "Got it" dismisses it for good | | |
+| 1.5c | Add to home screen | iPhone: Share → Add to Home Screen. Android: Chrome offers to install | | |
+| 1.5d | **Sign in inside the app** | Opening from the icon on iPhone, you're asked to sign in again — expected, and only once | | |
+| 1.5e | Banner gone once installed | Neither box appears inside the installed app | | |
 | 1.6 | Icon | Purple square, white ring, mint centre | | |
 | 1.7 | Launch from the icon | Opens full screen, no browser bar, still signed in | | |
 | 1.8 | Loading | A spinner, never a blank white screen | | |
@@ -358,3 +375,6 @@ Things you might flag that are intentional:
 - **Two speakers are not on the programme.** Arun Prakash and Thomas Martinsen
   gave no availability in either CSV.
 - **The icon is a placeholder** until brand assets arrive.
+- **On iPhone the email link opens Safari, not the app.** An Apple limitation
+  with no workaround. The app now tells people to install before signing in,
+  which avoids the double sign-in it would otherwise cause. Android is fine.

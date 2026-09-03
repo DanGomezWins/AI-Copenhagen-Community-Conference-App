@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { EVENT } from "@/lib/event";
 import { track } from "@/lib/track";
 import { EVENTS } from "@/lib/analytics";
+import InstallFirst from "@/components/InstallFirst";
 
 const DEV_SIGNIN = process.env.NEXT_PUBLIC_ENABLE_DEV_SIGNIN === "true";
 
@@ -130,6 +131,8 @@ export default function LoginPage() {
       >
         Event details on Meetup ↗
       </a>
+      <InstallFirst />
+
       <div className="mt-8">
         <Suspense fallback={null}>
           <LoginForm />

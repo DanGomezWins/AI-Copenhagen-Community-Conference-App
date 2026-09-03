@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import FeedList from "./FeedList";
 import type { PostWithAuthor } from "@/lib/feed";
 import { EVENT } from "@/lib/event";
+import InstallBanner from "@/components/InstallBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,8 @@ export default async function FeedPage() {
           Post
         </Link>
       </div>
+
+      <InstallBanner />
 
       <h2 className="mt-8 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
         Feed
