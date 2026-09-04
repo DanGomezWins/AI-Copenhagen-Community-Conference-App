@@ -120,13 +120,14 @@ export async function saveSession(
   revalidatePath("/admin/schedule");
 
   if (clash) {
-    return {
-      warning:
-        `Your change was saved. ${clash.room} now has both this session and ` +
-        `"${clash.title}" (${timeAt(clash.starts_at)}` +
-        `${clash.ends_at ? `–${timeAt(clash.ends_at)}` : ""}) overlapping. ` +
-        `Both are showing to attendees — move or cancel one if that is wrong.`,
-    };
+    // Show warning but still redirect back to schedule.
+    // The conflict is saved and the organiser needs to see the full list to resolve it.
+    const msg =
+      `Your change was saved. ${clash.room} now has both this session and ` +
+      `"${clash.title}" (${timeAt(clash.starts_at)}` +
+      `${clash.ends_at ? `–${timeAt(clash.ends_at)}` : ""}) overlapping. ` +
+      `Both are showing to attendees — move or cancel one if that is wrong.`;
+    redirect(`/admin/schedule?warning=${encodeURIComponent(msg)}`);
   }
 
   redirect("/admin/schedule");

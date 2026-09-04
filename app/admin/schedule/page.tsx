@@ -6,7 +6,12 @@ import SubmitButton from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function SchedulePage() {
+export default async function SchedulePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ warning?: string }>;
+}) {
+  const { warning } = await searchParams;
   const supabase = await createClient();
   const { data } = await supabase
     .from("sessions")
@@ -16,6 +21,11 @@ export default async function SchedulePage() {
 
   return (
     <section>
+      {warning && (
+        <div className="rounded-lg border border-[var(--color-warning-soft)] bg-[var(--color-warning-soft)] p-3.5">
+          <p className="text-sm text-[var(--color-warning-ink)]">{warning}</p>
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Schedule</h1>

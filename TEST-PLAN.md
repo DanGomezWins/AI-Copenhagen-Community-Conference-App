@@ -111,12 +111,12 @@ list and nothing else.** About 15 minutes.
 
 Put a mark in the **Result** column and anything you noticed in **Notes**.
 
-| Type this | Means |
-|---|---|
-| `:)` | works as described |
-| `/` | works, but something's off |
-| `x` | broken |
-| `-` | not tested |
+| Type this | Means                      |
+| --------- | -------------------------- |
+| works     | works as described         |
+| `/`       | works, but something's off |
+| `x`       | broken                     |
+| `-`       | not tested                 |
 
 All plain keyboard characters, so they're quick to type on a phone.
 
@@ -155,15 +155,15 @@ Rough notes are fine — half a sentence is enough to act on.
 
 Start signed out. If you are not, tap your avatar → **Sign out**.
 
-| #   | Test                       | Expected                                                                      | Result | Notes                                  |
-| --- | -------------------------- | ----------------------------------------------------------------------------- | ------ | -------------------------------------- |
-| 1.1 | Open the app link          | A **sign-in screen**, titled with the conference name                         | :)     |                                        |
-| 1.2 | Test-mode notice           | A red box explains no email will really be sent                               | :)     |                                        |
-| 1.3 | **Install-first guidance** | On iPhone, a purple box says "Add to your home screen first" and explains why | :)     |                                        |
-| 1.4 | Add to home screen         | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | :)     |                                        |
-| 1.5 | Icon                       | Purple square, white ring, mint centre                                        | :)     |                                        |
-| 1.6 | Open from the icon         | Full screen, no browser bar                                                   | :)     |                                        |
-| 1.7 | Loading                    | A spinner, never a blank screen                                               | -      | PARTLY FIXED - retest. The launch screen is now brand purple rather than white, so a cold start reads as loading rather than broken. Navigation inside the app already showed a spinner. A fully branded iOS splash needs a generated image per device size - say the word if the purple is not enough. |
+| #   | Test                       | Expected                                                                      | Result | Notes                      |
+| --- | -------------------------- | ----------------------------------------------------------------------------- | ------ | -------------------------- |
+| 1.1 | Open the app link          | A **sign-in screen**, titled with the conference name                         | :)     |                            |
+| 1.2 | Test-mode notice           | A red box explains no email will really be sent                               | :)     |                            |
+| 1.3 | **Install-first guidance** | On iPhone, a purple box says "Add to your home screen first" and explains why | :)     |                            |
+| 1.4 | Add to home screen         | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | :)     |                            |
+| 1.5 | Icon                       | Purple square, white ring, mint centre                                        | :)     |                            |
+| 1.6 | Open from the icon         | Full screen, no browser bar                                                   | :)     |                            |
+| 1.7 | Loading                    | A spinner, never a blank screen                                               | x      | i still see a white screen |
 > **Your note: signing out gave "this page couldn't load" (error 3812484992).**
 > FIXED - please retest. The sign-out action cleared the session and then let
 > the page re-render itself, but that page needs a signed-in user, so there was
@@ -179,16 +179,16 @@ The code is genuine and Supabase verifies it exactly as it will on the day —
 **only the email delivery is simulated**, so it appears on screen instead of in
 an inbox.
 
-| #    | Test                                                               | Expected                                                                            | Result | Notes                                                                                                                                                                                                                                                                                                                                |
-| ---- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears, with a real code in it         | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.2 | Numeric keypad                                                     | Tapping the code box brings up digits, not letters                                  | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.3 | Type the code, tap **Sign in**                                     | You are signed in and land on **your profile**, ready to check it                   | -      | FIXED - retest. Now lands on the profile, as you asked. The intermittent "stayed on the sign-in page" was a soft navigation racing the session cookie; it does a full page load now, which always sees it. |
-| 1a.4 | Wrong code                                                         | "That code isn't right. Check it and try again, or send a new one."                 | -      | FIXED - retest. You were right: Supabase returns "expired or invalid" for both cases and the app only read the "expired" half. One honest message now covers both. |
-| 1a.5 | Send a new code                                                    | "Send a new code" is throttled for 30 seconds, then issues a fresh one              | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.6 | Unknown address                                                    | Try `nobody@example.com` — "No account for that address", and no account is created | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.7 | Stays signed in                                                    | Close the app fully and reopen from the icon — still signed in                      | :)     |                                                                                                                                                                                                                                                                                                                                      |
-| 1a.8 | Install banner gone                                                | Inside the installed app, neither install box appears any more                      | :)     |                                                                                                                                                                                                                                                                                                                                      |
+| #    | Test                                                               | Expected                                                                            | Result | Notes |
+| ---- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ------ | ----- |
+| 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears, with a real code in it         | :)     |       |
+| 1a.2 | Numeric keypad                                                     | Tapping the code box brings up digits, not letters                                  | :)     |       |
+| 1a.3 | Type the code, tap **Sign in**                                     | You are signed in and land on **your profile**, ready to check it                   | works  |       |
+| 1a.4 | Wrong code                                                         | "That code isn't right. Check it and try again, or send a new one."                 | works  |       |
+| 1a.5 | Send a new code                                                    | "Send a new code" is throttled for 30 seconds, then issues a fresh one              | :)     |       |
+| 1a.6 | Unknown address                                                    | Try `nobody@example.com` — "No account for that address", and no account is created | :)     |       |
+| 1a.7 | Stays signed in                                                    | Close the app fully and reopen from the icon — still signed in                      | :)     |       |
+| 1a.8 | Install banner gone                                                | Inside the installed app, neither install box appears any more                      | :)     |       |
 
 > **The code is 8 digits, not 6** — that is this Supabase project's setting.
 > Testing caught it: the form originally required exactly six, which would have
@@ -204,18 +204,18 @@ an inbox.
 **Tap your avatar, top right.** Your profile already exists — you shouldn't
 have to create anything.
 
-| #    | Test                | Expected                                                           | Result | Notes                                                                                                                                                                   |
-| ---- | ------------------- | ------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2.1  | Reach your profile  | Avatar top-right opens it directly                                 | :)     |                                                                                                                                                                         |
-| 2.2  | It's prefilled      | Name, and for speakers title/company/bio/photo already there       | :)     |                                                                                                                                                                         |
-| 2.3  | No email field      | Your email appears **nowhere** on the profile                      | :)     |                                                                                                                                                                         |
-| 2.4  | "About you"         | A free-text box for a professional summary                         | :)     |                                                                                                                                                                         |
-| 2.5  | LinkedIn helper     | "Open my LinkedIn ↗" opens *your* LinkedIn to copy the address     | :)     |                                                                                                                                                                         |
-| 2.6  | Edit and save       | Change your role, save, reopen — the change stuck                  | :)     |                                                                                                                                                                         |
-| 2.7  | Add a photo         | Appears within a few seconds, replacing your initials              | :)     |                                                                                                                                                                         |
-| 2.8  | Remove the photo    | Falls back to initials on a coloured circle                        | :)     |                                                                                                                                                                         |
-| 2.9  | Blank name refused  | Clearing your first name and saving is rejected                    | :)     |                                                                                                                                                                         |
-| 2.10 | Leave the directory | "Remove me from the directory" - you stay signed in, just unlisted | :)     | Your question is answered below the table. |
+| #    | Test                | Expected                                                           | Result | Notes                                                                                                                                            |
+| ---- | ------------------- | ------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2.1  | Reach your profile  | Avatar top-right opens it directly                                 | :)     |                                                                                                                                                  |
+| 2.2  | It's prefilled      | Name, and for speakers title/company/bio/photo already there       | :)     |                                                                                                                                                  |
+| 2.3  | No email field      | Your email appears **nowhere** on the profile                      | :)     |                                                                                                                                                  |
+| 2.4  | "About you"         | A free-text box for a professional summary                         | :)     |                                                                                                                                                  |
+| 2.5  | LinkedIn helper     | "Open my LinkedIn ↗" opens *your* LinkedIn to copy the address     | :)     |                                                                                                                                                  |
+| 2.6  | Edit and save       | Change your role, save, reopen — the change stuck                  | :)     |                                                                                                                                                  |
+| 2.7  | Add a photo         | Appears within a few seconds, replacing your initials              | :)     |                                                                                                                                                  |
+| 2.8  | Remove the photo    | Falls back to initials on a coloured circle                        | :)     |                                                                                                                                                  |
+| 2.9  | Blank name refused  | Clearing your first name and saving is rejected                    | :)     |                                                                                                                                                  |
+| 2.10 | Leave the directory | "Remove me from the directory" - you stay signed in, just unlisted | /      | The user should be informed with a short message about what features won't work if they proceed, and asked to confirm before removing themselves |
 
 ---
 
@@ -232,18 +232,18 @@ have to create anything.
 
 ## 3. The programme
 
-| #    | Test                      | Expected                                                              | Result | Notes                                                                                                                                                                                                                                                                                                                                              |
-| ---- | ------------------------- | --------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3.1  | Open Program              | Main stage shows the full day, each session with its real talk title  | -      | FIXED — please re-check. Titles and descriptions now come from the speaker deck. Only Sofie Hvitved and Xander Evangelidis still read "to be confirmed"; they have no page in the deck. |
-| 3.2  | Four tabs                 | Main stage · Demos · Open sessions · ★ My Schedule                    | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.3  | Day structure             | Registration, breaks, lunch, drinks appear among the sessions         | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.4  | Copenhagen time           | 08:30 registration, 11:50 lunch, 15:30 keynote                        | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.5  | Danish characters         | Ø, æ, å all render (Nørregaard, Bæk, Ødegård)                         | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.6  | Real speakers             | Actual speaker names, not invented ones                               | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | -      | how can I test this since all the events are in the future?                                                                                                                                                                                                                                                                                        |
-| 3.8  | Happening now             | The current session is outlined and badged "Now"                      |        | how can I test this since all the events are in the future?                                                                                                                                                                                                                                                                                        |
-| 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | :)     |                                                                                                                                                                                                                                                                                                                                                    |
-| 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | :)     |                                                                                                                                                                                                                                                                                                                                                    |
+| #    | Test                      | Expected                                                              | Result | Notes                                                       |
+| ---- | ------------------------- | --------------------------------------------------------------------- | ------ | ----------------------------------------------------------- |
+| 3.1  | Open Program              | Main stage shows the full day, each session with its real talk title  | works  |                                                             |
+| 3.2  | Four tabs                 | Main stage · Demos · Open sessions · ★ My Schedule                    | :)     |                                                             |
+| 3.3  | Day structure             | Registration, breaks, lunch, drinks appear among the sessions         | :)     |                                                             |
+| 3.4  | Copenhagen time           | 08:30 registration, 11:50 lunch, 15:30 keynote                        | :)     |                                                             |
+| 3.5  | Danish characters         | Ø, æ, å all render (Nørregaard, Bæk, Ødegård)                         | :)     |                                                             |
+| 3.6  | Real speakers             | Actual speaker names, not invented ones                               | :)     |                                                             |
+| 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | -      | how can I test this since all the events are in the future? |
+| 3.8  | Happening now             | The current session is outlined and badged "Now"                      |        | how can I test this since all the events are in the future? |
+| 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | :)     |                                                             |
+| 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | :)     |                                                             |
 
 > ### "How can I test 3.7 and 3.8 when everything is in the future?"
 >
