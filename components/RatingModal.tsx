@@ -5,10 +5,6 @@ import { saveRating, type RatingState } from "@/app/actions/ratings";
 import { track } from "@/lib/track";
 import { EVENTS } from "@/lib/analytics";
 
-/**
- * Star rating plus an optional comment. Used for the app and for each session —
- * one component so the two never drift apart.
- */
 export default function RatingModal({
   label,
   sessionId,
@@ -28,6 +24,7 @@ export default function RatingModal({
     {},
   );
   const dialog = useRef<HTMLDivElement>(null);
+  const [viewportHeight, setViewportHeight] = useState<string>("90dvh");
 
   useEffect(() => {
     if (state.ok) {
@@ -43,7 +40,6 @@ export default function RatingModal({
     }
   }, [state.ok, sessionId, stars, comment]);
 
-  // Escape closes, as people expect from anything modal.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -51,42 +47,28 @@ export default function RatingModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  /**
-   * Height of the *visible* part of the screen.
-   *
-   * On a phone, opening the keyboard shrinks the visual viewport but leaves the
-   * layout viewport alone. A `fixed inset-0` overlay therefore keeps its full
-   * height and the bottom of the sheet — Cancel and Send — ends up underneath
-   * the keyboard, unreachable. Testing found exactly that: you could type a
-   * comment and then had no way to submit it.
-   *
-   * Matching the overlay to visualViewport keeps the buttons on screen while
-   * the keyboard is up.
-   */
-  const [viewport, setViewport] = useState<number | null>(null);
   useEffect(() => {
     if (!open) return;
+
+    const updateHeight = () => {
+      const vv = window.visualViewport;
+      if (vv && vv.height) {
+        // Use 95% of visual viewport height to leave a small margin
+        setViewportHeight(`${vv.height * 0.95}px`);
+      }
+    };
+
+    updateHeight();
+
     const vv = window.visualViewport;
-    if (!vv) {
-      // Fallback: use window.innerHeight if visualViewport not available
-      setViewport(window.innerHeight);
-      return;
+    if (vv) {
+      vv.addEventListener("resize", updateHeight);
+      vv.addEventListener("scroll", updateHeight);
+      return () => {
+        vv.removeEventListener("resize", updateHeight);
+        vv.removeEventListener("scroll", updateHeight);
+      };
     }
-    const sync = () => {
-      // Always use the visual viewport height when available
-      setViewport(vv.height ?? window.innerHeight);
-    };
-    sync();
-    vv.addEventListener("resize", sync);
-    vv.addEventListener("scroll", sync);
-    // Re-sync after a small delay to catch any timing issues
-    const timeout = setTimeout(sync, 100);
-    return () => {
-      clearTimeout(timeout);
-      vv.removeEventListener("resize", sync);
-      vv.removeEventListener("scroll", sync);
-      setViewport(null);
-    };
   }, [open]);
 
   const already = existingStars != null;
@@ -112,10 +94,11 @@ export default function RatingModal({
             role="dialog"
             aria-modal="true"
             aria-label={label}
-            className="fixed bottom-0 left-0 right-0 z-50 flex max-h-screen w-full flex-col rounded-t-2xl bg-[var(--color-surface)] sm:left-1/2 sm:bottom-auto sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl bg-[var(--color-surface)] sm:left-1/2 sm:bottom-auto sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
+            style={{ maxHeight: viewportHeight }}
           >
             {state.ok ? (
-              <div className="overflow-y-auto p-5 sm:p-5" style={{ maxHeight: "calc(100% - 0px)" }}>
+              <div className="flex flex-1 items-center justify-center overflow-y-auto p-5">
                 <div className="py-6 text-center">
                   <p className="text-3xl">★</p>
                   <p className="mt-2 font-semibold">Thank you</p>
@@ -125,13 +108,13 @@ export default function RatingModal({
                 </div>
               </div>
             ) : (
-              <form action={action} className="flex flex-col" style={{ height: "100%" }}>
+              <form action={action} className="flex flex-col">
                 {sessionId && (
                   <input type="hidden" name="session_id" value={sessionId} />
                 )}
                 <input type="hidden" name="stars" value={stars} />
 
-                <div className="flex-1 overflow-y-auto p-5 sm:p-5">
+                <div className="flex-1 overflow-y-auto p-5">
                   <p className="font-semibold">{label}</p>
 
                   <div
@@ -164,7 +147,7 @@ export default function RatingModal({
                   <textarea
                     id="comment"
                     name="comment"
-                    rows={3}
+                    rows={2}
                     maxLength={1000}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
@@ -178,7 +161,7 @@ export default function RatingModal({
                   )}
                 </div>
 
-                <div className="border-t border-[var(--color-line)] p-5 sm:p-5">
+                <div className="flex-shrink-0 border-t border-[var(--color-line)] p-5">
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -199,7 +182,7 @@ export default function RatingModal({
               </form>
             )}
           </div>
-        </div>
+        </>
       )}
     </>
   );
