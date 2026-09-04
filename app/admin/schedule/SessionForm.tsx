@@ -174,23 +174,22 @@ export default function SessionForm({ session }: { session?: Session | null }) {
           </p>
         )}
 
-        {editing && (
-          <label className="flex items-start gap-3 rounded-lg border border-[var(--color-line)] px-3 py-3">
-            <input
-              type="checkbox"
-              name="announce"
-              defaultChecked
-              className="mt-0.5 size-4 accent-[var(--color-accent)]"
-            />
-            <span className="text-sm">
-              <span className="font-medium">Tell attendees</span>
-              <span className="block text-xs text-[var(--color-muted)]">
-                Posts a schedule-change notice to the feed. Only fires if the time or
-                room actually changed &mdash; fixing a typo won&rsquo;t notify anyone.
-              </span>
+        <label className="flex items-start gap-3 rounded-lg border border-[var(--color-line)] px-3 py-3">
+          <input
+            type="checkbox"
+            name="announce"
+            defaultChecked
+            className="mt-0.5 size-4 accent-[var(--color-accent)]"
+          />
+          <span className="text-sm">
+            <span className="font-medium">Tell attendees</span>
+            <span className="block text-xs text-[var(--color-muted)]">
+              {editing
+                ? "Posts a schedule-change notice to the feed. Only fires if the time or room actually changed — fixing a typo won't notify anyone."
+                : "Posts to the feed announcing this new session."}
             </span>
-          </label>
-        )}
+          </span>
+        </label>
 
         {/* Errors sit directly above the button and are impossible to miss —
             a quiet line of red text mid-form got overlooked in testing. */}
