@@ -232,18 +232,18 @@ have to create anything.
 
 ## 3. The programme
 
-| #    | Test                      | Expected                                                              | Result | Notes                                                       |
-| ---- | ------------------------- | --------------------------------------------------------------------- | ------ | ----------------------------------------------------------- |
-| 3.1  | Open Program              | Main stage shows the full day, each session with its real talk title  | works  |                                                             |
-| 3.2  | Four tabs                 | Main stage · Demos · Open sessions · ★ My Schedule                    | :)     |                                                             |
-| 3.3  | Day structure             | Registration, breaks, lunch, drinks appear among the sessions         | :)     |                                                             |
-| 3.4  | Copenhagen time           | 08:30 registration, 11:50 lunch, 15:30 keynote                        | :)     |                                                             |
-| 3.5  | Danish characters         | Ø, æ, å all render (Nørregaard, Bæk, Ødegård)                         | :)     |                                                             |
-| 3.6  | Real speakers             | Actual speaker names, not invented ones                               | :)     |                                                             |
-| 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | -      | how can I test this since all the events are in the future? |
-| 3.8  | Happening now             | The current session is outlined and badged "Now"                      |        | how can I test this since all the events are in the future? |
-| 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | :)     |                                                             |
-| 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | :)     |                                                             |
+| #    | Test                      | Expected                                                              | Result | Notes |
+| ---- | ------------------------- | --------------------------------------------------------------------- | ------ | ----- |
+| 3.1  | Open Program              | Main stage shows the full day, each session with its real talk title  | works  |       |
+| 3.2  | Four tabs                 | Main stage · Demos · Open sessions · ★ My Schedule                    | :)     |       |
+| 3.3  | Day structure             | Registration, breaks, lunch, drinks appear among the sessions         | :)     |       |
+| 3.4  | Copenhagen time           | 08:30 registration, 11:50 lunch, 15:30 keynote                        | :)     |       |
+| 3.5  | Danish characters         | Ø, æ, å all render (Nørregaard, Bæk, Ødegård)                         | :)     |       |
+| 3.6  | Real speakers             | Actual speaker names, not invented ones                               | :)     |       |
+| 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | works  |       |
+| 3.8  | Happening now             | The current session is outlined and badged "Now"                      | works  |       |
+| 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | :)     |       |
+| 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | :)     |       |
 
 > ### "How can I test 3.7 and 3.8 when everything is in the future?"
 >
@@ -291,18 +291,18 @@ have to create anything.
 
 ## 5. Session pages
 
-| #    | Test               | Expected                                                                 | Result | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ---- | ------------------ | ------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5.1  | Open a session     | Tapping a session card opens its own page                                | -      | FIXED - retest. Back from a speaker's profile now returns to the session you came from, not the directory. |
-| 5.2  | Details            | Time, room, title, and description if set                                | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 5.3  | Speaker card       | The speaker as a tappable card with photo and title                      | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 5.4  | Through to profile | Tapping it opens their full profile                                      | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 5.5  | Star from here     | A full-width **"Add to My Schedule"** button under the speaker card      | -      | FIXED - retest. The star was there, but drawn as a pale outline glyph in the border colour, which reads as decoration. It is a labelled button now. |
-| 5.6  | Back goes back     | Returns where you came from — Program *or* My Schedule                   | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 5.7  | Rate this session  | Opens a modal: five stars, a comment, **Cancel and Send both visible**    | -      | FIXED - retest **with the keyboard up**. The sheet was full-screen-height, but a keyboard only shrinks the *visible* viewport, so the buttons sat underneath it. It now matches the visible area and scrolls. |
-| 5.8  | Send a rating      | Confirms with a thank-you, then closes                                   | -      | FIXED - retest. This was not only the hidden button: **every rating had been failing to save since the feature was built.** See the note under this table. |
-| 5.9  | Revise it          | Reopening shows your rating *and your comment*; changing it replaces it   | -      | Retest - this could not have worked before, since nothing saved. |
-| 5.10 | Anonymity stated   | The page says the rating is anonymous                                    | :)     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| #    | Test               | Expected                                                                | Result | Notes |
+| ---- | ------------------ | ----------------------------------------------------------------------- | ------ | ----- |
+| 5.1  | Open a session     | Tapping a session card opens its own page                               | works  |       |
+| 5.2  | Details            | Time, room, title, and description if set                               | :)     |       |
+| 5.3  | Speaker card       | The speaker as a tappable card with photo and title                     | :)     |       |
+| 5.4  | Through to profile | Tapping it opens their full profile                                     | :)     |       |
+| 5.5  | Star from here     | A full-width **"Add to My Schedule"** button under the speaker card     | works  |       |
+| 5.6  | Back goes back     | Returns where you came from — Program *or* My Schedule                  | :)     |       |
+| 5.7  | Rate this session  | Opens a modal: five stars, a comment, **Cancel and Send both visible**  | works  |       |
+| 5.8  | Send a rating      | Confirms with a thank-you, then closes                                  | works  |       |
+| 5.9  | Revise it          | Reopening shows your rating *and your comment*; changing it replaces it | works  |       |
+| 5.10 | Anonymity stated   | The page says the rating is anonymous                                   | :)     |       |
 
 ---
 
@@ -345,22 +345,22 @@ have to create anything.
 
 **Anyone can post now** — not just organisers.
 
-| #    | Test                       | Expected                                                    | Result | Notes                                                                                            |
-| ---- | -------------------------- | ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
-| 7.1  | Post button                | Visible to everyone, top right of the Feed                  | :)     |                                                                                                  |
-| 7.2  | Post text                  | Appears at the top of the feed with your name and photo     | :)     |                                                                                                  |
-| 7.3  | Character limit            | Counter caps at 500 and the button disables past it         | -      | COULD NOT REPRODUCE - please retest and tell me more. The limit is 500 in the form, the server and the database, and there is no cap at 199 anywhere. If it happens again, tell me the count shown under the box and whether Post was greyed out. |
-| 7.4  | **Post a photo**           | Pick one; it uploads and appears in the feed                | :)     |                                                                                                  |
-| 7.5  | **Post a link**            | Type `example.com`; it renders as a tappable link           | :)     |                                                                                                  |
-| 7.6  | Edit your own              | Edit, save — marked "edited"                                | :)     |                                                                                                  |
-| 7.7  | Delete your own            | Deleting returns you to the Feed                            | :)     |                                                                                                  |
-| 7.8  | **Organiser posts differ** | Organiser posts are tinted and badged "Organiser"           | :)     |                                                                                                  |
-| 7.9  | Alert style                | *Organisers:* "Mark as an alert" highlights it in red       | :)     |                                                                                                  |
-| 7.10 | Alerts are restricted      | A non-organiser sees no alert option                        | :)     |                                                                                                  |
-| 7.11 | **Moderation**             | *Organisers:* every post has a "Moderate" link to delete it | :)     |                                                                                                  |
-| 7.12 | Live update *(2 devices)*  | Post on one, it appears on the other **without refreshing** | :)     |                                                                                                  |
-| 7.13 | Empty post refused         | Submitting nothing is rejected                              | :)     |                                                                                                  |
-| 7.14 | **Restore is announced**   | Cancel a session, then restore it - the Feed says "Back on"  | -      | NEW - from your note below. Organiser -> Edit the schedule.                                      |
+| #    | Test                       | Expected                                                    | Result | Notes       |
+| ---- | -------------------------- | ----------------------------------------------------------- | ------ | ----------- |
+| 7.1  | Post button                | Visible to everyone, top right of the Feed                  | :)     |             |
+| 7.2  | Post text                  | Appears at the top of the feed with your name and photo     | :)     |             |
+| 7.3  | Character limit            | Counter caps at 500 and the button disables past it         | works  |             |
+| 7.4  | **Post a photo**           | Pick one; it uploads and appears in the feed                | :)     |             |
+| 7.5  | **Post a link**            | Type `example.com`; it renders as a tappable link           | :)     |             |
+| 7.6  | Edit your own              | Edit, save — marked "edited"                                | :)     |             |
+| 7.7  | Delete your own            | Deleting returns you to the Feed                            | :)     |             |
+| 7.8  | **Organiser posts differ** | Organiser posts are tinted and badged "Organiser"           | :)     |             |
+| 7.9  | Alert style                | *Organisers:* "Mark as an alert" highlights it in red       | :)     |             |
+| 7.10 | Alerts are restricted      | A non-organiser sees no alert option                        | :)     |             |
+| 7.11 | **Moderation**             | *Organisers:* every post has a "Moderate" link to delete it | :)     |             |
+| 7.12 | Live update *(2 devices)*  | Post on one, it appears on the other **without refreshing** | :)     |             |
+| 7.13 | Empty post refused         | Submitting nothing is rejected                              | :)     |             |
+| 7.14 | **Restore is announced**   | Cancel a session, then restore it - the Feed says "Back on" | x      | didn't work |
 > **Your note: a cancelled session announced itself, a restored one did not.**
 > FIXED - and you were right about why it matters: anyone who saw the
 > cancellation would never learn it was back on, and would skip a session that
@@ -371,15 +371,15 @@ have to create anything.
 
 ## 8. About and rating the app
 
-| #   | Test              | Expected                                                                   | Result | Notes                                                                                                                        |
-| --- | ----------------- | -------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 8.1 | Open About        | "About" in the top bar                                                     | :)     |                                                                                                                              |
-| 8.2 | The blurb         | Explains what the app is and that it's an experiment                       | :)     |                                                                                                                              |
-| 8.3 | Both names linked | Your name and Martin's link to your profiles                               | :)     |                                                                                                                              |
-| 8.4 | Rate this app     | Opens the same star modal, Cancel and Send both visible                    | -      | FIXED - retest. Same two fixes as 5.7 and 5.8. |
-| 8.5 | Free text         | Labelled "We'd love to hear your feedback or suggestions — it's anonymous" | :)     |                                                                                                                              |
-| 8.6 | Submit            | Confirms and closes; your comment is still there if you reopen             | -      | FIXED - retest. The comment vanished because the whole save failed - see the note under section 5. |
-| 8.7 | Revise            | Reopening shows your rating and lets you change it                         | -      | Retest - nothing saved before, so this could not have worked. |
+| #   | Test              | Expected                                                                   | Result | Notes                                                 |
+| --- | ----------------- | -------------------------------------------------------------------------- | ------ | ----------------------------------------------------- |
+| 8.1 | Open About        | "About" in the top bar                                                     | :)     |                                                       |
+| 8.2 | The blurb         | Explains what the app is and that it's an experiment                       | :)     |                                                       |
+| 8.3 | Both names linked | Your name and Martin's link to your profiles                               | :)     |                                                       |
+| 8.4 | Rate this app     | Opens the same star modal, Cancel and Send both visible                    | works  |                                                       |
+| 8.5 | Free text         | Labelled "We'd love to hear your feedback or suggestions — it's anonymous" | :)     |                                                       |
+| 8.6 | Submit            | Confirms and closes; your comment is still there if you reopen             | works  |                                                       |
+| 8.7 | Revise            | Reopening shows your rating and lets you change it                         | x      | couldn't change it, only showed the thank you message |
 
 ---
 
@@ -387,21 +387,21 @@ have to create anything.
 
 **Organiser → Edit the schedule.**
 
-| #    | Test                 | Expected                                                                       | Result | Notes                                                                         |
-| ---- | -------------------- | ------------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------- |
-| 9.1  | Open it              | All rooms listed, grouped                                                      | :)     |                                                                               |
+| #    | Test                 | Expected                                                                       | Result | Notes                                                                                                                                                                                                  |
+| ---- | -------------------- | ------------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 9.1  | Open it              | All rooms listed, grouped                                                      | :)     |                                                                                                                                                                                                        |
 | 9.2  | Add a session        | Room, title, speaker, start time - **and the Feed announces it**               | -      | FIXED - retest. Good catch: only *changes* were announced, so a session added to the programme appeared silently. A new session now posts "Added to the programme: ..." when Tell attendees is ticked. |
-| 9.3  | End time follows     | Setting a start fills the end automatically; moving the start moves it         | :)     |                                                                               |
-| 9.4  | Room is a choice     | Three fixed rooms, no free-text box                                            | :)     |                                                                               |
-| 9.5  | **Description**      | A description field, shown on the session page                                 | :)     |                                                                               |
-| 9.6  | Move a session       | Change the time, leave "Tell attendees" ticked                                 | :)     |                                                                               |
-| 9.7  | Change announced     | The Feed shows what moved and what it was before                               | :)     |                                                                               |
-| 9.8  | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate                  | :)     |                                                                               |
-| 9.9  | Opt out              | Unticking "Tell attendees" posts nothing                                       | :)     |                                                                               |
-| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | :)     |                                                                               |
-| 9.11 | Cancel               | Stays visible struck through in the Program                                    | :)     |                                                                               |
-| 9.12 | Restore              | Puts it back                                                                   | :)     |                                                                               |
-| 9.13 | Delete               | Removes it entirely                                                            | :)     |                                                                               |
+| 9.3  | End time follows     | Setting a start fills the end automatically; moving the start moves it         | :)     |                                                                                                                                                                                                        |
+| 9.4  | Room is a choice     | Three fixed rooms, no free-text box                                            | :)     |                                                                                                                                                                                                        |
+| 9.5  | **Description**      | A description field, shown on the session page                                 | :)     |                                                                                                                                                                                                        |
+| 9.6  | Move a session       | Change the time, leave "Tell attendees" ticked                                 | :)     |                                                                                                                                                                                                        |
+| 9.7  | Change announced     | The Feed shows what moved and what it was before                               | :)     |                                                                                                                                                                                                        |
+| 9.8  | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate                  | :)     |                                                                                                                                                                                                        |
+| 9.9  | Opt out              | Unticking "Tell attendees" posts nothing                                       | :)     |                                                                                                                                                                                                        |
+| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | :)     |                                                                                                                                                                                                        |
+| 9.11 | Cancel               | Stays visible struck through in the Program                                    | :)     |                                                                                                                                                                                                        |
+| 9.12 | Restore              | Puts it back                                                                   | :)     |                                                                                                                                                                                                        |
+| 9.13 | Delete               | Removes it entirely                                                            | :)     |                                                                                                                                                                                                        |
 
 ---
 
