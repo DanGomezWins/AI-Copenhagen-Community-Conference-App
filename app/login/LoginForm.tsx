@@ -91,10 +91,20 @@ export default function LoginForm() {
     setBusy(false);
 
     if (err) {
+      // Key off the error code, not the words. Matching "invalid" anywhere in
+      // the message meant an SMTP failure - "invalid login: 535 authentication
+      // failed" - was shown to the attendee as "we can't find your ticket",
+      // sending them to an organiser to fix a problem on our side.
+      const code = (err as { code?: string }).code ?? "";
+      const noTicket = code === "otp_disabled" || /signups not allowed/i.test(err.message);
+      const cannotSend = /error sending|smtp|relay|authentication failed/i.test(err.message);
+
       setError(
-        /not found|signups not allowed|invalid/i.test(err.message)
+        noTicket
           ? "We can't find a ticket for that address. Use the address you bought your ticket with, or find an organiser."
-          : err.message,
+          : cannotSend
+            ? "We couldn't send the code just now - that's our end, not yours. Try again in a moment, or find an organiser."
+            : err.message,
       );
       return;
     }
