@@ -9,7 +9,7 @@
 ## Contents
 
 - [What it does](#what-it-does)
-  - [Feed](#feed--live-updates-from-everyone)
+  - [Feed](#feed-live-updates-from-everyone)
   - [Program & My Schedule](#program--my-schedule)
   - [Session pages](#session-pages)
   - [Networking](#networking)
@@ -20,9 +20,9 @@
 - [Getting started](#getting-started)
 - [What I need decisions on](#what-i-need-decisions-on)
 - [Before the event](#before-the-event)
-- [Measuring how it went](#measuring-how-it-went)
-- [How it's built](#how-its-built)
-- [Running it locally](#running-it-locally)
+- [Measuring how it went](##measuring-how-it-went)
+- [How it's built](# how-its-built)
+- [Running it locally](##running-it-locally)
 
 ---
 
@@ -30,7 +30,7 @@
 
 Three tabs, plus an organiser area only organisers can see.
 
-### Feed — live updates from everyone
+### Feed - live updates from everyone
 
 The home screen. **Anyone can post** — text, a photo, a link. Organisers'
 posts are badged and tinted so official information stays separable from
@@ -257,11 +257,9 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_xxxxxxxxxxxxxxxxxxxx
 NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
 ```
 
-**3. Use a separate project for testing.** This is worth doing before you test
-again, so today's clicking around doesn't end up in the real numbers. Create a
-second PostHog project called `AIMC-CC (test)` and use *its* key locally, while
-Railway keeps the production key. Same events, two buckets, nothing to clean up
-afterwards. PostHog's free tier covers both comfortably.
+**3. Set up for analysis after the event.** You'll use one PostHog project for
+everything — test data and real event data together. After the event, filter each
+insight by date to show only the event window itself, excluding your testing clicks.
 
 **4. Send some events.** Open the app and click around. Within a minute or two
 they appear under *Activity* → *Live events*. Nothing can be charted until
@@ -282,7 +280,9 @@ same thing. Save each one to a dashboard called **HEART**.
 
 **7. Read it against the hypotheses.** The *Hypotheses* column already says what
 counts as good or bad, so on the day after the event you fill in *Results* and
-*Learnings* rather than staring at a number wondering whether 34% is good.
+*Learnings* rather than staring at a number wondering whether 34% is good. When
+reviewing each insight, filter by date to show only the event window — the app's
+timestamp will separate test data from real event data.
 
 The event names the app actually sends are listed in
 [`lib/analytics.ts`](lib/analytics.ts) — that file and the CSV are meant to stay
