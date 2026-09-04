@@ -141,7 +141,9 @@ export default function LoginForm() {
     "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
 
   if (step === "code") {
-    const canResend = !resentAt || Date.now() - resentAt > 30_000;
+    // Supabase enforces a 60s cooldown per address. Offering the button at 30s
+    // just hands the user a rejection at the busiest moment of the day.
+    const canResend = !resentAt || Date.now() - resentAt > 60_000;
     return (
       <form onSubmit={verify} className="space-y-4">
         <div>
