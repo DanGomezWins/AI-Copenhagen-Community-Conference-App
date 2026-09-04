@@ -67,12 +67,22 @@ export default function RatingModal({
   useEffect(() => {
     if (!open) return;
     const vv = window.visualViewport;
-    if (!vv) return;
-    const sync = () => setViewport(vv.height);
+    if (!vv) {
+      // Fallback: use window.innerHeight if visualViewport not available
+      setViewport(window.innerHeight);
+      return;
+    }
+    const sync = () => {
+      // Always use the visual viewport height when available
+      setViewport(vv.height ?? window.innerHeight);
+    };
     sync();
     vv.addEventListener("resize", sync);
     vv.addEventListener("scroll", sync);
+    // Re-sync after a small delay to catch any timing issues
+    const timeout = setTimeout(sync, 100);
     return () => {
+      clearTimeout(timeout);
       vv.removeEventListener("resize", sync);
       vv.removeEventListener("scroll", sync);
       setViewport(null);
@@ -104,7 +114,7 @@ export default function RatingModal({
             aria-label={label}
             // max-h + scroll so the sheet can never be taller than what's
             // visible; the buttons stay reachable however small that gets.
-            className="max-h-full w-full max-w-sm overflow-y-auto overscroll-contain rounded-t-2xl bg-[var(--color-surface)] p-5 pb-8 sm:rounded-2xl sm:pb-5"
+            className="max-h-full w-full max-w-sm overflow-y-auto overscroll-contain rounded-t-2xl bg-[var(--color-surface)] p-5 sm:rounded-2xl"
           >
             {state.ok ? (
               <div className="py-6 text-center">
@@ -115,13 +125,14 @@ export default function RatingModal({
                 </p>
               </div>
             ) : (
-              <form action={action}>
+              <form action={action} className="flex flex-col">
                 {sessionId && (
                   <input type="hidden" name="session_id" value={sessionId} />
                 )}
                 <input type="hidden" name="stars" value={stars} />
 
-                <p className="font-semibold">{label}</p>
+                <div className="flex-1">
+                  <p className="font-semibold">{label}</p>
 
                 <div
                   className="mt-4 flex justify-center gap-1"
@@ -160,13 +171,14 @@ export default function RatingModal({
                   className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]"
                 />
 
-                {state.error && (
-                  <p className="mt-2 text-sm font-medium text-[var(--color-danger-ink)]" role="alert">
-                    {state.error}
-                  </p>
-                )}
+                  {state.error && (
+                    <p className="mt-2 text-sm font-medium text-[var(--color-danger-ink)]" role="alert">
+                      {state.error}
+                    </p>
+                  )}
+                </div>
 
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex gap-2 border-t border-[var(--color-line)] pt-4">
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
