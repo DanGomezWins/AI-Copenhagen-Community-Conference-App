@@ -147,7 +147,7 @@ export default function RatingModal({
                   <textarea
                     id="comment"
                     name="comment"
-                    rows={2}
+                    rows={4}
                     maxLength={1000}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
