@@ -94,7 +94,7 @@ export default function RatingModal({
             role="dialog"
             aria-modal="true"
             aria-label={label}
-            className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2xl bg-[var(--color-surface)] sm:left-1/2 sm:bottom-auto sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
+            className="fixed top-0 left-0 right-0 z-50 flex flex-col rounded-2xl bg-[var(--color-surface)] sm:left-1/2 sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2"
             style={{ maxHeight: viewportHeight }}
           >
             {state.ok ? (
