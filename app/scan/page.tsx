@@ -1,12 +1,17 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ScanFlow from "./ScanFlow";
 import type { Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
+import { SCAN_ENABLED } from "@/lib/scan/enabled";
 
 export const dynamic = "force-dynamic";
 
 export default async function ScanPage() {
+  // Retired: Open Sessions live on their own site now. See lib/scan/enabled.ts.
+  if (!SCAN_ENABLED) notFound();
+
   const supabase = await createClient();
   const [{ data }, { data: profiles }] = await Promise.all([
     supabase.from("sessions").select("*").eq("track", "open")

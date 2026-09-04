@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { SCAN_ENABLED } from "@/lib/scan/enabled";
 import { buildDiff } from "@/lib/scan/diff";
 import { ProposedSessionSchema } from "@/lib/scan/schema";
 import { z } from "zod";
@@ -9,6 +10,11 @@ export const dynamic = "force-dynamic";
 
 /** Recomputes the diff against live data, so review always reflects reality. */
 export async function POST(request: NextRequest) {
+  // Retired with Open Sessions - see lib/scan/enabled.ts.
+  if (!SCAN_ENABLED) {
+    return NextResponse.json({ error: "Not found." }, { status: 404 });
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {

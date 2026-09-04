@@ -1,12 +1,16 @@
 import Link from "next/link";
 import AnnouncerToggle from "./AnnouncerToggle";
+import { SCAN_ENABLED } from "@/lib/scan/enabled";
 
 type Item = { href: string; title: string; desc: string; soon?: boolean };
 
 const ITEMS: Item[] = [
   { href: "/post", title: "Post an update", desc: "Goes to every attendee's feed instantly, badged as official." },
   { href: "/admin/schedule", title: "Edit the schedule", desc: "Change a time, room or speaker. Posts the notice for you." },
-  { href: "/scan", title: "Scan the board", desc: "Photograph the open sessions board. Attendees can do this too." },
+  // Retired with Open Sessions moving off-app — see lib/scan/enabled.ts.
+  ...(SCAN_ENABLED
+    ? [{ href: "/scan", title: "Scan the board", desc: "Photograph the open sessions board. Attendees can do this too." }]
+    : []),
   { href: "/admin/organisers", title: "Who can post", desc: "Add or remove organisers." },
   { href: "/admin/feedback", title: "Ratings & feedback", desc: "What people said about the app and each session." },
   { href: "/admin/test", title: "Testing tools", desc: "Rehearse the announcer and notifications before the day." },

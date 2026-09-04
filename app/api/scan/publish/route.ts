@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { SCAN_ENABLED } from "@/lib/scan/enabled";
 import { ScanResultSchema } from "@/lib/scan/schema";
 import { buildDiff, summarise } from "@/lib/scan/diff";
 import { timeToIso, roomForTrack, type Session } from "@/lib/program";
@@ -9,6 +10,11 @@ import { titleCaseName } from "@/lib/names";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+  // Retired with Open Sessions - see lib/scan/enabled.ts.
+  if (!SCAN_ENABLED) {
+    return NextResponse.json({ error: "Not found." }, { status: 404 });
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
