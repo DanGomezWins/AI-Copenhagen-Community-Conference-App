@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import Avatar from "@/components/Avatar";
 import StarButton from "@/components/StarButton";
 import RatingModal from "@/components/RatingModal";
+import { TrackSessionView } from "@/components/TrackPageView";
+import SessionSlidesLink from "@/components/SessionSlidesLink";
 import { TRACKS, timeRange, liveness, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
 
@@ -60,6 +62,7 @@ export default async function SessionPage({
 
   return (
     <section>
+      <TrackSessionView />
       <Link href={back.href} className="text-sm text-[var(--color-muted)]">
         ← {back.label}
       </Link>
@@ -138,17 +141,7 @@ export default async function SessionPage({
       {/* Slides are only offered once the session has finished — sharing a deck
           while someone is still presenting it undercuts the talk. */}
       {s.slides_url && finished && (
-        <a
-          href={s.slides_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 flex items-center justify-between rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-3.5"
-        >
-          <span className="text-sm font-semibold text-[var(--color-accent)]">
-            Download the slides (PDF)
-          </span>
-          <span className="text-sm text-[var(--color-accent)]">↓</span>
-        </a>
+        <SessionSlidesLink url={s.slides_url} />
       )}
       {s.slides_url && !finished && (
         <p className="mt-4 rounded-xl border border-dashed border-[var(--color-line)] p-3.5 text-sm text-[var(--color-muted)]">

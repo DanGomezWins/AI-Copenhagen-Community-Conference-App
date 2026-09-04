@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SessionCard from "@/components/SessionCard";
+import { TrackProgramView } from "@/components/TrackPageView";
 import {
   TRACKS, MY_SCHEDULE, isProgramView, liveness,
   type Session, type ProgramView,
@@ -49,6 +50,7 @@ export default async function ProgramPage({
 
   return (
     <section>
+      <TrackProgramView />
       <h1 className="text-2xl font-bold tracking-tight">Program</h1>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         {EVENT.date} · {EVENT.venue}

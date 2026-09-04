@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Avatar from "@/components/Avatar";
+import ProfileTracker from "@/components/ProfileTracker";
+import LinkedInLink from "@/components/LinkedInLink";
 import { TRACKS, timeRange, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
 
@@ -58,6 +60,7 @@ export default async function ProfilePage({
 
   return (
     <section>
+      <ProfileTracker fromSearch={from === "search"} />
       <Link href={back.href} className="text-sm text-[var(--color-muted)]">
         ← {back.label}
       </Link>
@@ -87,17 +90,7 @@ export default async function ProfilePage({
       )}
 
       {profile.linkedin_url && (
-        <a
-          href={profile.linkedin_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 flex items-center justify-between rounded-xl border border-[var(--color-line)] p-3.5"
-        >
-          <span className="text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
-            LinkedIn
-          </span>
-          <span className="text-sm text-[var(--color-accent)]">Open ↗</span>
-        </a>
+        <LinkedInLink url={profile.linkedin_url} />
       )}
 
       {sessions.length > 0 && (
