@@ -102,74 +102,74 @@ export default function RatingModal({
       </button>
 
       {open && (
-        <div
-          className="fixed inset-x-0 top-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
-          style={{ height: viewport ? `${viewport}px` : "100dvh" }}
-          onClick={(e) => e.target === dialog.current?.parentElement && setOpen(false)}
-        >
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/40"
+            onClick={() => setOpen(false)}
+          />
           <div
             ref={dialog}
             role="dialog"
             aria-modal="true"
             aria-label={label}
-            // max-h + scroll so the sheet can never be taller than what's
-            // visible; the buttons stay reachable however small that gets.
-            className="max-h-full w-full max-w-sm overflow-y-auto overscroll-contain rounded-t-2xl bg-[var(--color-surface)] p-5 sm:rounded-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 flex max-h-screen w-full flex-col rounded-t-2xl bg-[var(--color-surface)] sm:left-1/2 sm:bottom-auto sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
           >
             {state.ok ? (
-              <div className="py-6 text-center">
-                <p className="text-3xl">★</p>
-                <p className="mt-2 font-semibold">Thank you</p>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  Your feedback has been saved.
-                </p>
+              <div className="overflow-y-auto p-5 sm:p-5" style={{ maxHeight: "calc(100% - 0px)" }}>
+                <div className="py-6 text-center">
+                  <p className="text-3xl">★</p>
+                  <p className="mt-2 font-semibold">Thank you</p>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">
+                    Your feedback has been saved.
+                  </p>
+                </div>
               </div>
             ) : (
-              <form action={action} className="flex flex-col">
+              <form action={action} className="flex flex-col" style={{ height: "100%" }}>
                 {sessionId && (
                   <input type="hidden" name="session_id" value={sessionId} />
                 )}
                 <input type="hidden" name="stars" value={stars} />
 
-                <div className="flex-1">
+                <div className="flex-1 overflow-y-auto p-5 sm:p-5">
                   <p className="font-semibold">{label}</p>
 
-                <div
-                  className="mt-4 flex justify-center gap-1"
-                  role="radiogroup"
-                  aria-label="Rating out of five"
-                >
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      role="radio"
-                      aria-checked={stars === n}
-                      aria-label={`${n} star${n > 1 ? "s" : ""}`}
-                      onClick={() => setStars(n)}
-                      className={`text-4xl leading-none transition-colors ${
-                        n <= stars
-                          ? "text-[var(--color-accent)]"
-                          : "text-[var(--color-line)]"
-                      }`}
-                    >
-                      {n <= stars ? "★" : "☆"}
-                    </button>
-                  ))}
-                </div>
+                  <div
+                    className="mt-4 flex justify-center gap-1"
+                    role="radiogroup"
+                    aria-label="Rating out of five"
+                  >
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        role="radio"
+                        aria-checked={stars === n}
+                        aria-label={`${n} star${n > 1 ? "s" : ""}`}
+                        onClick={() => setStars(n)}
+                        className={`text-4xl leading-none transition-colors ${
+                          n <= stars
+                            ? "text-[var(--color-accent)]"
+                            : "text-[var(--color-line)]"
+                        }`}
+                      >
+                        {n <= stars ? "★" : "☆"}
+                      </button>
+                    ))}
+                  </div>
 
-                <label htmlFor="comment" className="mt-5 block text-sm font-medium">
-                  We&rsquo;d love to hear your feedback or suggestions — it&rsquo;s anonymous
-                </label>
-                <textarea
-                  id="comment"
-                  name="comment"
-                  rows={4}
-                  maxLength={1000}
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]"
-                />
+                  <label htmlFor="comment" className="mt-5 block text-sm font-medium">
+                    We&rsquo;d love to hear your feedback or suggestions — it&rsquo;s anonymous
+                  </label>
+                  <textarea
+                    id="comment"
+                    name="comment"
+                    rows={3}
+                    maxLength={1000}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]"
+                  />
 
                   {state.error && (
                     <p className="mt-2 text-sm font-medium text-[var(--color-danger-ink)]" role="alert">
@@ -178,21 +178,23 @@ export default function RatingModal({
                   )}
                 </div>
 
-                <div className="mt-4 flex gap-2 border-t border-[var(--color-line)] pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    className="flex-1 rounded-lg border border-[var(--color-line)] px-4 py-3 text-sm font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={pending || stars === 0}
-                    className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
-                  >
-                    {pending ? "Saving…" : already ? "Update" : "Send"}
-                  </button>
+                <div className="border-t border-[var(--color-line)] p-5 sm:p-5">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setOpen(false)}
+                      className="flex-1 rounded-lg border border-[var(--color-line)] px-4 py-3 text-sm font-medium"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={pending || stars === 0}
+                      className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                    >
+                      {pending ? "Saving…" : already ? "Update" : "Send"}
+                    </button>
+                  </div>
                 </div>
               </form>
             )}
