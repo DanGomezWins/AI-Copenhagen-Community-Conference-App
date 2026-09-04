@@ -1,10 +1,32 @@
+/**
+ * Two test sessions at known times, so time-dependent behaviour (finished vs
+ * happening-now styling, the slides announcement) can be exercised before the
+ * real event date.
+ *
+ *   node scripts/create-test-sessions.mjs
+ *
+ * Times are written with an explicit +02:00 offset to match Copenhagen, which
+ * is what timeToIso() in lib/program produces. Writing them as +00:00 shifts
+ * everything two hours and makes a "past" session look like it is still ahead.
+ */
+import fs from "node:fs";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://shggwtoeppiwyybkanfc.supabase.co";
-const serviceRoleKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoZ2d3dG9lcHBpd3l5YmthbmZjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Nzc0NDAxOSwiZXhwIjoyMTAzMzIwMDE5fQ.KlXTv85zWc8qj3JzrHWbP3Ht41voyyheh9qONTMuwIQ";
+for (const line of fs.readFileSync(".env.local", "utf8").split("\n")) {
+  const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+  if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
+}
 
-const supabase = createClient(supabaseUrl, serviceRoleKey);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const secretKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseUrl || !secretKey) {
+  console.error(
+    "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in .env.local",
+  );
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, secretKey);
 
 const pastSession = {
   title: "[TEST] Past Session - Edit me to add slides",
@@ -14,8 +36,8 @@ const pastSession = {
   speaker_profile_id: null,
   track: "main",
   room: "Test Room",
-  starts_at: "2026-09-04T08:00:00+00:00",
-  ends_at: "2026-09-04T09:00:00+00:00",
+  starts_at: "2026-09-03T20:00:00+02:00",
+  ends_at: "2026-09-03T21:00:00+02:00",
   status: "scheduled",
 };
 
@@ -27,8 +49,8 @@ const nowSession = {
   speaker_profile_id: null,
   track: "demos",
   room: "Test Room 2",
-  starts_at: "2026-09-04T12:00:00+00:00",
-  ends_at: "2026-09-04T13:00:00+00:00",
+  starts_at: "2026-09-04T10:00:00+02:00",
+  ends_at: "2026-09-04T15:00:00+02:00",
   status: "scheduled",
 };
 
@@ -39,17 +61,17 @@ async function run() {
       .insert([pastSession])
       .select();
     if (pastError) throw pastError;
-    console.log("✓ Past session created:", past[0].id);
+    console.log("Past session created:", past[0].id);
 
     const { data: now, error: nowError } = await supabase
       .from("sessions")
       .insert([nowSession])
       .select();
     if (nowError) throw nowError;
-    console.log("✓ Now session created:", now[0].id);
+    console.log("Now session created:", now[0].id);
 
     console.log(
-      "\nDone! Go to Organiser → Edit the schedule to edit them and add slides."
+      "\nDone. Go to Organiser -> Edit the schedule to edit them and add slides.",
     );
   } catch (error) {
     console.error("Error:", error.message);
