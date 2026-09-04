@@ -38,7 +38,9 @@ export default function StarButton({
     <form
       action={(formData) => {
         startTransition(() => setOptimistic(!optimistic));
-        track(optimistic ? EVENTS.SESSION_UNSTARRED : EVENTS.SESSION_STARRED, { sessionId });
+        if (!optimistic) {
+          track(EVENTS.SESSION_STARRED, { sessionId });
+        }
         return toggleStar(formData);
       }}
       className={labelled ? "mt-5" : undefined}

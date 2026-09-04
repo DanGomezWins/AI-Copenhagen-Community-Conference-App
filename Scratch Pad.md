@@ -1,2 +1,3 @@
 - How do I setup the PostHog dashboard for the app? And is it possible to set up a test dashboard separate from a production dashboard to avoid polluting real data from the day?
+- maybe wanna scrape or iframe open sessions timetable? Or add it manually during the day
 - 

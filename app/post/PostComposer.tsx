@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { createPost, updatePost, type PostFormState } from "@/app/actions/posts";
 import { POST_MAX } from "@/lib/feed";
 import { TRACKS } from "@/lib/program";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 const MAX_EDGE = 1280;
 
@@ -52,8 +54,13 @@ export default function PostComposer({
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (state.ok) router.push("/");
-  }, [state.ok, router]);
+    if (state.ok) {
+      if (!editing) {
+        track(EVENTS.ATTENDEE_POST_CREATED);
+      }
+      router.push("/");
+    }
+  }, [state.ok, router, editing]);
 
   async function onPickImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

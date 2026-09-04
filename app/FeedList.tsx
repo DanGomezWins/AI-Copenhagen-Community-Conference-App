@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
 import { relativeAge, type PostWithAuthor } from "@/lib/feed";
 import { TRACKS } from "@/lib/program";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 const trackLabel = (k: string | null) =>
   TRACKS.find((t) => t.key === k)?.label ?? null;
@@ -26,6 +28,10 @@ export default function FeedList({
   const [, setTick] = useState(0);
 
   const organisers = new Set(organiserIds);
+
+  useEffect(() => {
+    track(EVENTS.FEED_OPENED);
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => setTick((n) => n + 1), 30_000);

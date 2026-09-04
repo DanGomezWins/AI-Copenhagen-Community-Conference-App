@@ -97,7 +97,7 @@ export default function PushPrompt() {
       if (!res.ok) throw new Error("Could not save your subscription.");
 
       setState("subscribed");
-      track(EVENTS.NOTIFICATIONS_ENABLED);
+      track(EVENTS.NOTIFICATION_PERMISSION_GRANTED);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not turn notifications on.");
     } finally {
