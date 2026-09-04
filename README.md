@@ -18,6 +18,7 @@
   - [Speaker slides](#speaker-slides)
   - [Ratings and feedback](#ratings-and-feedback)
 - [Getting started](#getting-started)
+- [Sign-in and email](#sign-in-and-email)
 - [What I need decisions on](#what-i-need-decisions-on)
 - [Before the event](#before-the-event)
 - [Measuring how it went](#measuring-how-it-went)
@@ -139,55 +140,97 @@ doubles as a checklist, about 25 minutes.
 
 ---
 
-## What I need decisions on
-
-### 1. Email for sign-in — the blocker
+## Sign-in and email
 
 Attendees sign in with a **six-digit code**: enter your email, a code arrives,
 type it into the app. No passwords, and no leaving the app.
 
-**The problem:** the free email service bundled with our database allows only a
-couple of messages an hour. Useless when 200 people arrive between 08:30 and
-09:30.
+Mail goes out through **Brevo** (sponsor account, Starter plan, no daily cap)
+using Supabase Auth's custom SMTP. Nothing in the app sends email itself, so
+changing provider is a dashboard change and touches no code.
 
-**What's needed:** a real provider. **[Resend](https://resend.com), about $20
-for the event month**, cancel after. Ten minutes to set up.
+**Supabase -> Authentication -> SMTP Settings**
 
-**Until then** sign-in is in test mode — entering an email logs you straight in
-with no email sent. Fine for review, **cannot ship**: anyone with the link
-could sign in as anyone.
+| Field | Value |
+| --- | --- |
+| Sender email address | `app@aimeetupcopenhagen.dk` |
+| Sender name | `AI Meetup Copenhagen` |
+| Host | `smtp-relay.brevo.com` |
+| Port | `587` |
+| Minimum interval per user | `60` |
+| Username | `b54a11001@smtp-brevo.com` |
+| Password | the Brevo SMTP key |
 
-*Decision: approve the ~$20, or tell me who to invoice.*
+**Supabase -> Authentication -> Rate Limits.** The defaults are sized for a
+trickle of sign-ups, not 200 people arriving inside an hour, and three of them
+count **per IP** - on venue wifi the whole room shares one.
 
-> **Why a code and not a link.** Two reasons, and the second is the decisive one.
+| Limit | Default | Set to |
+| --- | --- | --- |
+| Sending emails (per hour) | 30 | 500 |
+| Sign-ups and sign-ins (per 5 min, per IP) | 30 | 300 |
+| Token verifications (per 5 min, per IP) | 30 | 300 |
+| Token refreshes (per 5 min, per IP) | 150 | 300 |
+
+Sign-ups and sign-ins bites first: at the default, the thirty-first person to
+ask for a code inside five minutes is refused.
+
+Expected volume is about **350 emails on the day** - one code each for 200
+attendees, plus resends, second devices and organisers during setup -
+concentrated in the 08:30-09:30 registration hour.
+
+**The Magic Link template must contain `{{ .Token }}`** (Authentication ->
+Emails -> Magic Link), or the message arrives with no code in it.
+
+**Minimum interval per user is 60 seconds** and the resend button in
+[LoginForm](app/login/LoginForm.tsx) matches it. Change one, change the other,
+or resending inside the window fails with an unhelpful error.
+
+### DNS on aimeetupcopenhagen.dk
+
+DKIM and DMARC are in place. **SPF is missing** - add this TXT record on the
+root domain:
+
+```
+v=spf1 include:spf.brevo.com ~all
+```
+
+Mail still authenticates through DKIM without it, but SPF lowers the chance of
+landing in spam.
+
+### Test mode
+
+`ENABLE_DEV_SIGNIN=true` signs an address straight in with no email sent, which
+is how the app was reviewed before email existed. It is server-only and read at
+**runtime**, so clearing it takes effect immediately.
+`NEXT_PUBLIC_ENABLE_DEV_SIGNIN` only reveals the button, is inlined at **build**
+time so it needs a redeploy, and must never be the security gate.
+
+Both must be `false` in production. Once real sign-in is confirmed, delete
+[app/dev/signin/route.ts](app/dev/signin/route.ts) and
+[app/api/dev/code/route.ts](app/api/dev/code/route.ts).
+
+> **Why a code and not a link.** Two reasons, and the second is decisive.
 >
-> The plan was for the Brevo email to carry a link that signs each person
-> straight in. A pre-made sign-in link in a bulk email *is* the credential — it
-> can be forwarded, screenshotted, or left open on a shared laptop.
+> A pre-made sign-in link in an email *is* the credential - it can be
+> forwarded, screenshotted, or left open on a shared laptop.
 >
 > More importantly, **a link cannot work on iPhone at all**. Tapping a link in
 > Mail opens Safari, and an installed Home Screen app keeps its own sign-in
 > separate from Safari's. So an attendee who installs the app, asks to sign in,
-> and then taps the link in their email ends up signed into *Safari* while the
-> app they just installed stays signed out. There is no way to fix that from
-> our side.
+> then taps the link in their email ends up signed into *Safari* while the app
+> they just installed stays signed out. There is no way to fix that from our
+> side.
 >
 > A code has neither problem. It is typed into whichever copy of the app asked
-> for it, so the session lands exactly where the person is — identical on
+> for it, so the session lands exactly where the person is - identical on
 > iPhone, Android, browser or installed.
 
-> **One Supabase setting is needed for this.** Authentication → Emails → Magic
-> Link: the template must include `{{ .Token }}` so the email shows the code.
-> I'll do it when Resend is connected; noting it so it isn't missed.
+---
 
-### 2. The AI key
+## What I need decisions on
 
-The whiteboard scanner uses Claude. It runs on **my personal API key** — about
-3 cents per photo, so a couple of dollars for a heavy day.
-
-*Either set up an account and send me the key, or I'll invoice the few dollars.*
-
-### 3. Slide files
+### Slide files
 
 To publish slides I need **a URL per session, PDF only**. Hosting them yourself
 and sending the links alongside the speaker details is simplest — then the app
@@ -197,7 +240,8 @@ posts them automatically as each talk ends.
 
 ## Before the event
 
-- [ ] Set up Resend and switch off test-mode sign-in
+- [ ] Switch off test-mode sign-in (`ENABLE_DEV_SIGNIN`) and confirm a real code arrives
+- [ ] Add the SPF record for aimeetupcopenhagen.dk
 - [ ] Load the real programme (arriving 24–48h before)
 - [ ] Load the attendee list from checkin.no — **this is what I need most**
 - [ ] Add slide URLs as speakers send them
@@ -231,7 +275,7 @@ Quick summary: **[Assets/metrics-framework.csv](Assets/metrics-framework.csv)** 
 | **App** | Next.js 16, TypeScript, Tailwind |
 | **Data, sign-in, photos** | Supabase — hosted in Ireland |
 | **Hosting** | Railway — EU West |
-| **Reading the whiteboard** | Claude (`claude-opus-5`) |
+| **Reading the whiteboard** | Claude (`claude-opus-5`) - retired, see below |
 | **Analytics** | PostHog — EU cloud |
 | **Notifications** | Web push |
 
@@ -241,6 +285,20 @@ where it behaves like an app.
 
 **On data.** Everything is in the EU. Profiles show no email addresses. People
 can remove themselves from the directory at any time. Ratings are anonymous.
+
+---
+
+### The whiteboard scanner is switched off
+
+Open Sessions moved to their own page, so photographing the board from this app
+is no longer needed. The whole flow - the Organiser card, `/scan`, and the
+`/api/scan/*` routes - is gated behind `SCAN_ENABLED` in
+[lib/scan/enabled.ts](lib/scan/enabled.ts), default off. Nothing was deleted.
+
+It was the only thing that called the Anthropic API, so **`ANTHROPIC_API_KEY`
+is unused and the account needs no credit** while it stays off. To revive it,
+set `SCAN_ENABLED=true` in the environment (no code change) and fund the key
+again.
 
 ---
 

@@ -181,7 +181,7 @@ an inbox.
 
 | #    | Test                                                               | Expected                                                                            | Result | Notes |
 | ---- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ------ | ----- |
-| 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A red "Test mode — no email was sent" panel appears, with a real code in it         | :)     |       |
+| 1a.1 | Enter `dangomezwindshuttle+test_guy@gmail.com` and tap **Sign in** | A six-digit code arrives by email (check spam once, then report it)                   | :)     |       |
 | 1a.2 | Numeric keypad                                                     | Tapping the code box brings up digits, not letters                                  | :)     |       |
 | 1a.3 | Type the code, tap **Sign in**                                     | You are signed in and land on **your profile**, ready to check it                   | works  |       |
 | 1a.4 | Wrong code                                                         | "That code isn't right. Check it and try again, or send a new one."                 | works  |       |
@@ -387,34 +387,34 @@ have to create anything.
 
 **Organiser → Edit the schedule.**
 
-| #    | Test                 | Expected                                                                       | Result | Notes                                                                                                                                                                                                  |
-| ---- | -------------------- | ------------------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 9.1  | Open it              | All rooms listed, grouped                                                      | :)     |                                                                                                                                                                                                        |
-| 9.2  | Add a session        | Room, title, speaker, start time - **and the Feed announces it**               | -      | FIXED - retest. Good catch: only *changes* were announced, so a session added to the programme appeared silently. A new session now posts "Added to the programme: ..." when Tell attendees is ticked. |
-| 9.3  | End time follows     | Setting a start fills the end automatically; moving the start moves it         | :)     |                                                                                                                                                                                                        |
-| 9.4  | Room is a choice     | Three fixed rooms, no free-text box                                            | :)     |                                                                                                                                                                                                        |
-| 9.5  | **Description**      | A description field, shown on the session page                                 | :)     |                                                                                                                                                                                                        |
-| 9.6  | Move a session       | Change the time, leave "Tell attendees" ticked                                 | :)     |                                                                                                                                                                                                        |
-| 9.7  | Change announced     | The Feed shows what moved and what it was before                               | :)     |                                                                                                                                                                                                        |
-| 9.8  | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate                  | :)     |                                                                                                                                                                                                        |
-| 9.9  | Opt out              | Unticking "Tell attendees" posts nothing                                       | :)     |                                                                                                                                                                                                        |
-| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | :)     |                                                                                                                                                                                                        |
-| 9.11 | Cancel               | Stays visible struck through in the Program                                    | :)     |                                                                                                                                                                                                        |
-| 9.12 | Restore              | Puts it back                                                                   | :)     |                                                                                                                                                                                                        |
-| 9.13 | Delete               | Removes it entirely                                                            | :)     |                                                                                                                                                                                                        |
+| #    | Test                 | Expected                                                                       | Result | Notes |
+| ---- | -------------------- | ------------------------------------------------------------------------------ | ------ | ----- |
+| 9.1  | Open it              | All rooms listed, grouped                                                      | :)     |       |
+| 9.2  | Add a session        | Room, title, speaker, start time - **and the Feed announces it**               | works  |       |
+| 9.3  | End time follows     | Setting a start fills the end automatically; moving the start moves it         | :)     |       |
+| 9.4  | Room is a choice     | Three fixed rooms, no free-text box                                            | :)     |       |
+| 9.5  | **Description**      | A description field, shown on the session page                                 | :)     |       |
+| 9.6  | Move a session       | Change the time, leave "Tell attendees" ticked                                 | :)     |       |
+| 9.7  | Change announced     | The Feed shows what moved and what it was before                               | :)     |       |
+| 9.8  | **Typo stays quiet** | Changing one letter of a title posts **nothing** — deliberate                  | :)     |       |
+| 9.9  | Opt out              | Unticking "Tell attendees" posts nothing                                       | :)     |       |
+| 9.10 | **Room clash warns** | Two sessions in one room at one time warns, naming the clash — but still saves | :)     |       |
+| 9.11 | Cancel               | Stays visible struck through in the Program                                    | :)     |       |
+| 9.12 | Restore              | Puts it back                                                                   | :)     |       |
+| 9.13 | Delete               | Removes it entirely                                                            | :)     |       |
 
 ---
 
 ## 10. Organiser: slides
 
-| #    | Test                | Expected                                                                                                 | Result | Notes                                                                      |
-| ---- | ------------------- | -------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------- |
-| 10.1 | Slides field        | The session form has a "Slides URL (PDF)" box                                                            | :)     |                                                                            |
-| 10.2 | Before it ends      | Add a URL to a **future** session. Its page says slides will appear once it's finished — no download yet | -      | Couldn't test this as the session is in the future, but I need to test it. |
-| 10.3 | **After it ends**   | Add a URL to a session already finished. Within a minute the Feed says the slides are available          | -      |                                                                            |
-| 10.4 | Download appears    | That session's page now shows a download button                                                          | -      |                                                                            |
-| 10.5 | **No URL, no post** | A finished session **without** a URL never announces anything                                            | -      |                                                                            |
-| 10.6 | No double-posting   | It announces once, not repeatedly                                                                        | -      |                                                                            |
+| #    | Test                | Expected                                                                                                 | Result | Notes |
+| ---- | ------------------- | -------------------------------------------------------------------------------------------------------- | ------ | ----- |
+| 10.1 | Slides field        | The session form has a "Slides URL (PDF)" box                                                            | :)     |       |
+| 10.2 | Before it ends      | Add a URL to a **future** session. Its page says slides will appear once it's finished — no download yet | works  |       |
+| 10.3 | **After it ends**   | Add a URL to a session already finished. Within a minute the Feed says the slides are available          | works  |       |
+| 10.4 | Download appears    | That session's page now shows a download button                                                          | works  |       |
+| 10.5 | **No URL, no post** | A finished session **without** a URL never announces anything                                            | works  |       |
+| 10.6 | No double-posting   | It announces once, not repeatedly                                                                        | works  |       |
 
 > ### How to test the slides, step by step
 >
@@ -443,13 +443,13 @@ have to create anything.
 
 **Organiser → Ratings & feedback.**
 
-| #    | Test               | Expected                                                  | Result | Notes                                                                                                                                                               |
-| ---- | ------------------ | --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 11.1 | Open it            | Averages for the app and for sessions                     | -      | UNBLOCKED - retest. You could not submit anything, so there was nothing here to see. Leave a rating in 5.8 and 8.6 first, then come back. |
-| 11.2 | Two-column table   | Stars beside the comment                                  | -      |                                                                                                                                                                     |
-| 11.3 | Your ratings       | The ones you left in 5.8 and 8.6 appear                   | -      |                                                                                                                                                                     |
-| 11.4 | Grouped by session | Session ratings grouped under each session, busiest first | -      | UNBLOCKED - retest. Same cause. |
-| 11.5 | **Anonymous**      | No name anywhere — you can't tell who said what           | -      |                                                                                                                                                                     |
+| #    | Test               | Expected                                                  | Result | Notes |
+| ---- | ------------------ | --------------------------------------------------------- | ------ | ----- |
+| 11.1 | Open it            | Averages for the app and for sessions                     | works  |       |
+| 11.2 | Two-column table   | Stars beside the comment                                  | works  |       |
+| 11.3 | Your ratings       | The ones you left in 5.8 and 8.6 appear                   | works  |       |
+| 11.4 | Grouped by session | Session ratings grouped under each session, busiest first | works  |       |
+| 11.5 | **Anonymous**      | No name anywhere — you can't tell who said what           | works  |       |
 When I rated the app and submitted some feedback, logged in as test guy on the website in a desktop browser, I got the error message: 'there is no unique or exclusion constraint matching the ON CONFLICT specification' - what does that mean?
 
 
@@ -460,23 +460,23 @@ When I rated the app and submitted some feedback, logged in as test guy on the w
 ⚠️ **Do this from the home-screen app**, not the browser — on iPhone
 notifications only work once installed.
 
-| #     | Test                         | Expected                                                                  | Result | Notes                                                                                |
-| ----- | ---------------------------- | ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
-| 12.1  | Turn on notifications        | Avatar → scroll down → allow                                              | :)     |                                                                                      |
-| 12.2  | Confirms                     | "Notifications are on"                                                    | :)     |                                                                                      |
-| 12.3  | Test notification            | Organiser -> Testing tools -> Send a test - it arrives                    | -      | NOT A BUG - retest with Do Not Disturb off. The button now also reports how many devices accepted it, so a server problem is distinguishable from a phone setting. |
-| 12.4  | Tapping opens the app        |                                                                           | :)     |                                                                                      |
-| 12.5  | Create a test session        | Testing tools → **+3 min**, listed as "waiting"                           | :)     |                                                                                      |
-| 12.6  | Wait a minute                | Reload — it says "announced ✓"                                            | :)     |                                                                                      |
-| 12.7  | Correct time                 | The time shown is Copenhagen time, not two hours out                      | :)     |                                                                                      |
-| 12.8  | In the Feed                  | "Next up at HH:MM …" appears, badged as automatic                         | :)     |                                                                                      |
-| 12.9  | Notification arrived         |                                                                           | -      | NOT A BUG - same cause. Retest with Do Not Disturb off. |
-| 12.10 | **No double-posting**        | Tap "Run announcer now" three times - still only one post                 | -      | COULD NOT REPRODUCE - please retest carefully. Each session is claimed before it posts, so a second run should find nothing to do. Most likely there were three *test sessions* (from tapping +3 min more than once) rather than three posts for one. Check the pending list first. |
-| 12.11 | Not-yet-due                  | **+30 min**, run it — nothing posts, too far out                          | :)     |                                                                                      |
-| 12.12 | **Kill switch**              | Organiser → turn announcements off; create +3 min and run — nothing posts | :)     |                                                                                      |
-| 12.13 | Back on                      | Toggling back on, it posts again                                          | :)     |                                                                                      |
-| 12.14 | Buttons show they're pressed | Every organiser button shows a spinner while working                      | :)     |                                                                                      |
-| 12.15 | Clean up                     | "Remove test sessions" clears them *(check the Feed first)*               | :)     |                                                                                      |
+| #     | Test                         | Expected                                                                  | Result | Notes |
+| ----- | ---------------------------- | ------------------------------------------------------------------------- | ------ | ----- |
+| 12.1  | Turn on notifications        | Avatar → scroll down → allow                                              | :)     |       |
+| 12.2  | Confirms                     | "Notifications are on"                                                    | :)     |       |
+| 12.3  | Test notification            | Organiser -> Testing tools -> Send a test - it arrives                    | works  |       |
+| 12.4  | Tapping opens the app        |                                                                           | :)     |       |
+| 12.5  | Create a test session        | Testing tools → **+3 min**, listed as "waiting"                           | :)     |       |
+| 12.6  | Wait a minute                | Reload — it says "announced ✓"                                            | :)     |       |
+| 12.7  | Correct time                 | The time shown is Copenhagen time, not two hours out                      | :)     |       |
+| 12.8  | In the Feed                  | "Next up at HH:MM …" appears, badged as automatic                         | :)     |       |
+| 12.9  | Notification arrived         |                                                                           | works  |       |
+| 12.10 | **No double-posting**        | Tap "Run announcer now" three times - still only one post                 | works  |       |
+| 12.11 | Not-yet-due                  | **+30 min**, run it — nothing posts, too far out                          | :)     |       |
+| 12.12 | **Kill switch**              | Organiser → turn announcements off; create +3 min and run — nothing posts | :)     |       |
+| 12.13 | Back on                      | Toggling back on, it posts again                                          | :)     |       |
+| 12.14 | Buttons show they're pressed | Every organiser button shows a spinner while working                      | :)     |       |
+| 12.15 | Clean up                     | "Remove test sessions" clears them *(check the Feed first)*               | :)     |       |
 
 ---
 
@@ -495,17 +495,17 @@ curious.
 
 ## 14. Design and general
 
-| #    | Test                 | Expected                                                 | Result | Notes                                                                                                                                                          |
-| ---- | -------------------- | -------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14.1 | **Light throughout** | No dark mode anywhere, even with your phone in dark mode | :)     |                                                                                                                                                                |
-| 14.2 | Brand purple         | Buttons and links are `#4309FF`                          | :)     |                                                                                                                                                                |
-| 14.3 | Readable             | Text is high contrast and comfortable in daylight        | :)     |                                                                                                                                                                |
-| 14.4 | Inter font           | Clean sans-serif throughout                              | :)     |                                                                                                                                                                |
-| 14.5 | App name             | **AIMC-CC** in the top bar and on the home-screen icon   | :)     |                                                                                                                                                                |
-| 14.6 | Full name            | Spelled out on the Feed and the sign-in screen           | :)     |                                                                                                                                                                |
-| 14.7 | Tap targets          | Nothing fiddly to hit one-handed                         | :)     |                                                                                                                                                                |
-| 14.8 | No overflow          | Nothing spills off the side, and no modal button is cut off | -      | FIXED - retest. The rating modal was the only case; see 5.7. |
-| 14.9 | Speed                | Screens open quickly on mobile data                      | :)     |                                                                                                                                                                |
+| #    | Test                 | Expected                                                    | Result | Notes |
+| ---- | -------------------- | ----------------------------------------------------------- | ------ | ----- |
+| 14.1 | **Light throughout** | No dark mode anywhere, even with your phone in dark mode    | :)     |       |
+| 14.2 | Brand purple         | Buttons and links are `#4309FF`                             | :)     |       |
+| 14.3 | Readable             | Text is high contrast and comfortable in daylight           | :)     |       |
+| 14.4 | Inter font           | Clean sans-serif throughout                                 | :)     |       |
+| 14.5 | App name             | **AIMC-CC** in the top bar and on the home-screen icon      | :)     |       |
+| 14.6 | Full name            | Spelled out on the Feed and the sign-in screen              | :)     |       |
+| 14.7 | Tap targets          | Nothing fiddly to hit one-handed                            | :)     |       |
+| 14.8 | No overflow          | Nothing spills off the side, and no modal button is cut off | works  |       |
+| 14.9 | Speed                | Screens open quickly on mobile data                         | :)     |       |
 
 ---
 
@@ -525,7 +525,9 @@ a button doesn't say what you'd expect, that's worth knowing.
 
 Things you might flag that are intentional:
 
-- **No email arrives when signing in.** Test mode until Resend is approved.
+- **No email arrives when signing in.** Check spam first. If it is genuinely
+  missing, the Magic Link template may be missing `{{ .Token }}`, or the
+  Supabase rate limit for sending emails has been hit.
 - **Open Sessions has no listing.** It links out; the URL is still to come.
 - **Attendees aren't loaded yet.** Ten test guests stand in until the
   checkin.no export arrives. They are the only accounts with a `+` in the
