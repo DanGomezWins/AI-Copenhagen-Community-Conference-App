@@ -57,7 +57,7 @@ export default function Directory({ people }: { people: DirectoryPerson[] }) {
     const q = deferred.trim();
     if (q.length < 2) return;
     const t = setTimeout(
-      () => track(EVENTS.DIRECTORY_SEARCHED, { length: q.length, results: results.length }),
+      () => track(EVENTS.DIRECTORY_SEARCH, { length: q.length, results: results.length }),
       800,
     );
     return () => clearTimeout(t);
