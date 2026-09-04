@@ -185,7 +185,7 @@ an inbox.
 | 1a.2 | Numeric keypad                                                     | Tapping the code box brings up digits, not letters                                  | :)     |       |
 | 1a.3 | Type the code, tap **Sign in**                                     | You are signed in and land on **your profile**, ready to check it                   | works  |       |
 | 1a.4 | Wrong code                                                         | "That code isn't right. Check it and try again, or send a new one."                 | works  |       |
-| 1a.5 | Send a new code                                                    | "Send a new code" is throttled for 30 seconds, then issues a fresh one              | :)     |       |
+| 1a.5 | Send a new code                                                    | "Send a new code" is throttled for 60 seconds, then issues a fresh one              | :)     |       |
 | 1a.6 | Unknown address                                                    | Try `nobody@example.com` — "No account for that address", and no account is created | :)     |       |
 | 1a.7 | Stays signed in                                                    | Close the app fully and reopen from the icon — still signed in                      | :)     |       |
 | 1a.8 | Install banner gone                                                | Inside the installed app, neither install box appears any more                      | :)     |       |
@@ -488,7 +488,7 @@ curious.
 
 | #    | Test         | Expected                                   | Result | Notes                                               |
 | ---- | ------------ | ------------------------------------------ | ------ | --------------------------------------------------- |
-| 13.1 | Reach it     | `/scan` still loads                        | -      | This functionality is disabled, so not testing it.  |
+| 13.1 | Reach it     | `/scan` returns "not found" - feature retired | :)     | Retired with Open Sessions; nothing to test.        |
 | 13.2 | Read a board | Photograph a handwritten list; it reads it | -      |                                                     |
 
 ---
