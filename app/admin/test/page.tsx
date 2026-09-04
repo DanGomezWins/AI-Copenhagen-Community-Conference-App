@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
-  createTestSession, runAnnouncerNow, sendTestPush, clearTestData,
+  createTestSession, createDatedSession, runAnnouncerNow, sendTestPush, clearTestData,
 } from "@/app/actions/test-tools";
 import { TEST_MARK } from "@/lib/test-mark";
 import { timeAt } from "@/lib/program";
@@ -118,9 +118,45 @@ export default async function TestToolsPage({
         </div>
       </div>
 
+      {/* --- program styling --- */}
+      <div className="mt-4 rounded-xl border border-[var(--color-line)] p-4">
+        <p className="font-semibold">2. See a session in the Program</p>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">
+          Puts a session on the <strong>Main stage</strong> track dated today, so
+          the Program has something current or past to show. The real programme
+          is all on 10 September, so nothing in it can be either until the day.
+        </p>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <form action={createDatedSession}>
+            <input type="hidden" name="kind" value="now" />
+            <SubmitButton
+              className={`${btn} border-[var(--color-accent)] text-[var(--color-accent)]`}
+              pendingLabel="Adding…"
+            >
+              Happening now
+            </SubmitButton>
+          </form>
+          <form action={createDatedSession}>
+            <input type="hidden" name="kind" value="finished" />
+            <SubmitButton className={btn} pendingLabel="Adding…">
+              Already finished
+            </SubmitButton>
+          </form>
+        </div>
+
+        <p className="mt-3 text-sm text-[var(--color-muted)]">
+          Then open <strong>Program</strong>. &ldquo;Happening now&rdquo; runs from
+          ten minutes ago until fifty minutes from now and should be outlined and
+          badged <strong>Now</strong>. &ldquo;Already finished&rdquo; ended an hour
+          ago and should be dimmed and labelled <strong>Finished</strong> - it is
+          also the one to use for testing slides. Both are removed by Clean up.
+        </p>
+      </div>
+
       {/* --- push --- */}
       <div className="mt-4 rounded-xl border border-[var(--color-line)] p-4">
-        <p className="font-semibold">2. Test notifications</p>
+        <p className="font-semibold">3. Test notifications</p>
 
         {!pushConfigured ? (
           <p className="mt-2 rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm">
@@ -147,7 +183,7 @@ export default async function TestToolsPage({
 
       {/* --- cleanup --- */}
       <div className="mt-4 rounded-xl border border-[var(--color-line)] p-4">
-        <p className="font-semibold">3. Clean up</p>
+        <p className="font-semibold">4. Clean up</p>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Removes only sessions created here and the posts they generated. The
           real programme and any genuine updates are untouched.{" "}

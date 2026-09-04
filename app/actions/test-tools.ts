@@ -51,6 +51,45 @@ export async function createTestSession(formData: FormData): Promise<void> {
   revalidatePath("/program");
 }
 
+/**
+ * Creates a session against the clock, dated TODAY, on the main track.
+ *
+ * "Now" and "Finished" styling can only be judged against the current time,
+ * and the real programme is all on 10 September - so before the day there is
+ * nothing in the Program that can ever be current or past. The announcer test
+ * above uses the Open track, which no longer lists in the Program at all, so
+ * it cannot be used to see this.
+ */
+export async function createDatedSession(formData: FormData): Promise<void> {
+  const { ok } = await guard();
+  if (!ok) return;
+
+  const finished = String(formData.get("kind") ?? "now") === "finished";
+  const now = Date.now();
+
+  // Already started and ending comfortably later, so it still reads as "Now"
+  // by the time the tester has walked over to the Program.
+  const starts = new Date(now + (finished ? -90 : -10) * 60_000);
+  const ends = new Date(now + (finished ? -60 : 50) * 60_000);
+
+  const admin = createAdminClient();
+  await admin.from("sessions").insert({
+    track: "main",
+    title: finished
+      ? `Finished test session - ended ${timeAt(ends.toISOString())}`
+      : `Happening now test session - until ${timeAt(ends.toISOString())}`,
+    speaker_name: "Test Speaker",
+    starts_at: starts.toISOString(),
+    ends_at: ends.toISOString(),
+    room: roomForTrack("main"),
+    notes: TEST_MARK,
+  });
+
+  revalidatePath("/");
+  revalidatePath("/program");
+  revalidatePath("/admin/test");
+}
+
 export async function runAnnouncerNow(): Promise<void> {
   const { ok } = await guard();
   if (!ok) return;
