@@ -61,6 +61,17 @@ export default async function ProgramPage({
     people.map((p) => [nameKey(`${p.first_name} ${p.last_name}`), p]),
   );
 
+  // Auto-fills the proposer's name in the topic form; they can clear it to
+  // stay anonymous.
+  const me = user ? people.find((p) => p.id === user.id) : null;
+  const myName = me ? `${me.first_name} ${me.last_name}` : "";
+
+  // So a topic's proposer can link through to their profile.
+  const directory = people.map((p) => ({
+    id: p.id,
+    name: `${p.first_name} ${p.last_name}`,
+  }));
+
   const moderatorId =
     view === "main" ? settings?.moderator_main_id
     : view === "demos" ? settings?.moderator_demos_id
@@ -136,7 +147,7 @@ export default async function ProgramPage({
           can reach the board that actually counts. */}
       {view === "open" && (
         <>
-          <OpenSessionsPrototype />
+          <OpenSessionsPrototype myName={myName} people={directory} />
 
           <div className="mt-6 rounded-xl border border-[var(--color-line)] p-4">
             <p className="text-sm font-medium">The board that counts</p>
