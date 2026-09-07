@@ -8,6 +8,7 @@ import {
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
 import { nameKey } from "@/lib/names";
+import OpenSessionsPrototype from "./OpenSessionsPrototype";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,9 @@ const VIEWS = [
 export default async function ProgramPage({
   searchParams,
 }: {
-  searchParams: Promise<{ track?: string }>;
+  searchParams: Promise<{ track?: string; preview?: string }>;
 }) {
-  const { track: raw } = await searchParams;
+  const { track: raw, preview } = await searchParams;
   const view: ProgramView = isProgramView(raw) ? raw : "main";
 
   const supabase = await createClient();
@@ -127,7 +128,11 @@ export default async function ProgramPage({
 
       {/* Open Sessions are scheduled on a separate site, so this tab points
           out rather than listing anything of its own. */}
-      {view === "open" && (
+      {/* Prototype of an in-app topic board, off the normal path: attendees on
+          the Open Sessions tab still get the link out. See the component. */}
+      {view === "open" && preview === "1" && <OpenSessionsPrototype />}
+
+      {view === "open" && preview !== "1" && (
         <div className="mt-4 rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
           <p className="font-semibold">Open Sessions are published separately</p>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
