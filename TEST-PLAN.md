@@ -110,7 +110,7 @@ Start signed out. If you are not, tap your avatar → **Sign out**.
 | --- | -------------------------- | ----------------------------------------------------------------------------- | ------ | -------------------------- |
 | 1.1 | Open the app link          | A **sign-in screen**, titled with the conference name                         | -      |                            |
 | 1.2 | Test-mode notice           | A red box explains no email will really be sent                               | -      |                            |
-| 1.3 | **Install-first guidance** | On iPhone, a purple box says "Add to your home screen first" and explains why | -      |                            |
+| 1.3 | **Install-first guidance** | A purple box says "Add this webpage to your home screen first" and explains why | -      |                            |
 | 1.4 | Add to home screen         | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | -      |                            |
 | 1.5 | Icon                       | Purple square, white ring, mint centre                                        | -      |                            |
 | 1.6 | Open from the icon         | Full screen, no browser bar                                                   | -      |                            |
