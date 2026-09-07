@@ -30,7 +30,7 @@ export default function InstallFirst() {
 
   return (
     <div className="mt-6 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
-      <p className="font-semibold">Add to your home screen first</p>
+      <p className="font-semibold">Add this webpage to your home screen first</p>
       <p className="mt-1 text-sm">
         Open your browser&rsquo;s menu and choose{" "}
         <strong>Add to Home Screen</strong> (or <strong>Install</strong>). Then
