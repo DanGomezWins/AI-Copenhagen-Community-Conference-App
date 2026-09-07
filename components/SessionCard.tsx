@@ -26,6 +26,17 @@ export default function SessionCard({
   const cancelled = s.status === "cancelled";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
 
+  // Everyone on stage, not just the lead - the closing keynote has three, and
+  // naming one of them made the other two look like they were not appearing.
+  const names = [s.speaker_name, ...(s.co_speaker_names ?? [])].filter(
+    (n): n is string => Boolean(n),
+  );
+  const solo = names.length === 1;
+  const billing =
+    names.length > 2
+      ? `${names.slice(0, -1).join(", ")} & ${names[names.length - 1]}`
+      : names.join(" & ");
+
   return (
     <li
       className={`flex items-start gap-2 rounded-xl border p-3.5 transition-opacity ${
@@ -81,13 +92,15 @@ export default function SessionCard({
           {s.title}
         </h3>
 
-        {s.speaker_name && (
+        {names.length > 0 && (
           <>
-            <p className="mt-1 text-sm font-medium">{s.speaker_name}</p>
+            <p className="mt-1 text-sm font-medium">{billing}</p>
             {/* Role and company sit on their own line, one step quieter. On a
                 phone this is the difference between a card you can skim and a
-                paragraph you have to read. */}
-            {(speaker?.role || speaker?.company) && (
+                paragraph you have to read - which is also why a session with
+                several speakers lists the names only. Three roles and three
+                companies is a paragraph. */}
+            {solo && (speaker?.role || speaker?.company) && (
               <p className="text-xs leading-snug text-[var(--color-muted)]">
                 {[speaker.role, speaker.company].filter(Boolean).join(" · ")}
               </p>
