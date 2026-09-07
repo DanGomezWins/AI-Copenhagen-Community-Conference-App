@@ -10,8 +10,9 @@ import { useMemo, useState } from "react";
  * before anyone writes integration code. Votes and topics live in component
  * state and vanish on reload - nothing is stored, nothing is sent.
  *
- * Reached only at /program?track=open&preview=1, so attendees on the normal
- * Open Sessions tab still get the link out to the real board.
+ * It sits on the Open Sessions tab itself so it can be judged in place, with
+ * a link to the real board directly underneath - a prototype that collects
+ * votes nobody counts must never be the only thing on that tab.
  */
 
 type Kind = "tell" | "ask";

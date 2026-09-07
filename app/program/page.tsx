@@ -20,9 +20,9 @@ const VIEWS = [
 export default async function ProgramPage({
   searchParams,
 }: {
-  searchParams: Promise<{ track?: string; preview?: string }>;
+  searchParams: Promise<{ track?: string }>;
 }) {
-  const { track: raw, preview } = await searchParams;
+  const { track: raw } = await searchParams;
   const view: ProgramView = isProgramView(raw) ? raw : "main";
 
   const supabase = await createClient();
@@ -130,30 +130,36 @@ export default async function ProgramPage({
           out rather than listing anything of its own. */}
       {/* Prototype of an in-app topic board, off the normal path: attendees on
           the Open Sessions tab still get the link out. See the component. */}
-      {view === "open" && preview === "1" && <OpenSessionsPrototype />}
+      {/* The topic board, in-app. Still a prototype: nothing it collects is
+          stored, so the real board stays linked underneath rather than being
+          replaced outright - if this is still here when attendees arrive, they
+          can reach the board that actually counts. */}
+      {view === "open" && (
+        <>
+          <OpenSessionsPrototype />
 
-      {view === "open" && preview !== "1" && (
-        <div className="mt-4 rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
-          <p className="font-semibold">Open Sessions are published separately</p>
-          <p className="mt-1 text-sm text-[var(--color-muted)]">
-            The open sessions schedule is decided during the day and lives on its
-            own page.
-          </p>
-          {openUrl ? (
-            <a
-              href={openUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block rounded-lg bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white"
-            >
-              Open the schedule ↗
-            </a>
-          ) : (
-            <p className="mt-3 text-sm font-medium">
-              The link will appear here as soon as that page is live.
+          <div className="mt-6 rounded-xl border border-[var(--color-line)] p-4">
+            <p className="text-sm font-medium">The board that counts</p>
+            <p className="mt-1 text-sm text-[var(--color-muted)]">
+              Topics and votes above are a trial and are not recorded. Suggest
+              and vote on the real board.
             </p>
-          )}
-        </div>
+            {openUrl ? (
+              <a
+                href={openUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-block rounded-lg bg-[var(--color-accent)] px-3.5 py-2 text-sm font-medium text-white"
+              >
+                Open the real board ↗
+              </a>
+            ) : (
+              <p className="mt-3 text-sm font-medium">
+                The link will appear here as soon as that page is live.
+              </p>
+            )}
+          </div>
+        </>
       )}
 
       {view === MY_SCHEDULE && sessions.length === 0 && (
