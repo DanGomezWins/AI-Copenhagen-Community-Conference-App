@@ -52,11 +52,6 @@ const DETAIL_MAX = 400;
 /** The six highest-voted topics get a room. */
 const WINNING = 6;
 
-const KIND_HELP: Record<Kind, string> = {
-  ask: "You have a topic you would like others to help you with",
-  tell: "You have an experience you would like to share with others",
-};
-
 const SEED: Topic[] = [
   {
     id: "1", kind: "ask", votes: 9, mine: false, createdByMe: false,
@@ -389,9 +384,12 @@ function TopicDialog({
 }) {
   const [title, setTitle] = useState(existing?.title ?? "");
   const [detail, setDetail] = useState(existing?.detail ?? "");
-  // Prefilled, because most people will use their own name - and the ones who
-  // will not are better served by clearing a field than hunting for a checkbox.
-  const [proposer, setProposer] = useState(existing ? existing.proposer : myName);
+  // Prefilled from the profile. Anonymity is a checkbox rather than an empty
+  // field, so the name is never lost by toggling it off and on again.
+  const [proposer, setProposer] = useState(
+    existing ? existing.proposer || myName : myName,
+  );
+  const [anon, setAnon] = useState(existing ? !existing.proposer : false);
   const [slot, setSlot] = useState<string>(existing?.slot ?? NO_PREFERENCE);
   const [kind, setKind] = useState<Kind>(existing?.kind ?? "ask");
 
@@ -407,14 +405,15 @@ function TopicDialog({
     onSave({
       title: title.trim(),
       detail: detail.trim(),
-      proposer: proposer.trim(),
+      proposer: anon ? "" : proposer.trim(),
       slot,
       kind,
     });
   }
 
+  // py-2.5 rather than py-3, and 16px text so iOS does not zoom on focus.
   const field =
-    "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
+    "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]";
 
   return (
     <>
@@ -426,13 +425,13 @@ function TopicDialog({
         className="fixed left-0 right-0 top-0 z-50 flex max-h-[95dvh] flex-col rounded-b-2xl bg-[var(--color-surface)] sm:left-1/2 sm:top-8 sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:rounded-2xl"
       >
         <form onSubmit={submit} className="flex min-h-0 flex-col">
-          <div className="min-h-0 flex-1 overflow-y-auto p-5">
-            <p className="text-lg font-bold">
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <p className="font-bold">
               {existing ? "Edit your topic" : "Propose a topic"}
             </p>
 
-            <label htmlFor="t-title" className="mt-4 block text-sm font-medium">
-              Title
+            <label htmlFor="t-title" className="mt-3 block text-sm font-medium">
+              Topic title
             </label>
             <input
               id="t-title"
@@ -444,35 +443,49 @@ function TopicDialog({
               className={field}
             />
 
-            <label htmlFor="t-detail" className="mt-4 block text-sm font-medium">
-              Description
-            </label>
+            {/* Label and counter share a row rather than stacking: with the
+                keyboard up, every line costs. */}
+            <div className="mt-3 flex items-baseline justify-between gap-2">
+              <label htmlFor="t-detail" className="text-sm font-medium">
+                Topic description{" "}
+                <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+              </label>
+              <span className="text-xs tabular-nums text-[var(--color-muted)]">
+                {detail.length}/{DETAIL_MAX}
+              </span>
+            </div>
             <textarea
               id="t-detail"
               value={detail}
               onChange={(e) => setDetail(e.target.value.slice(0, DETAIL_MAX))}
-              rows={4}
+              rows={2}
               placeholder="A sentence or two so people know what to expect"
               className={field}
             />
-            <p className="mt-1 text-right text-xs text-[var(--color-muted)]">
-              {detail.length}/{DETAIL_MAX}
-            </p>
 
             <label htmlFor="t-name" className="mt-3 block text-sm font-medium">
-              Your name{" "}
-              <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+              Your name
             </label>
             <input
               id="t-name"
-              value={proposer}
+              value={anon ? "" : proposer}
               onChange={(e) => setProposer(e.target.value)}
+              disabled={anon}
               maxLength={60}
-              placeholder="Leave blank to propose anonymously"
-              className={field}
+              placeholder={anon ? "Anonymous" : "Your name"}
+              className={`${field} disabled:opacity-50`}
             />
+            <label className="mt-2 flex items-center gap-2.5 text-sm">
+              <input
+                type="checkbox"
+                checked={anon}
+                onChange={(e) => setAnon(e.target.checked)}
+                className="size-4 accent-[var(--color-accent)]"
+              />
+              Post anonymously
+            </label>
 
-            <label htmlFor="t-slot" className="mt-4 block text-sm font-medium">
+            <label htmlFor="t-slot" className="mt-3 block text-sm font-medium">
               Preferred time slot{" "}
               <span className="font-normal text-[var(--color-muted)]">(optional)</span>
             </label>
@@ -490,7 +503,7 @@ function TopicDialog({
               ))}
             </select>
 
-            <div className="mt-4 flex gap-1 rounded-full border border-[var(--color-line)] p-0.5">
+            <div className="mt-3 flex gap-1 rounded-full border border-[var(--color-line)] p-0.5">
               {(["ask", "tell"] as const).map((k) => (
                 <button
                   key={k}
@@ -509,23 +522,20 @@ function TopicDialog({
                 </button>
               ))}
             </div>
-            <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-              {KIND_HELP[kind]}
-            </p>
           </div>
 
-          <div className="flex shrink-0 gap-2 border-t border-[var(--color-line)] p-5">
+          <div className="flex shrink-0 gap-2 border-t border-[var(--color-line)] p-4">
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 rounded-lg border border-[var(--color-line)] px-4 py-3 text-sm font-medium"
+              className="flex-1 rounded-lg border border-[var(--color-line)] px-4 py-2.5 text-sm font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!title.trim()}
-              className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               {existing ? "Save changes" : "Submit"}
             </button>
