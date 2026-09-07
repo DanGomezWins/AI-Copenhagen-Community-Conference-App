@@ -106,7 +106,7 @@ export default async function ProgramPage({
 
         {/* Named under the tabs, because the question "who do I ask in this
             room?" is asked in the room, not on a separate page. */}
-        <p className="pb-2.5 text-xs text-[var(--color-muted)]">
+        <p className="mt-2.5 pb-3 text-xs text-[var(--color-muted)]">
           {moderator ? (
             <>
               Moderated by{" "}
