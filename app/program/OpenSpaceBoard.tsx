@@ -1,38 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-
-/**
- * PROTOTYPE ONLY. Not wired to anything.
- *
- * A mock-up of the Open Space topic board (os.codecollab.ai) rendered in this
- * app's own styling, so we can judge whether pulling it in-app is worth doing
- * before anyone writes integration code. Votes and topics live in component
- * state and vanish on reload - nothing is stored, nothing is sent.
- *
- * It sits on the Open Sessions tab itself so it can be judged in place, with
- * a link to the real board directly underneath - a prototype that collects
- * votes nobody counts must never be the only thing on that tab.
- */
-
-type Kind = "ask" | "tell";
-
-type Topic = {
-  id: string;
-  title: string;
-  detail: string;
-  kind: Kind;
-  slot: string;
-  /** Empty means proposed anonymously. */
-  proposer: string;
-  votes: number;
-  mine: boolean;
-  /** Only topics you proposed can be edited. */
-  createdByMe: boolean;
-};
+import { useActionState, useEffect, useOptimistic, useState, useTransition } from "react";
+import { saveTopic, deleteTopic, toggleVote, type TopicState } from "@/app/actions/open-space";
 
 export type Person = { id: string; name: string };
+
+export type Topic = {
+  id: string;
+  title: string;
+  detail: string | null;
+  kind: "ask" | "tell";
+  slot: string | null;
+  /** Null when proposed anonymously. */
+  proposer_name: string | null;
+  created_at: string;
+  votes: number;
+  youVoted: boolean;
+  yours: boolean;
+};
 
 /** The slots Open Sessions run in. */
 const SLOTS = [
@@ -52,110 +38,49 @@ const DETAIL_MAX = 400;
 /** The six highest-voted topics get a room. */
 const WINNING = 6;
 
-const SEED: Topic[] = [
-  {
-    id: "1", kind: "ask", votes: 9, mine: false, createdByMe: false,
-    slot: "10:50 – 11:15", proposer: "Freja Lindqvist",
-    title: "Getting agents to admit when they are stuck",
-    detail:
-      "Mine will happily churn for twenty minutes rather than say it cannot do the thing. Has anyone found a prompt, a harness or a stopping rule that actually works?",
-  },
-  {
-    id: "2", kind: "tell", votes: 7, mine: false, createdByMe: false,
-    slot: NO_PREFERENCE, proposer: "",
-    title: "We replaced our whole RAG stack with one long prompt",
-    detail:
-      "Six months of chunking, embeddings and a vector database, deleted. Quality went up. Happy to walk through what we cut, what it cost and where it would not work.",
-  },
-  {
-    id: "3", kind: "ask", votes: 6, mine: false, createdByMe: false,
-    slot: "13:20 – 13:45", proposer: "Nikolaj Steenbæk",
-    title: "What does code review look like when nobody wrote the code?",
-    detail:
-      "If the diff came from an agent, what is the reviewer actually reviewing? Curious how other teams have changed the ritual, or whether they have at all.",
-  },
-  {
-    id: "4", kind: "tell", votes: 5, mine: false, createdByMe: false,
-    slot: "9:30 – 9:55", proposer: "Maja Overgaard Lund",
-    title: "Shipping to production on a Friday, agent-assisted",
-    detail:
-      "What we automated, what we still gate by hand, and the one incident that taught us where the line sits.",
-  },
-  {
-    id: "5", kind: "tell", votes: 4, mine: false, createdByMe: false,
-    slot: NO_PREFERENCE, proposer: "Emil Kristoffersen",
-    title: "Evals nobody actually runs, and what to do instead",
-    detail:
-      "We built a beautiful eval suite and looked at it twice. What replaced it was smaller, uglier and used daily.",
-  },
-  {
-    id: "6", kind: "ask", votes: 3, mine: false, createdByMe: false,
-    slot: "14:10 – 14:35", proposer: "",
-    title: "Where do you draw the line on tool access at work?",
-    detail:
-      "Shell access, production credentials, the company inbox. Interested in what people genuinely allow versus what the policy says.",
-  },
-  {
-    id: "7", kind: "ask", votes: 1, mine: false, createdByMe: false,
-    slot: NO_PREFERENCE, proposer: "Signe Vestergaard Holm",
-    title: "Small models on-device: who is genuinely doing it?",
-    detail:
-      "Plenty of demos, fewer shipped products. If you have one in users' hands, what did you give up to get there?",
-  },
-];
-
-export default function OpenSessionsPrototype({
+export default function OpenSpaceBoard({
+  topics,
   myName,
   people,
-  realBoardUrl,
 }: {
+  topics: Topic[];
   myName: string;
   people: Person[];
-  /** The live board. Held in app_settings so it can change without a deploy. */
-  realBoardUrl: string | null;
 }) {
-  const [topics, setTopics] = useState<Topic[]>(SEED);
   const [sort, setSort] = useState<"top" | "new">("top");
   const [open, setOpen] = useState<string | null>(null);
   /** null = closed, "new" = proposing, otherwise the id being edited. */
   const [editing, setEditing] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
-  const byName = useMemo(
-    () => new Map(people.map((p) => [p.name.toLowerCase(), p.id])),
-    [people],
-  );
-
-  const ordered = useMemo(() => {
-    const list = [...topics];
-    // "New" is newest-first, which for this mock is simply reverse insertion.
-    return sort === "top"
-      ? list.sort((a, b) => b.votes - a.votes)
-      : list.reverse();
-  }, [topics, sort]);
-
-  function toggleVote(id: string) {
-    setTopics((prev) =>
-      prev.map((t) =>
+  // A vote should land the moment it is tapped. The server action still runs
+  // and revalidates; this only covers the round trip.
+  const [shown, applyVote] = useOptimistic(
+    topics,
+    (current, id: string) =>
+      current.map((t) =>
         t.id === id
-          ? { ...t, mine: !t.mine, votes: t.votes + (t.mine ? -1 : 1) }
+          ? { ...t, youVoted: !t.youVoted, votes: t.votes + (t.youVoted ? -1 : 1) }
           : t,
       ),
-    );
-  }
+  );
 
-  function save(draft: Draft) {
-    if (editing && editing !== "new") {
-      setTopics((prev) =>
-        prev.map((t) => (t.id === editing ? { ...t, ...draft } : t)),
-      );
-    } else {
-      setTopics((prev) => [
-        { ...draft, id: String(Date.now()), votes: 1, mine: true, createdByMe: true },
-        ...prev,
-      ]);
-      setSort("new");
-    }
-    setEditing(null);
+  const byName = new Map(people.map((p) => [p.name.toLowerCase(), p.id]));
+
+  const ordered = [...shown].sort((a, b) =>
+    sort === "top"
+      ? b.votes - a.votes || a.created_at.localeCompare(b.created_at)
+      : b.created_at.localeCompare(a.created_at),
+  );
+
+  function vote(t: Topic) {
+    const body = new FormData();
+    body.set("topic_id", t.id);
+    body.set("voted", String(t.youVoted));
+    startTransition(() => {
+      applyVote(t.id);
+      void toggleVote(body);
+    });
   }
 
   // Only meaningful under "Top": the cut-off is about rank, not recency.
@@ -167,25 +92,7 @@ export default function OpenSessionsPrototype({
 
   return (
     <div className="mt-4">
-      <p className="rounded-lg border border-dashed border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-3 text-xs text-[var(--color-accent)]">
-        <strong>Prototype.</strong> Sample topics, and votes reset when you
-        reload. Nothing here is connected to{" "}
-        {realBoardUrl ? (
-          <a
-            href={realBoardUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold underline underline-offset-2"
-          >
-            the real board
-          </a>
-        ) : (
-          "the real board"
-        )}
-        .
-      </p>
-
-      <div className="mt-4 rounded-xl border border-[var(--color-line)] p-3.5">
+      <div className="rounded-xl border border-[var(--color-line)] p-3.5">
         <p className="text-sm font-medium">How this works</p>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Propose a topic you would like to talk about (Tell) or raise for
@@ -196,7 +103,7 @@ export default function OpenSessionsPrototype({
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-          {topics.length} topics
+          {shown.length} {shown.length === 1 ? "topic" : "topics"}
         </p>
         <div className="flex gap-1 rounded-full border border-[var(--color-line)] p-0.5">
           {(["top", "new"] as const).map((s) => (
@@ -217,17 +124,26 @@ export default function OpenSessionsPrototype({
         </div>
       </div>
 
+      {shown.length === 0 && (
+        <div className="mt-3 rounded-xl border border-dashed border-[var(--color-line)] p-6 text-center">
+          <p className="text-sm font-medium">Nothing proposed yet</p>
+          <p className="mt-1 text-sm text-[var(--color-muted)]">
+            Be the first. Anything you would rather discuss than sit through.
+          </p>
+        </div>
+      )}
+
       <ol className="mt-2 space-y-2">
         {ordered.map((t, i) => {
-          const proposerId = t.proposer
-            ? byName.get(t.proposer.toLowerCase())
+          const proposerId = t.proposer_name
+            ? byName.get(t.proposer_name.toLowerCase())
             : undefined;
 
           return (
             <li key={t.id}>
               <div
                 className={`flex items-start gap-3 rounded-xl border p-3.5 ${
-                  t.mine
+                  t.youVoted
                     ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]"
                     : "border-[var(--color-line)]"
                 }`}
@@ -252,7 +168,7 @@ export default function OpenSessionsPrototype({
                       >
                         {t.kind}
                       </span>
-                      {t.slot !== NO_PREFERENCE && (
+                      {t.slot && (
                         <span className="font-mono text-[10px] tabular-nums text-[var(--color-muted)]">
                           {t.slot}
                         </span>
@@ -292,60 +208,69 @@ export default function OpenSessionsPrototype({
                       <p className="text-sm leading-relaxed text-[var(--color-muted)]">
                         {t.detail || "No description given."}
                       </p>
-                      {t.createdByMe && (
-                        <button
-                          type="button"
-                          onClick={() => setEditing(t.id)}
-                          className="mt-2 text-sm font-medium text-[var(--color-accent)]"
-                        >
-                          Edit your topic
-                        </button>
+                      {t.yours && (
+                        <div className="mt-2 flex items-center gap-4">
+                          <button
+                            type="button"
+                            onClick={() => setEditing(t.id)}
+                            className="text-sm font-medium text-[var(--color-accent)]"
+                          >
+                            Edit
+                          </button>
+                          <form action={deleteTopic}>
+                            <input type="hidden" name="id" value={t.id} />
+                            <button
+                              type="submit"
+                              className="text-sm font-medium text-[var(--color-danger-ink)]"
+                            >
+                              Remove
+                            </button>
+                          </form>
+                        </div>
                       )}
                     </div>
                   )}
 
-                  {/* Sits outside the expand button on purpose: it holds a
-                      link, and a link inside a button is invalid and
-                      unreachable by keyboard. */}
+                  {/* Outside the expand button on purpose: it holds a link, and
+                      a link inside a button is invalid and unreachable by
+                      keyboard. */}
                   <p className="mt-2 text-xs text-[var(--color-muted)]">
                     Proposed by{" "}
-                    {!t.proposer ? (
+                    {!t.proposer_name ? (
                       <span className="italic">Anonymous</span>
                     ) : proposerId ? (
                       <Link
-                        // track=open so Back lands on this tab rather than the
-                        // Program's default, which is Main stage.
                         href={`/people/${proposerId}?from=program&track=open`}
                         className="font-medium text-[var(--color-accent)]"
                       >
-                        {t.proposer}
+                        {t.proposer_name}
                       </Link>
                     ) : (
-                      <span className="font-medium">{t.proposer}</span>
+                      <span className="font-medium">{t.proposer_name}</span>
                     )}
                   </p>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => toggleVote(t.id)}
-                  aria-pressed={t.mine}
-                  aria-label={`${t.mine ? "Remove your vote for" : "Vote for"} ${t.title}`}
+                  onClick={() => vote(t)}
+                  aria-pressed={t.youVoted}
+                  aria-label={`${t.youVoted ? "Remove your vote for" : "Vote for"} ${t.title}`}
                   className={`flex shrink-0 flex-col items-center rounded-lg border px-3 py-1.5 transition-colors ${
-                    t.mine
+                    t.youVoted
                       ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
                       : "border-[var(--color-line)] text-[var(--color-muted)]"
                   }`}
                 >
                   <span className="text-sm font-semibold tabular-nums">{t.votes}</span>
                   <span className="text-[10px] uppercase tracking-wide">
-                    {t.mine ? "Voted" : "Vote"}
+                    {t.youVoted ? "Voted" : "Vote"}
                   </span>
                 </button>
               </div>
 
               {/* The line between a room and a mutter in the coffee queue. */}
-              {i + 1 === cutoffAfter && (
+              {i + 1 === cutoffAfter && i + 1 < ordered.length && (
                 <div className="mt-2 flex items-center gap-2">
                   <span className="h-px flex-1 bg-[var(--color-line)]" />
                   <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
@@ -372,15 +297,12 @@ export default function OpenSessionsPrototype({
           key={editing}
           existing={target}
           myName={myName}
-          onCancel={() => setEditing(null)}
-          onSave={save}
+          onClose={() => setEditing(null)}
         />
       )}
     </div>
   );
 }
-
-type Draft = Omit<Topic, "id" | "votes" | "mine" | "createdByMe">;
 
 /**
  * The propose/edit form.
@@ -392,42 +314,27 @@ type Draft = Omit<Topic, "id" | "votes" | "mine" | "createdByMe">;
 function TopicDialog({
   existing,
   myName,
-  onCancel,
-  onSave,
+  onClose,
 }: {
   existing: Topic | null;
   myName: string;
-  onCancel: () => void;
-  onSave: (draft: Draft) => void;
+  onClose: () => void;
 }) {
-  const [title, setTitle] = useState(existing?.title ?? "");
+  const [state, action, pending] = useActionState<TopicState, FormData>(saveTopic, {});
   const [detail, setDetail] = useState(existing?.detail ?? "");
-  // Prefilled from the profile. Anonymity is a checkbox rather than an empty
-  // field, so the name is never lost by toggling it off and on again.
-  const [proposer, setProposer] = useState(
-    existing ? existing.proposer || myName : myName,
-  );
-  const [anon, setAnon] = useState(existing ? !existing.proposer : false);
-  const [slot, setSlot] = useState<string>(existing?.slot ?? NO_PREFERENCE);
-  const [kind, setKind] = useState<Kind>(existing?.kind ?? "ask");
+  const [anon, setAnon] = useState(existing ? !existing.proposer_name : false);
+  const [kind, setKind] = useState<"ask" | "tell">(existing?.kind ?? "ask");
+  const [name, setName] = useState(existing?.proposer_name ?? myName);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
+    if (state.ok) onClose();
+  }, [state.ok, onClose]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onCancel]);
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!title.trim()) return;
-    onSave({
-      title: title.trim(),
-      detail: detail.trim(),
-      proposer: anon ? "" : proposer.trim(),
-      slot,
-      kind,
-    });
-  }
+  }, [onClose]);
 
   // py-2.5 rather than py-3, and 16px text so iOS does not zoom on focus.
   const field =
@@ -435,14 +342,17 @@ function TopicDialog({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/40" onClick={onCancel} />
+      <div className="fixed inset-0 z-50 bg-black/40" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={existing ? "Edit your topic" : "Propose a topic"}
         className="fixed left-0 right-0 top-0 z-50 flex max-h-[95dvh] flex-col rounded-b-2xl bg-[var(--color-surface)] sm:left-1/2 sm:top-8 sm:w-full sm:max-w-md sm:-translate-x-1/2 sm:rounded-2xl"
       >
-        <form onSubmit={submit} className="flex min-h-0 flex-col">
+        <form action={action} className="flex min-h-0 flex-col">
+          {existing && <input type="hidden" name="id" value={existing.id} />}
+          <input type="hidden" name="kind" value={kind} />
+
           <div className="min-h-0 flex-1 overflow-y-auto p-4">
             <p className="font-bold">
               {existing ? "Edit your topic" : "Propose a topic"}
@@ -453,9 +363,10 @@ function TopicDialog({
             </label>
             <input
               id="t-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="title"
+              defaultValue={existing?.title ?? ""}
               maxLength={90}
+              required
               autoFocus
               placeholder="What do you want to talk about?"
               className={field}
@@ -474,6 +385,7 @@ function TopicDialog({
             </div>
             <textarea
               id="t-detail"
+              name="detail"
               value={detail}
               onChange={(e) => setDetail(e.target.value.slice(0, DETAIL_MAX))}
               rows={2}
@@ -486,8 +398,9 @@ function TopicDialog({
             </label>
             <input
               id="t-name"
-              value={anon ? "" : proposer}
-              onChange={(e) => setProposer(e.target.value)}
+              name="proposer_name"
+              value={anon ? "" : name}
+              onChange={(e) => setName(e.target.value)}
               disabled={anon}
               maxLength={60}
               placeholder={anon ? "Anonymous" : "Your name"}
@@ -496,6 +409,7 @@ function TopicDialog({
             <label className="mt-2 flex items-center gap-2.5 text-sm">
               <input
                 type="checkbox"
+                name="anon"
                 checked={anon}
                 onChange={(e) => setAnon(e.target.checked)}
                 className="size-4 accent-[var(--color-accent)]"
@@ -509,8 +423,8 @@ function TopicDialog({
             </label>
             <select
               id="t-slot"
-              value={slot}
-              onChange={(e) => setSlot(e.target.value)}
+              name="slot"
+              defaultValue={existing?.slot ?? NO_PREFERENCE}
               className={field}
             >
               <option value={NO_PREFERENCE}>{NO_PREFERENCE}</option>
@@ -540,22 +454,31 @@ function TopicDialog({
                 </button>
               ))}
             </div>
+
+            {state.error && (
+              <p
+                role="alert"
+                className="mt-3 rounded-lg border border-[var(--color-danger)] bg-[var(--color-danger-soft)] p-3 text-sm font-medium text-[var(--color-danger-ink)]"
+              >
+                {state.error}
+              </p>
+            )}
           </div>
 
           <div className="flex shrink-0 gap-2 border-t border-[var(--color-line)] p-4">
             <button
               type="button"
-              onClick={onCancel}
+              onClick={onClose}
               className="flex-1 rounded-lg border border-[var(--color-line)] px-4 py-2.5 text-sm font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={!title.trim()}
+              disabled={pending}
               className="flex-1 rounded-lg bg-[var(--color-accent)] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
-              {existing ? "Save changes" : "Submit"}
+              {pending ? "Saving…" : existing ? "Save changes" : "Submit"}
             </button>
           </div>
         </form>

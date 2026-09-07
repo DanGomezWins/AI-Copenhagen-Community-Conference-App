@@ -8,9 +8,20 @@ import {
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
 import { nameKey } from "@/lib/names";
-import OpenSessionsPrototype from "./OpenSessionsPrototype";
+import OpenSpaceBoard, { type Topic } from "./OpenSpaceBoard";
 
 export const dynamic = "force-dynamic";
+
+type OpenTopicRow = {
+  id: string;
+  title: string;
+  detail: string | null;
+  kind: string;
+  slot: string | null;
+  proposer_name: string | null;
+  created_by: string;
+  created_at: string;
+};
 
 const VIEWS = [
   ...TRACKS.map((t) => ({ key: t.key as ProgramView, label: t.label })),
@@ -28,7 +39,14 @@ export default async function ProgramPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: sessionRows }, { data: starRows }, { data: settings }, { data: profiles }] =
+  const [
+    { data: sessionRows },
+    { data: starRows },
+    { data: settings },
+    { data: profiles },
+    { data: topicRows },
+    { data: voteRows },
+  ] =
     await Promise.all([
       view === MY_SCHEDULE
         ? supabase.from("sessions").select("*").order("starts_at", { ascending: true })
@@ -39,9 +57,17 @@ export default async function ProgramPage({
         : Promise.resolve({ data: [] as { session_id: string }[] }),
       supabase
         .from("app_settings")
-        .select("open_sessions_url, moderator_main_id, moderator_demos_id, moderator_open_id")
+        .select("moderator_main_id, moderator_demos_id, moderator_open_id")
         .maybeSingle(),
       supabase.from("profiles").select("id, first_name, last_name, role, company"),
+      // Only needed on the Open Sessions tab, but fetched in the same round
+      // trip rather than a second waterfall after the view is known.
+      view === "open"
+        ? supabase.from("open_topics").select("*").order("created_at", { ascending: false })
+        : Promise.resolve({ data: [] as OpenTopicRow[] }),
+      view === "open"
+        ? supabase.from("open_topic_votes").select("topic_id, profile_id")
+        : Promise.resolve({ data: [] as { topic_id: string; profile_id: string }[] }),
     ]);
 
   const starred = new Set((starRows ?? []).map((r) => r.session_id));
@@ -52,7 +78,6 @@ export default async function ProgramPage({
     view === MY_SCHEDULE ? all.filter((s) => starred.has(s.id)) : all;
 
   const state = liveness(sessions);
-  const openUrl = settings?.open_sessions_url ?? null;
 
   // Role and company come from the speaker's profile, matched on name - the
   // same way the session page resolves its speaker card.
@@ -70,6 +95,22 @@ export default async function ProgramPage({
   const directory = people.map((p) => ({
     id: p.id,
     name: `${p.first_name} ${p.last_name}`,
+  }));
+
+  // Counts and "did I vote" are derived here rather than in the database: the
+  // board is small, and one pass beats a view plus a second query.
+  const votes = voteRows ?? [];
+  const topics: Topic[] = (topicRows ?? []).map((t) => ({
+    id: t.id,
+    title: t.title,
+    detail: t.detail,
+    kind: t.kind === "tell" ? "tell" : "ask",
+    slot: t.slot,
+    proposer_name: t.proposer_name,
+    created_at: t.created_at,
+    votes: votes.filter((v) => v.topic_id === t.id).length,
+    youVoted: Boolean(user) && votes.some((v) => v.topic_id === t.id && v.profile_id === user!.id),
+    yours: Boolean(user) && t.created_by === user!.id,
   }));
 
   const moderatorId =
@@ -141,14 +182,8 @@ export default async function ProgramPage({
           out rather than listing anything of its own. */}
       {/* Prototype of an in-app topic board, off the normal path: attendees on
           the Open Sessions tab still get the link out. See the component. */}
-      {/* The topic board, in-app. Still a prototype: nothing it collects is
-          stored, which is why its own banner links out to the real board. */}
       {view === "open" && (
-        <OpenSessionsPrototype
-          myName={myName}
-          people={directory}
-          realBoardUrl={openUrl}
-        />
+        <OpenSpaceBoard topics={topics} myName={myName} people={directory} />
       )}
 
       {view === MY_SCHEDULE && sessions.length === 0 && (
