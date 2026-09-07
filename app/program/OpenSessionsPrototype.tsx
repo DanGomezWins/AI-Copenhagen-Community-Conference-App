@@ -107,9 +107,12 @@ const SEED: Topic[] = [
 export default function OpenSessionsPrototype({
   myName,
   people,
+  realBoardUrl,
 }: {
   myName: string;
   people: Person[];
+  /** The live board. Held in app_settings so it can change without a deploy. */
+  realBoardUrl: string | null;
 }) {
   const [topics, setTopics] = useState<Topic[]>(SEED);
   const [sort, setSort] = useState<"top" | "new">("top");
@@ -166,7 +169,20 @@ export default function OpenSessionsPrototype({
     <div className="mt-4">
       <p className="rounded-lg border border-dashed border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-3 text-xs text-[var(--color-accent)]">
         <strong>Prototype.</strong> Sample topics, and votes reset when you
-        reload. Nothing here is connected to the real board.
+        reload. Nothing here is connected to{" "}
+        {realBoardUrl ? (
+          <a
+            href={realBoardUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold underline underline-offset-2"
+          >
+            the real board
+          </a>
+        ) : (
+          "the real board"
+        )}
+        .
       </p>
 
       <div className="mt-4 rounded-xl border border-[var(--color-line)] p-3.5">
