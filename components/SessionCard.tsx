@@ -13,12 +13,15 @@ export default function SessionCard({
   starred,
   showTrack = false,
   from,
+  speaker,
 }: {
   session: Session;
   state: Liveness;
   starred: boolean;
   showTrack?: boolean;
   from?: string;
+  /** Role and company for the speaker, when they have a profile. */
+  speaker?: { role: string | null; company: string | null };
 }) {
   const cancelled = s.status === "cancelled";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
@@ -79,7 +82,17 @@ export default function SessionCard({
         </h3>
 
         {s.speaker_name && (
-          <p className="mt-1 text-sm text-[var(--color-muted)]">{s.speaker_name}</p>
+          <>
+            <p className="mt-1 text-sm font-medium">{s.speaker_name}</p>
+            {/* Role and company sit on their own line, one step quieter. On a
+                phone this is the difference between a card you can skim and a
+                paragraph you have to read. */}
+            {(speaker?.role || speaker?.company) && (
+              <p className="text-xs leading-snug text-[var(--color-muted)]">
+                {[speaker.role, speaker.company].filter(Boolean).join(" · ")}
+              </p>
+            )}
+          </>
         )}
 
         {s.slides_url && (

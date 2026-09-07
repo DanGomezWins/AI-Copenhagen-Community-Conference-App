@@ -100,7 +100,7 @@ export default function RatingModal({
             {state.ok ? (
               <div className="flex flex-1 items-center justify-center overflow-y-auto p-5">
                 <div className="py-6 text-center">
-                  <p className="text-3xl">★</p>
+                  <p className="text-3xl">🙂</p>
                   <p className="mt-2 font-semibold">Thank you</p>
                   <p className="mt-1 text-sm text-[var(--color-muted)]">
                     Your feedback has been saved.

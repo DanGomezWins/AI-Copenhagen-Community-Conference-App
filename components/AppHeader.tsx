@@ -26,7 +26,8 @@ export default async function AppHeader() {
   ]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]/95 backdrop-blur">
+    <header style={{ height: "var(--app-header-h)" }}
+      className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-screen-sm items-center gap-3 px-4 py-2.5">
         {/* Full name where there's room; the short form on a narrow phone,
             where the full title would crowd out the avatar and Organiser chip. */}

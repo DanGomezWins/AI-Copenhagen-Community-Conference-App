@@ -74,12 +74,12 @@ export default async function AboutPage() {
 
       <div className="mt-10 border-t border-[var(--color-line)] pt-6">
         <a
-          href={EVENT.meetupUrl}
+          href={EVENT.eventUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm font-medium text-[var(--color-accent)] underline underline-offset-2"
         >
-          Event details on Meetup ↗
+          Event details ↗
         </a>
         <p className="mt-3 text-xs text-[var(--color-muted)]">
           Your data stays in the EU. Your profile is visible to other attendees

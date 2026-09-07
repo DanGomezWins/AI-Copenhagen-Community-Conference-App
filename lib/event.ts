@@ -6,6 +6,7 @@ export const EVENT = {
   short: "AIMC-CC",
   date: "Thursday 10 September",
   venue: "twoday København",
-  meetupUrl:
-    "https://www.meetup.com/ai-meetup-copenhagen-innovators-creators-techies/events/316009297/",
+  /** Where tickets and the public event listing live. */
+  eventUrl:
+    "https://event.checkin.no/224835/ai-meetup-copenhagen-community-conference-2026",
 } as const;

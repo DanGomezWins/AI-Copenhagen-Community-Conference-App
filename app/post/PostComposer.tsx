@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { createPost, updatePost, type PostFormState } from "@/app/actions/posts";
 import { POST_MAX } from "@/lib/feed";
-import { TRACKS } from "@/lib/program";
 import { track } from "@/lib/track";
 import { EVENTS } from "@/lib/analytics";
 
@@ -154,30 +153,6 @@ export default function PostComposer({
             )}
           </div>
 
-          <fieldset>
-            <legend className="text-sm font-medium">
-              Who is this for?{" "}
-              <span className="font-normal text-[var(--color-muted)]">
-                (everyone sees it either way)
-              </span>
-            </legend>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <label>
-                <input type="radio" name="track" value="" defaultChecked className="peer sr-only" />
-                <span className="block cursor-pointer rounded-full border border-[var(--color-line)] px-3 py-1.5 text-sm peer-checked:border-[var(--color-accent)] peer-checked:text-[var(--color-accent)]">
-                  Everyone
-                </span>
-              </label>
-              {TRACKS.map((t) => (
-                <label key={t.key}>
-                  <input type="radio" name="track" value={t.key} className="peer sr-only" />
-                  <span className="block cursor-pointer rounded-full border border-[var(--color-line)] px-3 py-1.5 text-sm peer-checked:border-[var(--color-accent)] peer-checked:text-[var(--color-accent)]">
-                    {t.label}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
         </>
       )}
 

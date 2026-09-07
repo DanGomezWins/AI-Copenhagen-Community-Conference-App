@@ -7,6 +7,7 @@ import {
   type Session, type ProgramView,
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
+import { nameKey } from "@/lib/names";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export default async function ProgramPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: sessionRows }, { data: starRows }, { data: settings }] =
+  const [{ data: sessionRows }, { data: starRows }, { data: settings }, { data: profiles }] =
     await Promise.all([
       view === MY_SCHEDULE
         ? supabase.from("sessions").select("*").order("starts_at", { ascending: true })
@@ -35,7 +36,11 @@ export default async function ProgramPage({
       user
         ? supabase.from("session_stars").select("session_id").eq("profile_id", user.id)
         : Promise.resolve({ data: [] as { session_id: string }[] }),
-      supabase.from("app_settings").select("open_sessions_url").maybeSingle(),
+      supabase
+        .from("app_settings")
+        .select("open_sessions_url, moderator_main_id, moderator_demos_id, moderator_open_id")
+        .maybeSingle(),
+      supabase.from("profiles").select("id, first_name, last_name, role, company"),
     ]);
 
   const starred = new Set((starRows ?? []).map((r) => r.session_id));
@@ -48,15 +53,40 @@ export default async function ProgramPage({
   const state = liveness(sessions);
   const openUrl = settings?.open_sessions_url ?? null;
 
+  // Role and company come from the speaker's profile, matched on name - the
+  // same way the session page resolves its speaker card.
+  const people = profiles ?? [];
+  const byName = new Map(
+    people.map((p) => [nameKey(`${p.first_name} ${p.last_name}`), p]),
+  );
+
+  const moderatorId =
+    view === "main" ? settings?.moderator_main_id
+    : view === "demos" ? settings?.moderator_demos_id
+    : view === "open" ? settings?.moderator_open_id
+    : null;
+  const moderator = moderatorId
+    ? people.find((p) => p.id === moderatorId) ?? null
+    : null;
+
   return (
     <section>
       <TrackProgramView />
-      <h1 className="text-2xl font-bold tracking-tight">Program</h1>
-      <p className="mt-1 text-sm text-[var(--color-muted)]">
-        {EVENT.date} · {EVENT.venue}
-      </p>
 
-      <nav className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1">
+      {/* Sticks under the app header so the room you are looking at stays on
+          screen. Scrolling a long programme otherwise loses which tab is
+          selected within a couple of swipes. Bleeds full-width so nothing
+          shows through at the edges as content passes beneath. */}
+      <div
+        style={{ top: "var(--app-header-h)" }}
+        className="sticky z-30 -mx-4 -mt-4 border-b border-[var(--color-line)] bg-[var(--color-surface)]/95 px-4 pt-4 backdrop-blur"
+      >
+        <h1 className="text-2xl font-bold tracking-tight">Program</h1>
+        <p className="mt-1 text-sm text-[var(--color-muted)]">
+          {EVENT.date} · {EVENT.venue}
+        </p>
+
+        <nav className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
         {VIEWS.map((v) => (
           <Link
             key={v.key}
@@ -71,8 +101,29 @@ export default async function ProgramPage({
           >
             {v.key === MY_SCHEDULE ? `★ ${v.label}` : v.label}
           </Link>
-        ))}
-      </nav>
+          ))}
+        </nav>
+
+        {/* Named under the tabs, because the question "who do I ask in this
+            room?" is asked in the room, not on a separate page. */}
+        <p className="pb-2.5 text-xs text-[var(--color-muted)]">
+          {moderator ? (
+            <>
+              Moderated by{" "}
+              <Link
+                href={`/people/${moderator.id}?from=program`}
+                className="font-medium text-[var(--color-accent)]"
+              >
+                {moderator.first_name} {moderator.last_name}
+              </Link>
+            </>
+          ) : view === MY_SCHEDULE ? (
+            <span className="opacity-0">.</span>
+          ) : (
+            "Moderator to be confirmed"
+          )}
+        </p>
+      </div>
 
       {/* Open Sessions are scheduled on a separate site, so this tab points
           out rather than listing anything of its own. */}
@@ -128,6 +179,9 @@ export default async function ProgramPage({
               starred={starred.has(s.id)}
               showTrack={view === MY_SCHEDULE}
               from={view === MY_SCHEDULE ? "mine" : view}
+              speaker={
+                s.speaker_name ? byName.get(nameKey(s.speaker_name)) : undefined
+              }
             />
           ))}
         </ol>

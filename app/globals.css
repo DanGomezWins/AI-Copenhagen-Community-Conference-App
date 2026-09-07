@@ -39,6 +39,9 @@
 
 :root {
   color-scheme: light;
+  /* AppHeader: 0.625rem padding top and bottom, a 32px avatar, 1px border.
+     The Program's own sticky header offsets by this, so the two never overlap. */
+  --app-header-h: 53px;
 }
 
 html,

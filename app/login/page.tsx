@@ -13,12 +13,12 @@ export default function LoginPage() {
         {EVENT.date} · {EVENT.venue}
       </p>
       <a
-        href={EVENT.meetupUrl}
+        href={EVENT.eventUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-1 inline-block text-sm font-medium text-[var(--color-accent)] underline underline-offset-2"
       >
-        Event details on Meetup ↗
+        Event details ↗
       </a>
 
       <InstallFirst />

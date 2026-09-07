@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import Avatar from "@/components/Avatar";
+import SpeakerCard, { type SpeakerProfile } from "@/components/SpeakerCard";
 import StarButton from "@/components/StarButton";
 import RatingModal from "@/components/RatingModal";
 import { TrackSessionView } from "@/components/TrackPageView";
@@ -43,11 +43,18 @@ export default async function SessionPage({
         : Promise.resolve({ data: null }),
     ]);
 
-  const speaker = s.speaker_name
-    ? (profiles ?? []).find(
-        (p) => nameKey(`${p.first_name} ${p.last_name}`) === nameKey(s.speaker_name!),
-      )
-    : undefined;
+  const find = (name: string) =>
+    (profiles ?? []).find(
+      (p) => nameKey(`${p.first_name} ${p.last_name}`) === nameKey(name),
+    ) as SpeakerProfile | undefined;
+
+  // The lead first, then anyone sharing the stage. The closing keynote has
+  // three; a single card would silently drop two of them.
+  const names = [s.speaker_name, ...(s.co_speaker_names ?? [])].filter(
+    (n): n is string => Boolean(n),
+  );
+  const speakers = names.map(find).filter((p): p is SpeakerProfile => Boolean(p));
+  const unlisted = names.filter((n) => !find(n));
 
   const state = liveness([s]).get(s.id) ?? "upcoming";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
@@ -109,33 +116,39 @@ export default async function SessionPage({
         <p className="mt-5 whitespace-pre-wrap leading-relaxed">{s.description}</p>
       )}
 
-      {speaker ? (
-        <Link
-          // Carry where we are, so Back on their profile returns to this
-          // session rather than dumping you in the directory.
-          href={`/people/${speaker.id}?from=session&session=${s.id}`}
-          className="mt-6 flex items-center gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
+      {/* A demo is a pitch; the first thing anyone wants afterwards is the
+          thing itself. Sits above the speaker card because the product is what
+          the talk was about. */}
+      {s.track === "demos" && (
+        <a
+          href={s.company_url ?? undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled={s.company_url ? undefined : true}
+          className={`mt-4 flex items-center justify-between gap-3 rounded-xl border p-3.5 ${
+            s.company_url
+              ? "border-[var(--color-accent)] text-[var(--color-accent)]"
+              : "pointer-events-none border-dashed border-[var(--color-line)] text-[var(--color-muted)]"
+          }`}
         >
-          <Avatar
-            firstName={speaker.first_name}
-            lastName={speaker.last_name}
-            photoUrl={speaker.photo_url}
-            size={52}
-          />
-          <span className="min-w-0 flex-1">
-            <span className="block font-medium">
-              {speaker.first_name} {speaker.last_name}
-            </span>
-            <span className="block truncate text-sm text-[var(--color-muted)]">
-              {[speaker.role, speaker.company].filter(Boolean).join(" · ")}
-            </span>
+          <span className="text-sm font-medium">
+            {s.company_url ? "Visit the product ↗" : "Product link coming soon"}
           </span>
-          <span className="shrink-0 text-sm text-[var(--color-accent)]">View ↗</span>
-        </Link>
-      ) : (
-        s.speaker_name && (
-          <p className="mt-6 text-[var(--color-muted)]">{s.speaker_name}</p>
-        )
+        </a>
+      )}
+
+      {speakers.length > 0 && (
+        <div className="mt-6 space-y-2">
+          {speakers.map((p) => (
+            <SpeakerCard key={p.id} speaker={p} sessionId={s.id} />
+          ))}
+        </div>
+      )}
+
+      {/* Someone billed on the session who has no profile yet still gets named
+          - better than vanishing from their own talk. */}
+      {unlisted.length > 0 && (
+        <p className="mt-3 text-[var(--color-muted)]">{unlisted.join(", ")}</p>
       )}
 
       {/* Slides are only offered once the session has finished — sharing a deck

@@ -43,6 +43,10 @@ export type Session = {
   notes: string | null;
   description: string | null;
   slides_url: string | null;
+  /** The product or company a demo talk is about. */
+  company_url: string | null;
+  /** Anyone else on stage. speaker_name stays the lead. */
+  co_speaker_names: string[] | null;
 };
 
 const TZ = "Europe/Copenhagen";

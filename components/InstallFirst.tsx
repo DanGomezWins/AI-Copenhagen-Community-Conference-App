@@ -3,31 +3,27 @@
 import { useEffect, useState } from "react";
 
 /**
- * Tells an iPhone user to install BEFORE signing in.
+ * Tells people to install BEFORE signing in.
  *
- * Two iOS facts drive this, and neither can be engineered around:
+ * The reason is sharpest on iPhone - a Home Screen app there keeps its own
+ * storage, so signing in via Safari leaves the installed icon signed out, and
+ * an emailed link can never open the installed app - but the advice is worth
+ * following everywhere: the installed copy is where notifications arrive, so
+ * that is where the session needs to live.
  *
- *  1. A link in an email always opens Safari. Apple has never supported
- *     deep-linking into an installed Home Screen web app.
- *  2. A Home Screen web app has its own storage, separate from Safari's. So
- *     signing in via the emailed link does not sign you in inside the app.
- *
- * Together that means anyone who signs in first and installs second has to
- * sign in twice — and once real email is live, that is a second email and a
- * second wait. Installing first costs one tap and avoids the whole thing.
- *
- * Android is unaffected: installed PWAs handle their own in-scope links, and
- * storage is shared.
+ * The wording is deliberately browser-neutral. Naming Safari's Share menu
+ * helped iPhone users and quietly misled everyone else, and the exact menu
+ * differs across Chrome, Edge, Firefox and Samsung Internet - so it says what
+ * to look for rather than where to tap.
  */
 export default function InstallFirst() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
-    setShow(isIos && !standalone);
+    setShow(!standalone);
   }, []);
 
   if (!show) return null;
@@ -36,14 +32,14 @@ export default function InstallFirst() {
     <div className="mt-6 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
       <p className="font-semibold">Add to your home screen first</p>
       <p className="mt-1 text-sm">
-        Tap <strong>Share</strong> at the bottom of Safari, then{" "}
-        <strong>Add to Home Screen</strong>. Open it from the new icon and sign
-        in there.
+        Open your browser&rsquo;s menu and choose{" "}
+        <strong>Add to Home Screen</strong> (or <strong>Install</strong>). Then
+        open the app from its new icon and sign in there.
       </p>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        On iPhone the installed app keeps its own sign-in, separate from
-        Safari&rsquo;s. Signing in from the icon means you only do it once — and
-        it&rsquo;s the only way notifications work.
+        The installed app keeps its own sign-in, so signing in from the icon
+        means you only do it once &mdash; and it&rsquo;s where notifications
+        arrive.
       </p>
     </div>
   );

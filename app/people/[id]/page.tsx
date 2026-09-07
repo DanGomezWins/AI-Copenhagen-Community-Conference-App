@@ -93,6 +93,39 @@ export default async function ProfilePage({
         <LinkedInLink url={profile.linkedin_url} />
       )}
 
+      {/* Placeholder until the company URLs arrive: the row still shows, so the
+          profile does not visibly change shape when they are filled in. */}
+      {profile.company && (
+        <a
+          href={profile.company_url ?? undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled={profile.company_url ? undefined : true}
+          className={`mt-3 flex items-center justify-between gap-3 rounded-xl border p-3.5 ${
+            profile.company_url
+              ? "border-[var(--color-line)]"
+              : "pointer-events-none border-dashed border-[var(--color-line)]"
+          }`}
+        >
+          <span
+            className={`truncate text-sm font-medium ${
+              profile.company_url
+                ? "text-[var(--color-accent)] underline underline-offset-2"
+                : "text-[var(--color-muted)]"
+            }`}
+          >
+            {profile.company}
+          </span>
+          <span className="shrink-0 text-sm text-[var(--color-muted)]">
+            {profile.company_url ? (
+              <span className="text-[var(--color-accent)]">Open ↗</span>
+            ) : (
+              "Link coming soon"
+            )}
+          </span>
+        </a>
+      )}
+
       {sessions.length > 0 && (
         <div className="mt-8">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
