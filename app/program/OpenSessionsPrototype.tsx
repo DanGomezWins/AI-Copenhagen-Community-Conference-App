@@ -313,7 +313,9 @@ export default function OpenSessionsPrototype({
                       <span className="italic">Anonymous</span>
                     ) : proposerId ? (
                       <Link
-                        href={`/people/${proposerId}?from=program`}
+                        // track=open so Back lands on this tab rather than the
+                        // Program's default, which is Main stage.
+                        href={`/people/${proposerId}?from=program&track=open`}
                         className="font-medium text-[var(--color-accent)]"
                       >
                         {t.proposer}

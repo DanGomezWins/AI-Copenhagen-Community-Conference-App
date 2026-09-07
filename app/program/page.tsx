@@ -123,7 +123,7 @@ export default async function ProgramPage({
             <>
               Moderated by{" "}
               <Link
-                href={`/people/${moderator.id}?from=program`}
+                href={`/people/${moderator.id}?from=program&track=${view}`}
                 className="font-medium text-[var(--color-accent)]"
               >
                 {moderator.first_name} {moderator.last_name}
