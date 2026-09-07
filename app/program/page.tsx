@@ -178,10 +178,9 @@ export default async function ProgramPage({
         </p>
       </div>
 
-      {/* Open Sessions are scheduled on a separate site, so this tab points
-          out rather than listing anything of its own. */}
-      {/* Prototype of an in-app topic board, off the normal path: attendees on
-          the Open Sessions tab still get the link out. See the component. */}
+      {/* Open Sessions are not a fixed programme: attendees propose topics and
+          vote, and the highest-voted get a room. So this tab is the board
+          rather than a list of sessions. */}
       {view === "open" && (
         <OpenSpaceBoard topics={topics} myName={myName} people={directory} />
       )}
