@@ -29,6 +29,15 @@
   --color-positive-soft: #e8fde9;
   --color-positive-ink: #0a5f2c;
 
+  /* Open Space topic kinds. Two hues carrying the same weight - a Tell is not
+     more important than an Ask. Deliberately outside the accent family: a
+     voted card is tinted with --color-accent-soft, and a purple badge on it
+     would disappear. */
+  --color-tell-soft: #e6eefc;
+  --color-tell-ink: #1a4b8f;
+  --color-ask-soft: #fdf0dd;
+  --color-ask-ink: #8a4a08;
+
   --color-danger: #ff5555;
   --color-danger-soft: #ffe9e9;
   --color-danger-ink: #b31212;

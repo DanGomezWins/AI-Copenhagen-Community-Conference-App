@@ -16,18 +16,59 @@ import { useMemo, useState } from "react";
  */
 
 type Kind = "tell" | "ask";
-type Topic = { id: string; title: string; kind: Kind; votes: number; mine: boolean };
+type Topic = {
+  id: string;
+  title: string;
+  detail: string;
+  kind: Kind;
+  votes: number;
+  mine: boolean;
+};
 
 const SEED: Topic[] = [
-  { id: "1", title: "Getting agents to admit when they are stuck", kind: "ask", votes: 9, mine: false },
-  { id: "2", title: "We replaced our whole RAG stack with one long prompt", kind: "tell", votes: 7, mine: false },
-  { id: "3", title: "What does code review look like when nobody wrote the code?", kind: "ask", votes: 6, mine: false },
-  { id: "4", title: "Shipping to production on a Friday, agent-assisted", kind: "tell", votes: 5, mine: false },
-  { id: "5", title: "Evals nobody actually runs, and what to do instead", kind: "tell", votes: 4, mine: false },
-  { id: "6", title: "Where do you draw the line on tool access at work?", kind: "ask", votes: 3, mine: false },
-  { id: "7", title: "Small models on-device: who is genuinely doing it?", kind: "ask", votes: 1, mine: false },
+  {
+    id: "1", kind: "ask", votes: 9, mine: false,
+    title: "Getting agents to admit when they are stuck",
+    detail:
+      "Mine will happily churn for twenty minutes rather than say it cannot do the thing. Has anyone found a prompt, a harness or a stopping rule that actually works?",
+  },
+  {
+    id: "2", kind: "tell", votes: 7, mine: false,
+    title: "We replaced our whole RAG stack with one long prompt",
+    detail:
+      "Six months of chunking, embeddings and a vector database, deleted. Quality went up. Happy to walk through what we cut, what it cost and where it would not work.",
+  },
+  {
+    id: "3", kind: "ask", votes: 6, mine: false,
+    title: "What does code review look like when nobody wrote the code?",
+    detail:
+      "If the diff came from an agent, what is the reviewer actually reviewing? Curious how other teams have changed the ritual, or whether they have at all.",
+  },
+  {
+    id: "4", kind: "tell", votes: 5, mine: false,
+    title: "Shipping to production on a Friday, agent-assisted",
+    detail:
+      "What we automated, what we still gate by hand, and the one incident that taught us where the line sits.",
+  },
+  {
+    id: "5", kind: "tell", votes: 4, mine: false,
+    title: "Evals nobody actually runs, and what to do instead",
+    detail:
+      "We built a beautiful eval suite and looked at it twice. What replaced it was smaller, uglier and used daily.",
+  },
+  {
+    id: "6", kind: "ask", votes: 3, mine: false,
+    title: "Where do you draw the line on tool access at work?",
+    detail:
+      "Shell access, production credentials, the company inbox. Interested in what people genuinely allow versus what the policy says.",
+  },
+  {
+    id: "7", kind: "ask", votes: 1, mine: false,
+    title: "Small models on-device: who is genuinely doing it?",
+    detail:
+      "Plenty of demos, fewer shipped products. If you have one in users' hands, what did you give up to get there?",
+  },
 ];
-
 /** The six highest-voted topics get a room. */
 const WINNING = 6;
 
@@ -37,6 +78,8 @@ export default function OpenSessionsPrototype() {
   const [composing, setComposing] = useState(false);
   const [draft, setDraft] = useState("");
   const [draftKind, setDraftKind] = useState<Kind>("tell");
+  const [draftDetail, setDraftDetail] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
 
   const ordered = useMemo(() => {
     const list = [...topics];
@@ -61,10 +104,18 @@ export default function OpenSessionsPrototype() {
     const title = draft.trim();
     if (!title) return;
     setTopics((prev) => [
-      { id: String(Date.now()), title, kind: draftKind, votes: 1, mine: true },
+      {
+        id: String(Date.now()),
+        title,
+        detail: draftDetail.trim(),
+        kind: draftKind,
+        votes: 1,
+        mine: true,
+      },
       ...prev,
     ]);
     setDraft("");
+    setDraftDetail("");
     setComposing(false);
     setSort("new");
   }
@@ -122,23 +173,66 @@ export default function OpenSessionsPrototype() {
               }`}
             >
               <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                      t.kind === "tell"
-                        ? "bg-[var(--color-raised)] text-[var(--color-muted)]"
-                        : "border border-[var(--color-accent)] text-[var(--color-accent)]"
-                    }`}
-                  >
-                    {t.kind}
-                  </span>
-                  {i < cutoffAfter && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-                      In the top {WINNING}
+                <button
+                  type="button"
+                  onClick={() => setOpen(open === t.id ? null : t.id)}
+                  aria-expanded={open === t.id}
+                  aria-controls={`topic-detail-${t.id}`}
+                  // The chevron is decorative and the heading inside does not
+                  // name the control, so screen readers announced an unlabelled
+                  // button. Say what it opens.
+                  aria-label={`${open === t.id ? "Hide" : "Show"} details for ${t.title}`}
+                  className="w-full text-left"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Two hues, one weight: neither kind outranks the other. */}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        t.kind === "tell"
+                          ? "bg-[var(--color-tell-soft)] text-[var(--color-tell-ink)]"
+                          : "bg-[var(--color-ask-soft)] text-[var(--color-ask-ink)]"
+                      }`}
+                    >
+                      {t.kind}
                     </span>
-                  )}
-                </div>
-                <h3 className="mt-1.5 font-semibold leading-snug">{t.title}</h3>
+                    {i < cutoffAfter && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                        In the top {WINNING}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-1.5 flex items-start gap-2">
+                    <h3 className="min-w-0 flex-1 font-semibold leading-snug">
+                      {t.title}
+                    </h3>
+                    <svg
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      className={`mt-0.5 size-4 shrink-0 text-[var(--color-muted)] transition-transform ${
+                        open === t.id ? "rotate-180" : ""
+                      }`}
+                    >
+                      <path
+                        d="M5 7.5 10 12.5 15 7.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </button>
+
+                {open === t.id && (
+                  <p
+                    id={`topic-detail-${t.id}`}
+                    className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]"
+                  >
+                    {t.detail || "No description given."}
+                  </p>
+                )}
               </div>
 
               <button
@@ -189,6 +283,20 @@ export default function OpenSessionsPrototype() {
             autoFocus
             placeholder="Something you would rather discuss than sit through"
             className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]"
+          />
+
+          <label htmlFor="detail" className="mt-3 block text-sm font-medium">
+            A bit more{" "}
+            <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+          </label>
+          <textarea
+            id="detail"
+            value={draftDetail}
+            onChange={(e) => setDraftDetail(e.target.value)}
+            rows={3}
+            maxLength={400}
+            placeholder="What you want to get into, and why it is worth an hour."
+            className="mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-2.5 text-base outline-none focus:border-[var(--color-accent)]"
           />
 
           <div className="mt-3 flex gap-2">
