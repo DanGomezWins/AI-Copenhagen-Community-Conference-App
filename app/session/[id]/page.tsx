@@ -8,6 +8,7 @@ import { TrackSessionView } from "@/components/TrackPageView";
 import SessionSlidesLink from "@/components/SessionSlidesLink";
 import { TRACKS, timeRange, liveness, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
+import { SLIDES_ENABLED } from "@/lib/slides";
 
 export const dynamic = "force-dynamic";
 
@@ -153,10 +154,10 @@ export default async function SessionPage({
 
       {/* Slides are only offered once the session has finished — sharing a deck
           while someone is still presenting it undercuts the talk. */}
-      {s.slides_url && finished && (
+      {SLIDES_ENABLED && s.slides_url && finished && (
         <SessionSlidesLink url={s.slides_url} />
       )}
-      {s.slides_url && !finished && (
+      {SLIDES_ENABLED && s.slides_url && !finished && (
         <p className="mt-4 rounded-xl border border-dashed border-[var(--color-line)] p-3.5 text-sm text-[var(--color-muted)]">
           Slides will be available here once the session has finished.
         </p>

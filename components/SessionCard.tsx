@@ -2,6 +2,7 @@ import Link from "next/link";
 import StarButton from "@/components/StarButton";
 import { timeRange, isStructural, TRACKS, type Session } from "@/lib/program";
 import type { Liveness } from "@/lib/program";
+import { SLIDES_ENABLED } from "@/lib/slides";
 
 /**
  * One session in a list. Used by the Program, My Schedule and profile pages so
@@ -108,7 +109,7 @@ export default function SessionCard({
           </>
         )}
 
-        {s.slides_url && (
+        {SLIDES_ENABLED && s.slides_url && (
           <p className="mt-1.5 text-sm font-medium text-[var(--color-accent)]">
             Slides available ↓
           </p>

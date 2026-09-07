@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import Avatar from "@/components/Avatar";
 import ProfileTracker from "@/components/ProfileTracker";
 import LinkedInLink from "@/components/LinkedInLink";
+import { SLIDES_ENABLED } from "@/lib/slides";
 import { TRACKS, timeRange, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
 
@@ -145,7 +146,7 @@ export default async function ProfilePage({
                   <p className="mt-1 text-sm text-[var(--color-muted)]">
                     {TRACKS.find((t) => t.key === s.track)?.label}
                   </p>
-                  {s.slides_url && (
+                  {SLIDES_ENABLED && s.slides_url && (
                     <p className="mt-2 text-sm font-medium text-[var(--color-accent)]">
                       Slides available ↓
                     </p>

@@ -87,7 +87,7 @@ Rough notes are fine — half a sentence is enough to act on.
 | [7](#7-the-feed) | The feed | Posting, photos, links, moderation |
 | [8](#8-about-and-rating-the-app) | About & rating | About page, app rating |
 | [9](#9-organiser-schedule-editing) | Schedule editing | *Organisers* |
-| [10](#10-organiser-slides) | Slides | *Organisers* |
+| [10](#10-organiser-slides) | Slides | Removed |
 | [11](#11-organiser-feedback-review) | Feedback review | *Organisers* |
 | [12](#12-organiser-announcements-and-notifications) | Announcements | *Organisers* |
 | [14](#14-design-and-general) | Design & general | Colours, fonts, layout |
@@ -353,37 +353,9 @@ have to create anything.
 
 ## 10. Organiser: slides
 
-| #    | Test                | Expected                                                                                                 | Result | Notes |
-| ---- | ------------------- | -------------------------------------------------------------------------------------------------------- | ------ | ----- |
-| 10.1 | Slides field        | The session form has a "Slides URL (PDF)" box                                                            | -      |       |
-| 10.2 | Before it ends      | Add a URL to a **future** session. Its page says slides will appear once it's finished — no download yet | -      |       |
-| 10.3 | **After it ends**   | Add a URL to a session already finished. Within a minute the Feed says the slides are available          | -      |       |
-| 10.4 | Download appears    | That session's page now shows a download button                                                          | -      |       |
-| 10.5 | **No URL, no post** | A finished session **without** a URL never announces anything                                            | -      |       |
-| 10.6 | No double-posting   | It announces once, not repeatedly                                                                        | -      |       |
-
-> ### How to test the slides, step by step
->
-> You need one session that has already finished. Five minutes.
->
-> 1. **Organiser → Edit the schedule.** Pick any session and add a *Slides URL* —
->    any PDF link will do, e.g. `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`.
->    Leave its time alone for now and save.
-> 2. **Test 10.2:** open that session's page. It should say slides will appear
->    once it has finished, with **no** download button.
-> 3. Now you need a finished session. **Organiser → Testing tools → 2. See a
->    session in the Program → Already finished** makes one in a single tap; add
->    the *Slides URL* to that. (Or edit the times by hand as above, untick
->    *Tell attendees*, and let the announcer do the rest.)
-> 4. **Test 10.3:** wait a minute, then open the Feed. It should say the slides
->    are available, badged as automatic. (Impatient? **Organiser → Testing
->    tools → Run announcer now**.)
-> 5. **Test 10.4:** open the session page again — the download button is there.
-> 6. **Test 10.6:** run the announcer twice more. Still one post, not three.
-> 7. **Test 10.5:** pick a *different* finished session with **no** slides URL
->    and run the announcer. It must say nothing at all about that one.
->
-> Then put the times back.
+**Removed.** Speakers were not going to supply decks in advance, so the whole
+feature is switched off - no Slides URL box on the session form, no download on
+a session page, and the announcer never posts about slides. Nothing to test.
 
 ---
 

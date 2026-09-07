@@ -60,7 +60,7 @@ All event names are defined in [`lib/analytics.ts`](lib/analytics.ts). The app f
 | `session_starred` | Added to My Schedule | `sessionId` |
 | `profile_view` | Directory profile opened | `from_search` (bool, optional) |
 | `linkedin_tap` | LinkedIn button tapped | — |
-| `slides_download_tapped` | Download button tapped on finished session | — |
+| `slides_download_tapped` | Download button tapped on finished session — **inactive, slides are switched off** | — |
 | `program_opened` | Programme/schedule screen loads | — |
 | `session_page_opened` | Session detail page opens | — |
 | `directory_search` | Search performed in directory | `length`, `results` |
@@ -80,7 +80,7 @@ These events need additional integration work and will be added later:
 - `notification_received` — when notification is delivered to device
 - `notification_opened` — when user taps a notification
 - `session_start` — when app session begins
-- `slides_announcement_posted` — when slide deck notification is posted
+- `slides_announcement_posted` — when slide deck notification is posted (**inactive, slides are switched off**)
 
 ---
 

@@ -149,8 +149,8 @@ export default async function TestToolsPage({
           Then open <strong>Program</strong>. &ldquo;Happening now&rdquo; runs from
           ten minutes ago until fifty minutes from now and should be outlined and
           badged <strong>Now</strong>. &ldquo;Already finished&rdquo; ended an hour
-          ago and should be dimmed and labelled <strong>Finished</strong> - it is
-          also the one to use for testing slides. Both are removed by Clean up.
+          ago and should be dimmed and labelled <strong>Finished</strong>. Both are
+          removed by Clean up.
         </p>
       </div>
 

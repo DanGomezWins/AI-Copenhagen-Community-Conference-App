@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { SLIDES_ENABLED } from "@/lib/slides";
 import { sendToAll } from "@/lib/push";
 import { timeAt, TRACKS, type Session } from "@/lib/program";
 
@@ -105,6 +106,10 @@ export async function runAnnouncerTick(now: Date = new Date()): Promise<Tick> {
   }
 
   // ---------- slides ----------
+  // Switched off with the feature. Returning here rather than filtering the
+  // query keeps the post itself impossible, not merely unlikely.
+  if (!SLIDES_ENABLED) return { posted, slides, skipped: null };
+
   // Only for sessions that have actually finished and that have a URL. A
   // session without slides announces nothing at all, which is the whole point:
   // "slides available" must never be posted for something with no slides.

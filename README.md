@@ -15,7 +15,6 @@
   - [Networking](#networking)
   - [Organiser tools](#organiser-tools)
   - [Automatic announcements](#automatic-announcements)
-  - [Speaker slides](#speaker-slides)
   - [Ratings and feedback](#ratings-and-feedback)
 - [Getting started](#getting-started)
 - [Sign-in and email](#sign-in-and-email)
@@ -94,12 +93,6 @@ a rescheduled session re-announces at its new time.
 **There's an off switch on the organiser screen.** If the day runs late, turn
 it off rather than have the app confidently announce sessions that aren't
 happening.
-
-### Speaker slides
-
-Add a PDF link to a session and the app **posts that the slides are available
-once that session has ended** — never before, so nobody hands out a deck while
-its speaker is still presenting. A session without a link announces nothing.
 
 ### Ratings and feedback
 
@@ -287,6 +280,18 @@ where it behaves like an app.
 can remove themselves from the directory at any time. Ratings are anonymous.
 
 ---
+
+### Speaker slides are switched off
+
+The feature assumed speakers would hand over a PDF, or a link to one, before or
+during the day. Almost none will, and a programme promising "slides will appear
+here once this finishes" is worse than not offering it at all.
+
+It is gated on `SLIDES_ENABLED` in [lib/slides.ts](lib/slides.ts), default off -
+the form field, the download link, the card markers and the announcer's "slides
+are available" post. Nothing was deleted, the `slides_url` column is untouched,
+and saving a session while it is off will not wipe a URL already stored. Set
+`SLIDES_ENABLED=true` to bring it back.
 
 ### The whiteboard scanner is switched off
 

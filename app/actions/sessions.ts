@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isTrackKey, timeToIso, timeAt, describeChange, roomForTrack, type Session } from "@/lib/program";
 import { titleCaseName } from "@/lib/names";
+import { SLIDES_ENABLED } from "@/lib/slides";
 
 /**
  * Slide links are http(s) only. Anything else in a field that later becomes a
@@ -74,7 +75,10 @@ export async function saveSession(
     title: f.title,
     speaker_name: f.speaker_name,
     description: f.description,
-    slides_url: f.slides_url,
+    // With slides switched off the form no longer submits this field, so
+    // reading it back would write null over anything already stored. Leave the
+    // column alone entirely instead.
+    ...(SLIDES_ENABLED ? { slides_url: f.slides_url } : {}),
     // Always derived: the track is the room.
     room: roomForTrack(f.track),
     starts_at: f.starts_at,

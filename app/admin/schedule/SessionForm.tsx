@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { saveSession, deleteSession, type SessionFormState } from "@/app/actions/sessions";
 import { TRACKS, isoToTime, type Session } from "@/lib/program";
+import { SLIDES_ENABLED } from "@/lib/slides";
 
 const field =
   "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
@@ -119,24 +120,26 @@ export default function SessionForm({ session }: { session?: Session | null }) {
           </p>
         </div>
 
-        <div>
-          <label htmlFor="slides_url" className="block text-sm font-medium">
-            Slides URL{" "}
-            <span className="font-normal text-[var(--color-muted)]">(optional, PDF)</span>
-          </label>
-          <input
-            id="slides_url"
-            name="slides_url"
-            inputMode="url"
-            defaultValue={session?.slides_url ?? ""}
-            placeholder="https://…/slides.pdf"
-            className={field}
-          />
-          <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Attendees can download this once the session has finished, and the
-            feed announces it automatically. Leave blank and nothing is posted.
-          </p>
-        </div>
+        {SLIDES_ENABLED && (
+          <div>
+            <label htmlFor="slides_url" className="block text-sm font-medium">
+              Slides URL{" "}
+              <span className="font-normal text-[var(--color-muted)]">(optional, PDF)</span>
+            </label>
+            <input
+              id="slides_url"
+              name="slides_url"
+              inputMode="url"
+              defaultValue={session?.slides_url ?? ""}
+              placeholder="https://…/slides.pdf"
+              className={field}
+            />
+            <p className="mt-1 text-xs text-[var(--color-muted)]">
+              Attendees can download this once the session has finished, and the
+              feed announces it automatically. Leave blank and nothing is posted.
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <div>
