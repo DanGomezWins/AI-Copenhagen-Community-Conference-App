@@ -177,9 +177,9 @@ export default function OpenSessionsPrototype({
       <div className="mt-4 rounded-xl border border-[var(--color-line)] p-3.5">
         <p className="text-sm font-medium">How this works</p>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          Suggest anything you would rather talk about than listen to. Vote for
-          as many as you like &mdash; the {WINNING} with the most votes get a
-          room, and the schedule appears here once it is set.
+          Propose a topic you would like to talk about (Tell) or raise for
+          discussion (Ask). Vote for as many as you like. The six with the most
+          votes get a room, and the schedule appears here once it is set.
         </p>
       </div>
 
