@@ -210,6 +210,12 @@ large denominator is invisible on an axis anyway. So:
   comparison.
 - **A tile carrying a formula is safe as `BoldNumber`**, because the formula
   collapses the series into the one number that was meant.
+- **One tile reads backwards, and its name has to say so.** Searches that found
+  nobody is a failure rate sitting in a section called Task success, where
+  every other tile means better as it rises. Named "Directory search" it was a
+  number nobody could interpret without opening it, which on a dashboard means
+  it gets interpreted wrongly. The name now states the failure and the
+  description opens with LOWER IS BETTER.
 - **Only where the shape through the day is the point** does a chart survive -
   rooms explored and the Open Space board - and those were moved to
   `interval: hour` so there is something to see.
