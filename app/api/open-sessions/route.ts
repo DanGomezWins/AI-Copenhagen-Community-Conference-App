@@ -31,11 +31,11 @@ const Session = z.object({
 const Payload = z.object({
   sessions: z.array(Session).max(50),
   /**
-   * Off unless asked for. The endpoint is live, so it is also the test
-   * endpoint - and a default of true would notify two hundred phones on every
-   * trial push. Set it on the final one.
+   * On unless turned off. Nobody has the app yet, so trial pushes reach
+   * nobody; once the invitation goes out, a push notifies every phone, so
+   * send "announce": false for anything that is not the real thing.
    */
-  announce: z.boolean().default(false),
+  announce: z.boolean().default(true),
 });
 
 function authorised(request: NextRequest): boolean {
