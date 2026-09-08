@@ -11,6 +11,9 @@ const PUBLIC_PATHS = [
   "/dev", // dev sign-in; the route itself 404s unless the flag is on
   "/api/dev", // mints a test code; also 404s unless the flag is on
   "/api/health",
+  // Carries its own bearer token: the Open Space platform pushes the agenda
+  // here and has no attendee session to present.
+  "/api/open-sessions",
   "/manifest.json",
   "/sw.js",
 ];

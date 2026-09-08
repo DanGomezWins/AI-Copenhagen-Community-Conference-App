@@ -8,21 +8,18 @@ import {
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
 import { nameKey } from "@/lib/names";
-import OpenSpaceBoard, { type Topic } from "./OpenSpaceBoard";
+import OpenSessions, { type AgendaItem } from "./OpenSessions";
 
 export const dynamic = "force-dynamic";
 
-type OpenTopicRow = {
+type AgendaRow = {
   id: string;
   title: string;
-  detail: string | null;
-  kind: string;
+  description: string | null;
+  facilitator: string | null;
   slot: string | null;
-  proposer_name: string | null;
-  created_by: string;
-  created_at: string;
+  kind: string | null;
 };
-
 const VIEWS = [
   ...TRACKS.map((t) => ({ key: t.key as ProgramView, label: t.label })),
   { key: MY_SCHEDULE as ProgramView, label: "My Schedule" },
@@ -44,8 +41,7 @@ export default async function ProgramPage({
     { data: starRows },
     { data: settings },
     { data: profiles },
-    { data: topicRows },
-    { data: voteRows },
+    { data: agendaRows },
   ] =
     await Promise.all([
       view === MY_SCHEDULE
@@ -57,17 +53,14 @@ export default async function ProgramPage({
         : Promise.resolve({ data: [] as { session_id: string }[] }),
       supabase
         .from("app_settings")
-        .select("moderator_main_id, moderator_demos_id, moderator_open_id")
+        .select("open_sessions_url, moderator_main_id, moderator_demos_id, moderator_open_id")
         .maybeSingle(),
       supabase.from("profiles").select("id, first_name, last_name, role, company"),
       // Only needed on the Open Sessions tab, but fetched in the same round
       // trip rather than a second waterfall after the view is known.
       view === "open"
-        ? supabase.from("open_topics").select("*").order("created_at", { ascending: false })
-        : Promise.resolve({ data: [] as OpenTopicRow[] }),
-      view === "open"
-        ? supabase.from("open_topic_votes").select("topic_id, profile_id")
-        : Promise.resolve({ data: [] as { topic_id: string; profile_id: string }[] }),
+        ? supabase.from("open_agenda").select("*").order("position", { ascending: true })
+        : Promise.resolve({ data: [] as AgendaRow[] }),
     ]);
 
   const starred = new Set((starRows ?? []).map((r) => r.session_id));
@@ -86,31 +79,15 @@ export default async function ProgramPage({
     people.map((p) => [nameKey(`${p.first_name} ${p.last_name}`), p]),
   );
 
-  // Auto-fills the proposer's name in the topic form; they can clear it to
-  // stay anonymous.
-  const me = user ? people.find((p) => p.id === user.id) : null;
-  const myName = me ? `${me.first_name} ${me.last_name}` : "";
+  const boardUrl = settings?.open_sessions_url ?? null;
 
-  // So a topic's proposer can link through to their profile.
-  const directory = people.map((p) => ({
-    id: p.id,
-    name: `${p.first_name} ${p.last_name}`,
-  }));
-
-  // Counts and "did I vote" are derived here rather than in the database: the
-  // board is small, and one pass beats a view plus a second query.
-  const votes = voteRows ?? [];
-  const topics: Topic[] = (topicRows ?? []).map((t) => ({
-    id: t.id,
-    title: t.title,
-    detail: t.detail,
-    kind: t.kind === "tell" ? "tell" : "ask",
-    slot: t.slot,
-    proposer_name: t.proposer_name,
-    created_at: t.created_at,
-    votes: votes.filter((v) => v.topic_id === t.id).length,
-    youVoted: Boolean(user) && votes.some((v) => v.topic_id === t.id && v.profile_id === user!.id),
-    yours: Boolean(user) && t.created_by === user!.id,
+  const agenda: AgendaItem[] = (agendaRows ?? []).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    facilitator: a.facilitator,
+    slot: a.slot,
+    kind: a.kind === "ask" || a.kind === "tell" ? a.kind : null,
   }));
 
   const moderatorId =
@@ -181,9 +158,7 @@ export default async function ProgramPage({
       {/* Open Sessions are not a fixed programme: attendees propose topics and
           vote, and the highest-voted get a room. So this tab is the board
           rather than a list of sessions. */}
-      {view === "open" && (
-        <OpenSpaceBoard topics={topics} myName={myName} people={directory} />
-      )}
+      {view === "open" && <OpenSessions agenda={agenda} boardUrl={boardUrl} />}
 
       {view === MY_SCHEDULE && sessions.length === 0 && (
         <div className="mt-6 rounded-xl border border-dashed border-[var(--color-line)] p-6">

@@ -25,3 +25,6 @@ Assets/speakers-extracted.txt
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
+
+# Push token for the Open Space agenda endpoint
+OPEN-SESSIONS-TOKEN.txt
