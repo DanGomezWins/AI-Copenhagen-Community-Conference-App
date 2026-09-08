@@ -37,6 +37,25 @@ export default function LoginForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [resentAt, setResentAt] = useState<number | null>(null);
+
+  /**
+   * Seconds left on Supabase's 60s per-address cooldown.
+   *
+   * Held in state and ticked, because the previous version compared
+   * Date.now() during render: nothing re-rendered when the minute elapsed, so
+   * the button stayed disabled until some unrelated state change happened to
+   * repaint it. Waiting - the one thing the label asks for - never worked.
+   */
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (!resentAt) return;
+    const tick = () =>
+      setCooldown(Math.max(0, Math.ceil((resentAt + 60_000 - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [resentAt]);
   // Test mode only: the code that would have been emailed, shown on screen.
   const [simulatedCode, setSimulatedCode] = useState<string | null>(null);
 
@@ -151,9 +170,9 @@ export default function LoginForm() {
     "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
 
   if (step === "code") {
-    // Supabase enforces a 60s cooldown per address. Offering the button at 30s
+    // Supabase enforces a 60s cooldown per address. Offering the button sooner
     // just hands the user a rejection at the busiest moment of the day.
-    const canResend = !resentAt || Date.now() - resentAt > 60_000;
+    const canResend = cooldown === 0;
     return (
       <form onSubmit={verify} className="space-y-4">
         <div>
@@ -234,7 +253,7 @@ export default function LoginForm() {
             onClick={() => sendCode()}
             className="font-medium text-[var(--color-accent)] disabled:opacity-40"
           >
-            Send a new code
+            {canResend ? "Send a new code" : `Send a new code (${cooldown}s)`}
           </button>
         </div>
       </form>
