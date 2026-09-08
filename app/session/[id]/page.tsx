@@ -120,16 +120,18 @@ export default async function SessionPage({
       )}
 
       {/* A demo is a pitch; the first thing anyone wants afterwards is the
-          thing itself. Only shown when there is somewhere to go - a row
-          promising a link that never arrives is worse than no row. */}
+          thing itself. Labelled with the company, the way a profile is - the
+          name is what someone recognises, where "visit the product" says
+          nothing about which product. Only shown when there is somewhere to
+          go. */}
       {s.track === "demos" && s.company_url && (
         <TrackedLink
           href={s.company_url}
           event={EVENTS.PRODUCT_LINK_TAPPED}
-          className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
+          className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
         >
-          <span className="text-sm font-medium text-[var(--color-accent)]">
-            Visit the product
+          <span className="truncate text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
+            {speakers[0]?.company ?? "Visit the product"}
           </span>
           <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
         </TrackedLink>

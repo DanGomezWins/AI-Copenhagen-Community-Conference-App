@@ -5,7 +5,7 @@ import { EVENTS } from "@/lib/analytics";
 
 export default function LinkedInLink({ url }: { url: string }) {
   const handleClick = () => {
-    track(EVENTS.LINKEDIN_TAP);
+    track(EVENTS.LINKEDIN_TAP, undefined, { onLeave: true });
   };
 
   return (

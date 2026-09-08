@@ -29,7 +29,7 @@ export default function TrackedLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => track(event, properties)}
+      onClick={() => track(event, properties, { onLeave: true })}
       className={className}
     >
       {children}
