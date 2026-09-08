@@ -110,7 +110,7 @@ Start signed out. If you are not, tap your avatar → **Sign out**.
 | --- | -------------------------- | ----------------------------------------------------------------------------- | ------ | -------------------------- |
 | 1.1 | Open the app link          | A **sign-in screen**, titled with the conference name                         | -      |                            |
 | 1.2 | Test-mode notice           | A red box explains no email will really be sent                               | -      |                            |
-| 1.3 | **Install-first guidance** | A purple box says "Add this webpage to your home screen first" and explains why | -      |                            |
+| 1.3 | **Install-first guidance** | A purple box says to open it on your mobile and add it to your home screen, and explains why | -      |                            |
 | 1.4 | Add to home screen         | iPhone: **Share** → **Add to Home Screen**. Android: Chrome offers to install | -      |                            |
 | 1.5 | Icon                       | Purple square, white ring, mint centre                                        | -      |                            |
 | 1.6 | Open from the icon         | Full screen, no browser bar                                                   | -      |                            |
@@ -187,13 +187,16 @@ have to create anything.
 | ---- | ------------------------- | --------------------------------------------------------------------- | ------ | ----- |
 | 3.1  | Open Program              | Main stage shows the full day, each session with its real talk title  | -      |       |
 | 3.2  | Four tabs                 | Main stage · Demos · Open sessions · ★ My Schedule                    | -      |       |
+| 3.2a | **Header stays put**      | Scroll a long way down — the Program heading and room tabs stay on screen | -      |       |
+| 3.2b | Moderator named           | Under the tabs: "Moderated by …", tapping the name opens their profile | -      |       |
+| 3.2c | Role and company          | Each session card shows the speaker's role and company under their name | -      |       |
 | 3.3  | Day structure             | Registration, breaks, lunch, drinks appear among the sessions         | -      |       |
 | 3.4  | Copenhagen time           | 08:30 registration, 11:50 lunch, 15:30 keynote                        | -      |       |
 | 3.5  | Danish characters         | Ø, æ, å all render (Nørregaard, Bæk, Ødegård)                         | -      |       |
 | 3.6  | Real speakers             | Actual speaker names, not invented ones                               | -      |       |
 | 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | -      |       |
 | 3.8  | Happening now             | The current session is outlined and badged "Now"                      | -      |       |
-| 3.9  | **Open Sessions**         | Links out to a separate page — a notice explains it's published there | -      |       |
+| 3.9  | **Open Sessions**         | Explains how Open Space works, links to the board, and shows an example schedule labelled "Example only" | -      |       |
 | 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | -      |       |
 
 > ### "How can I test 3.7 and 3.8 when everything is in the future?"
@@ -435,7 +438,9 @@ Things you might flag that are intentional:
 - **No email arrives when signing in.** Check spam first. If it is genuinely
   missing, the Magic Link template may be missing `{{ .Token }}`, or the
   Supabase rate limit for sending emails has been hit.
-- **Open Sessions has no listing.** It links out; the URL is still to come.
+- **Open Sessions shows an example schedule.** Proposing and voting happen on
+  the Open Space board, which the tab links to. The real agenda is pushed to
+  the app when voting closes and replaces the example.
 - **Attendees aren't loaded yet.** Ten test guests stand in until the
   checkin.no export arrives. They are the only accounts with a `+` in the
   address, so they are easy to remove.

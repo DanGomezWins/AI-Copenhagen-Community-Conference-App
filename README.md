@@ -18,10 +18,12 @@
   - [Ratings and feedback](#ratings-and-feedback)
 - [Getting started](#getting-started)
 - [Sign-in and email](#sign-in-and-email)
-- [What I need decisions on](#what-i-need-decisions-on)
 - [Before the event](#before-the-event)
 - [Measuring how it went](#measuring-how-it-went)
 - [How it's built](#how-its-built)
+  - [Open Sessions API](#open-sessions-the-agenda-arrives-by-api)
+  - [Speaker slides are off](#speaker-slides-are-switched-off)
+  - [The whiteboard scanner is off](#the-whiteboard-scanner-is-switched-off)
 - [Running it locally](#running-it-locally)
 
 ---
@@ -53,12 +55,22 @@ labelled, so the eye lands on what is still to come.
 **Tap ☆ on any session** and it joins **My Schedule** — a fourth view showing
 everything you've starred across both rooms in one chronological run.
 
-**Open Sessions** are published on their own page, so that tab links out.
+Each card carries the speaker's **role and company**, and each room names its
+**moderator** underneath the tabs. The heading and the room tabs stay stuck to
+the top as you scroll, so which room you are reading never leaves the screen.
+
+**Open Sessions** are chosen by attendees on the day, on the Open Space board
+that runs the proposing and voting. That tab links to the board, and shows an
+example schedule until the real one is pushed across &mdash; see
+[Open Sessions](#open-sessions-the-agenda-arrives-by-api).
 
 ### Session pages
 
+A session can list **more than one speaker** — the closing keynote has three,
+and each gets a card. Demo talks carry a link to the product.
+
 Tapping any session opens it: times, room, description, the speaker as a
-tappable card, slides once available, and **Rate this session**.
+tappable card, and **Rate this session**.
 
 ### Networking
 
@@ -221,25 +233,15 @@ Both must be `false` in production. Once real sign-in is confirmed, delete
 
 ---
 
-## What I need decisions on
-
-### Slide files
-
-To publish slides I need **a URL per session, PDF only**. Hosting them yourself
-and sending the links alongside the speaker details is simplest — then the app
-posts them automatically as each talk ends.
-
----
-
 ## Before the event
 
 - [ ] Switch off test-mode sign-in (`ENABLE_DEV_SIGNIN`) and confirm a real code arrives
 - [ ] Add the SPF record for aimeetupcopenhagen.dk
 - [ ] Load the real programme (arriving 24–48h before)
 - [ ] Load the attendee list from checkin.no — **this is what I need most**
-- [ ] Add slide URLs as speakers send them
-- [ ] Add the Open Sessions page URL
-- [ ] Add organisers and room hosts
+- [ ] Set `OPEN_SESSIONS_TOKEN` in Railway, and send it with the endpoint spec
+- [ ] Point `NEXT_PUBLIC_SITE_URL` at the custom domain, and add it to Supabase's redirect list
+- [ ] Add organisers, and the moderators for Main stage and Open sessions
 - [ ] Replace the placeholder icon with real branding
 
 **The one thing that blocks everything:** the **attendee export with email
@@ -281,6 +283,41 @@ can remove themselves from the directory at any time. Ratings are anonymous.
 
 ---
 
+### Open Sessions: the agenda arrives by API
+
+Proposing and voting happen on the **Open Space board**, which has its own
+backend for running the day — editing and hiding topics, facilitator notes.
+Rebuilding that here would have split the vote across two boards and produced a
+top six drawn from a divided electorate, so this app receives the finished
+agenda instead.
+
+```
+POST /api/open-sessions
+Authorization: Bearer $OPEN_SESSIONS_TOKEN
+{ "sessions": [ { "title": "…", "description": "…",
+                  "facilitator": "…", "slot": "10:50 - 11:15",
+                  "kind": "ask" } ],
+  "announce": true }
+```
+
+Only `title` is required. Each push **replaces the whole agenda**, so pushing
+again is how a mistake is corrected and `{"sessions": []}` clears it. The route
+authenticates with its own bearer token, so it is exempt from the session
+redirect in [PUBLIC_PATHS](lib/supabase/middleware.ts) and writes with the
+service role — `open_agenda` has no write policy at all.
+
+`announce` defaults to **true**: a push posts to the feed and notifies every
+phone. Send `"announce": false` for test pushes once the invitation has gone
+out.
+
+Facilitator names render as **plain text**, never linked to profiles. The
+source has one name field rather than a first and last, and topics can be
+proposed anonymously, so matching them would be guesswork that occasionally
+credits the wrong person.
+
+Until the first push the tab shows a labelled example agenda and links to the
+board.
+
 ### Speaker slides are switched off
 
 The feature assumed speakers would hand over a PDF, or a link to one, before or
@@ -295,8 +332,8 @@ and saving a session while it is off will not wipe a URL already stored. Set
 
 ### The whiteboard scanner is switched off
 
-Open Sessions moved to their own page, so photographing the board from this app
-is no longer needed. The whole flow - the Organiser card, `/scan`, and the
+Open Sessions are run on the Open Space board, so photographing a physical
+board from this app is no longer needed. The whole flow - the Organiser card, `/scan`, and the
 `/api/scan/*` routes - is gated behind `SCAN_ENABLED` in
 [lib/scan/enabled.ts](lib/scan/enabled.ts), default off. Nothing was deleted.
 
@@ -330,7 +367,7 @@ npm run dev
 | `npm run reset:demo` | Empty the feed and restore a clean demo state |
 | `npm run test:scan` | Whiteboard reader, against a generated board |
 | `npm run test:announcer` | Automatic announcements, incl. no-double-post |
-| `npm run test:slides` | Slide publishing, incl. never posting without a URL |
+| `npm run test:slides` | Slide publishing — the feature is off, kept for revival |
 | `npm run test:clash` | Schedule overlap detection |
 
 `GET /api/health` reports which settings are present without exposing them —
