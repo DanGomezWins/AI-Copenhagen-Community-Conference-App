@@ -25,7 +25,8 @@
     "import:people": "tsx scripts/import-people.mts",
     "test:slides": "tsx scripts/test-slides.mts",
     "import:programme": "tsx scripts/import-programme.mts",
-    "seed:guests": "tsx scripts/seed-test-guests.mts"
+    "seed:guests": "tsx scripts/seed-test-guests.mts",
+    "check:analytics": "node scripts/check-analytics.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
