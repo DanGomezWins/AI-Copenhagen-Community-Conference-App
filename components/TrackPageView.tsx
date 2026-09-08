@@ -22,8 +22,15 @@ export function TrackPageView({
   return null;
 }
 
-export function TrackSessionView() {
-  return <TrackPageView event={EVENTS.SESSION_PAGE_OPENED} />;
+/**
+ * Carries the room the session belongs to. Without it, "how many people opened
+ * a demo page" cannot be asked at all - and that is the denominator for the
+ * product-link rate, which is the clearest commercial signal in the app.
+ */
+export function TrackSessionView({ track: view }: { track: string }) {
+  return (
+    <TrackPageView event={EVENTS.SESSION_PAGE_OPENED} properties={{ track: view }} />
+  );
 }
 
 export function TrackProfileView({ fromSearch }: { fromSearch?: boolean } = {}) {

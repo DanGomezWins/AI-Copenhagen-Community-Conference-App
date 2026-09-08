@@ -72,7 +72,7 @@ export default async function SessionPage({
 
   return (
     <section>
-      <TrackSessionView />
+      <TrackSessionView track={s.track} />
       <Link href={back.href} className="text-sm text-[var(--color-muted)]">
         ← {back.label}
       </Link>

@@ -71,7 +71,7 @@ without translation.
 | `attendee_post_created`           | Feed opened; attendee posts                                                                                     | -                                     |
 | `session_starred`                 | Session starred                                                                                                 | sessionId                             |
 | `program_opened`                  | Programme tab opened                                                                                            | track (main, demos, open, mine)       |
-| `session_page_opened`             | Session page opened                                                                                             | -                                     |
+| `session_page_opened`             | Session page opened                                                                                             | track (main, demos, open) |
 | `directory_search`                | Search performed                                                                                                | length, results                       |
 | `linkedin_tap`                    | LinkedIn or company link tapped                                                                                 | -                                     |
 | `company_link_tapped`             | LinkedIn or company link tapped                                                                                 | -                                     |
