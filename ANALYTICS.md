@@ -228,6 +228,27 @@ large denominator is invisible on an axis anyway. So:
 - `metricShowChange` is off everywhere: there is no previous period to compare
   a one-day event against.
 
+### Why the aha tiles are not funnels
+
+Both definitions are **sets**, not journeys. Somebody who stars a session
+before saving their profile has done exactly as much as somebody who did it the
+other way round, and neither order is better. A funnel draws drop-off between
+ordered steps, so even set to unordered - which these were, and the numbers
+were right - the shape says "people fell out here", which is a claim the
+definition never makes.
+
+So the headline is a single share of attendees, computed from the cohort, and a
+separate bar chart shows each action side by side. The bar chart does the one
+job the funnel was genuinely good for: finding which action holds people back.
+The shortest bar is the one worth fixing, and no sequence is implied.
+
+A pie shows the same thing as proportion rather than as a number: super users,
+aha-but-not-super, and everyone else. Note the slices are built with a negated
+cohort filter (`not_in`) so they are mutually exclusive and sum to the whole.
+Super users are a subset of the aha group, so the obvious construction - one
+slice for the aha cohort and one for all users - would count them twice and
+draw a pie that adds up to more than everybody.
+
 ### Not firing
 
 - `notification_received` - not trackable in any honest way. The push service
