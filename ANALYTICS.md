@@ -8,7 +8,7 @@ It's configured so **no cookie banner is needed**: anonymous visitors aren't pro
 
 ## Metrics framework
 
-**[Assets/metrics-framework.csv](Assets/metrics-framework.csv)** — the HEART framework, ready to import into Google Sheets. Nineteen rows across Happiness, Engagement, Adoption, Retention and Task Success, each with the goal, what's tracked, the formula, and a stated hypothesis so a number can be read as good or bad rather than merely recorded. Results and Learnings columns are left empty to fill in afterwards.
+**[Assets/metrics-framework.csv](Assets/metrics-framework.csv)** — the source of truth, ready to import into Google Sheets. One row per dashboard tile across Happiness, Adoption, Engagement, Task success, Retention and the two aha-moment cohorts. Each carries the tile name, the goal, the signal, the event and its properties, the formula, and a stated hypothesis so a number can be read as good or bad rather than merely recorded. Results and Learnings are left empty to fill in afterwards.
 
 ---
 
@@ -47,9 +47,9 @@ NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
 
 ## Events
 
-All event names are defined in [`lib/analytics.ts`](lib/analytics.ts). The app fires these events deliberately, and nothing else is tracked.
-
-### Events
+All event names are defined in [`lib/analytics.ts`](lib/analytics.ts). The app
+fires these deliberately, and nothing else is tracked - no autocapture, no
+session recording.
 
 Every event below fires in the app today. The table is derived from
 [Assets/metrics-framework.csv](Assets/metrics-framework.csv), which is the
@@ -82,6 +82,65 @@ without translation.
 | `program_opened (track=main`      | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
 | `open)`                           | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
 | `profile_view`                    | Cohort: the aha cohort AND viewed a profile AND opened the feed                                                 | -                                     |
+
+## Verifying the tracking
+
+One pass through the app, in the order somebody would actually use it. Open
+PostHog → **Activity → Live events** on a second screen and watch them arrive.
+
+**Check the properties, not just the event names.** Both faults found so far
+were an event firing correctly while missing a property a tile divided by - the
+tile read "no matching events" and looked like nobody had done the thing. Click
+an event in the list to expand its properties.
+
+Do this in the **installed app**, not a browser tab, or step 1 cannot fire.
+
+| # | What you do | Event | Properties to check |
+| --- | --- | --- | --- |
+| 1 | Open the app from the Home Screen icon | `home_screen_launch` | none - it firing at all is the signal |
+| 2 | Type your email, tap **Email me a code** | `sign_in_started` | none |
+| 3 | ...the request succeeds | `sign_in_email_requested` | none - fires only if the send was accepted |
+| 4 | Enter the code, tap **Sign in** | `sign_in_completed` | none |
+| 5 | Turn on notifications from your profile | `notification_permission_granted` | none - only fires the first time you grant |
+| 6 | Edit anything on your profile, **Save** | `profile_edited` | none - fires on submit |
+| 7 | You land on the Program | `program_opened` | **`track` = `main`** |
+| 8 | Tap **Demos** | `program_opened` | **`track` = `demos`** |
+| 9 | Tap **Open sessions** | `program_opened` | **`track` = `open`** |
+| 10 | Tap **Propose and vote on topics** | `open_space_board_tapped` | `before_schedule` (true until the agenda is pushed) |
+| 11 | Back to Demos, open any session | `session_page_opened` | **`track` = `demos`** - the product-link tile divides by this |
+| 12 | Tap ☆ **Add to My Schedule** | `session_starred` | `sessionId` |
+| 13 | Tap the company link on that demo | `product_link_tapped` | none - fires as the page backgrounds |
+| 14 | Tap **★ My Schedule** | `program_opened` | **`track` = `mine`** |
+| 15 | **Networking**, open any profile | `profile_view` | none when opened from the list |
+| 16 | Tap their **LinkedIn** | `linkedin_tap` | none |
+| 17 | Tap their **company** | `company_link_tapped` | none |
+| 18 | Back to Networking, search a name | `directory_search` | `length`, `results` - fires ~1s after you stop typing |
+| 19 | Open a profile **from those results** | `profile_view` | **`from_search` = `true`** - only set on this path |
+| 20 | Tap **Feed** | `feed_opened` | none |
+| 21 | Post something | `attendee_post_created` | none |
+| 22 | Open a session, **Rate this session** | `session_rating_submitted` | **`star_rating`** (1-5), **`has_comment`** (true if you typed one) |
+| 23 | **About** → **Rate this app** | `app_rating_submitted` | **`star_rating`**, **`has_comment`** |
+| 24 | Send yourself a test push, tap it | `notification_opened` | `path` - the screen it opened |
+
+Expect **20 distinct event types** across roughly 25 events. Steps 7, 8, 9 and
+14 are the same event four times with a different `track` - if any shows the
+wrong value, or none, the room-level tiles break.
+
+### If something does not appear
+
+- **Nothing at all** - PostHog batches. Give it a minute, and check you are not
+  on a network blocking analytics.
+- **The event but not the property** - the fault is in the app, not the
+  dashboard. Run `npm run check:analytics`, which compares what the code sends
+  against what the tiles expect.
+- **`product_link_tapped` missing** - it fires as the app is backgrounded by the
+  in-app browser. It is sent with `send_instantly` and `sendBeacon` for exactly
+  that reason; if it is lost, that is the thing to look at.
+- **`home_screen_launch` missing** - you are in a browser tab, not the installed
+  app.
+
+Once every row checks out, the tiles are reading real data and the numbers in
+the write-up can be trusted.
 
 ### Aha moment and super users
 
