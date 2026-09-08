@@ -118,23 +118,19 @@ export default async function SessionPage({
       )}
 
       {/* A demo is a pitch; the first thing anyone wants afterwards is the
-          thing itself. Sits above the speaker card because the product is what
-          the talk was about. */}
-      {s.track === "demos" && (
+          thing itself. Only shown when there is somewhere to go - a row
+          promising a link that never arrives is worse than no row. */}
+      {s.track === "demos" && s.company_url && (
         <a
-          href={s.company_url ?? undefined}
+          href={s.company_url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-disabled={s.company_url ? undefined : true}
-          className={`mt-4 flex items-center justify-between gap-3 rounded-xl border p-3.5 ${
-            s.company_url
-              ? "border-[var(--color-accent)] text-[var(--color-accent)]"
-              : "pointer-events-none border-dashed border-[var(--color-line)] text-[var(--color-muted)]"
-          }`}
+          className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
         >
-          <span className="text-sm font-medium">
-            {s.company_url ? "Visit the product ↗" : "Product link coming soon"}
+          <span className="text-sm font-medium text-[var(--color-accent)]">
+            Visit the product
           </span>
+          <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
         </a>
       )}
 

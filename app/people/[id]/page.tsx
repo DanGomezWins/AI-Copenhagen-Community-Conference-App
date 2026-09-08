@@ -94,36 +94,20 @@ export default async function ProfilePage({
         <LinkedInLink url={profile.linkedin_url} />
       )}
 
-      {/* Placeholder until the company URLs arrive: the row still shows, so the
-          profile does not visibly change shape when they are filled in. */}
-      {profile.company && (
+      {/* Only when there is somewhere to go. The company already appears under
+          their name, so a row that says "link coming soon" adds a dead control
+          rather than information. */}
+      {profile.company && profile.company_url && (
         <a
-          href={profile.company_url ?? undefined}
+          href={profile.company_url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-disabled={profile.company_url ? undefined : true}
-          className={`mt-3 flex items-center justify-between gap-3 rounded-xl border p-3.5 ${
-            profile.company_url
-              ? "border-[var(--color-line)]"
-              : "pointer-events-none border-dashed border-[var(--color-line)]"
-          }`}
+          className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
         >
-          <span
-            className={`truncate text-sm font-medium ${
-              profile.company_url
-                ? "text-[var(--color-accent)] underline underline-offset-2"
-                : "text-[var(--color-muted)]"
-            }`}
-          >
+          <span className="truncate text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
             {profile.company}
           </span>
-          <span className="shrink-0 text-sm text-[var(--color-muted)]">
-            {profile.company_url ? (
-              <span className="text-[var(--color-accent)]">Open ↗</span>
-            ) : (
-              "Link coming soon"
-            )}
-          </span>
+          <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
         </a>
       )}
 
