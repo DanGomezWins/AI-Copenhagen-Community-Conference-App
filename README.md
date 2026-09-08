@@ -32,7 +32,7 @@
 
 Three tabs, plus an organiser area only organisers can see.
 
-### Feed - live updates from everyone
+### Feed: live updates from everyone
 
 The home screen. **Anyone can post** — text, a photo, a link. Organisers'
 posts are badged and tinted so official information stays separable from
