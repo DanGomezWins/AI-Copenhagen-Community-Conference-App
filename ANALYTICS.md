@@ -71,13 +71,13 @@ without translation.
 | `attendee_post_created`           | Feed opened; attendee posts                                                                                     | -                                     |
 | `session_starred`                 | Session starred                                                                                                 | sessionId                             |
 | `program_opened`                  | Programme tab opened                                                                                            | track (main, demos, open, mine)       |
-| `session_page_opened`             | Session page opened                                                                                             | track (main, demos, open) |
+| `session_page_opened`             | Session page opened                                                                                             | track (main, demos, open)             |
 | `directory_search`                | Search performed                                                                                                | length, results                       |
 | `linkedin_tap`                    | LinkedIn or company link tapped                                                                                 | -                                     |
 | `company_link_tapped`             | LinkedIn or company link tapped                                                                                 | -                                     |
 | `product_link_tapped`             | Product link tapped on a demo session                                                                           | -                                     |
 | `open_space_board_tapped`         | Board link tapped                                                                                               | before_schedule (bool)                |
-| `notification_opened` | Notification tapped | path |
+| `notification_opened`             | Notification tapped                                                                                             | path                                  |
 | `$pageview`                       | Repeat sessions per user                                                                                        | path                                  |
 | `program_opened (track=main`      | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
 | `open)`                           | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
@@ -95,32 +95,32 @@ an event in the list to expand its properties.
 
 Do this in the **installed app**, not a browser tab, or step 1 cannot fire.
 
-| # | What you do | Event | Properties to check |
-| --- | --- | --- | --- |
-| 1 | Open the app from the Home Screen icon | `home_screen_launch` | none - it firing at all is the signal |
-| 2 | Type your email, tap **Email me a code** | `sign_in_started` | none |
-| 3 | ...the request succeeds | `sign_in_email_requested` | none - fires only if the send was accepted |
-| 4 | Enter the code, tap **Sign in** | `sign_in_completed` | none |
-| 5 | Turn on notifications from your profile | `notification_permission_granted` | none - only fires the first time you grant |
-| 6 | Edit anything on your profile, **Save** | `profile_edited` | none - fires on submit |
-| 7 | You land on the Program | `program_opened` | **`track` = `main`** |
-| 8 | Tap **Demos** | `program_opened` | **`track` = `demos`** |
-| 9 | Tap **Open sessions** | `program_opened` | **`track` = `open`** |
-| 10 | Tap **Propose and vote on topics** | `open_space_board_tapped` | `before_schedule` (true until the agenda is pushed) |
-| 11 | Back to Demos, open any session | `session_page_opened` | **`track` = `demos`** - the product-link tile divides by this |
-| 12 | Tap ☆ **Add to My Schedule** | `session_starred` | `sessionId` |
-| 13 | Tap the company link on that demo | `product_link_tapped` | none - fires as the page backgrounds |
-| 14 | Tap **★ My Schedule** | `program_opened` | **`track` = `mine`** |
-| 15 | **Networking**, open any profile | `profile_view` | none when opened from the list |
-| 16 | Tap their **LinkedIn** | `linkedin_tap` | none |
-| 17 | Tap their **company** | `company_link_tapped` | none |
-| 18 | Back to Networking, search a name | `directory_search` | `length`, `results` - fires ~1s after you stop typing |
-| 19 | Open a profile **from those results** | `profile_view` | **`from_search` = `true`** - only set on this path |
-| 20 | Tap **Feed** | `feed_opened` | none |
-| 21 | Post something | `attendee_post_created` | none |
-| 22 | Open a session, **Rate this session** | `session_rating_submitted` | **`star_rating`** (1-5), **`has_comment`** (true if you typed one) |
-| 23 | **About** → **Rate this app** | `app_rating_submitted` | **`star_rating`**, **`has_comment`** |
-| 24 | Send yourself a test push, tap it | `notification_opened` | `path` - the screen it opened |
+| #   | What you do                              | Event                             | Properties to check                                                |
+| --- | ---------------------------------------- | --------------------------------- | ------------------------------------------------------------------ |
+| 1   | Open the app from the Home Screen icon   | `home_screen_launch`              | none - it firing at all is the signal                              |
+| 2   | Type your email, tap **Email me a code** | `sign_in_started`                 | none                                                               |
+| 3   | ...the request succeeds                  | `sign_in_email_requested`         | none - fires only if the send was accepted                         |
+| 4   | Enter the code, tap **Sign in**          | `sign_in_completed`               | none                                                               |
+| 5   | Turn on notifications from your profile  | `notification_permission_granted` | none - only fires the first time you grant                         |
+| 6   | Edit anything on your profile, **Save**  | `profile_edited`                  | none - fires on submit                                             |
+| 7   | You land on the Program                  | `program_opened`                  | **`track` = `main`**                                               |
+| 8   | Tap **Demos**                            | `program_opened`                  | **`track` = `demos`**                                              |
+| 9   | Tap **Open sessions**                    | `program_opened`                  | **`track` = `open`**                                               |
+| 10  | Tap **Propose and vote on topics**       | `open_space_board_tapped`         | `before_schedule` (true until the agenda is pushed)                |
+| 11  | Back to Demos, open any session          | `session_page_opened`             | **`track` = `demos`** - the product-link tile divides by this      |
+| 12  | Tap ☆ **Add to My Schedule**             | `session_starred`                 | `sessionId`                                                        |
+| 13  | Tap the company link on that demo        | `product_link_tapped`             | none - fires as the page backgrounds                               |
+| 14  | Tap **★ My Schedule**                    | `program_opened`                  | **`track` = `mine`**                                               |
+| 15  | **Networking**, open any profile         | `profile_view`                    | none when opened from the list                                     |
+| 16  | Tap their **LinkedIn**                   | `linkedin_tap`                    | none                                                               |
+| 17  | Tap their **company**                    | `company_link_tapped`             | none                                                               |
+| 18  | Back to Networking, search a name        | `directory_search`                | `length`, `results` - fires ~1s after you stop typing              |
+| 19  | Open a profile **from those results**    | `profile_view`                    | **`from_search` = `true`** - only set on this path                 |
+| 20  | Tap **Feed**                             | `feed_opened`                     | none                                                               |
+| 21  | Post something                           | `attendee_post_created`           | none                                                               |
+| 22  | Open a session, **Rate this session**    | `session_rating_submitted`        | **`star_rating`** (1-5), **`has_comment`** (true if you typed one) |
+| 23  | **About** → **Rate this app**            | `app_rating_submitted`            | **`star_rating`**, **`has_comment`**                               |
+| 24  | Send yourself a test push, tap it        | `notification_opened`             | `path` - the screen it opened                                      |
 
 Expect **20 distinct event types** across roughly 25 events. Steps 7, 8, 9 and
 14 are the same event four times with a different `track` - if any shows the

@@ -64,16 +64,27 @@ for (const file of files) {
 
     // The first object literal after the event reference, if there is one
     // before the statement ends.
+    // The last pattern catches a property object behind a condition -
+    // `fromSearch ? { from_search: true } : undefined` - which the others miss.
+    // A property that only sometimes ships is still a property a tile can be
+    // built on, and is exactly the kind that goes unnoticed.
     const obj =
       after.match(/properties=\{\{([\s\S]*?)\}\}/) ??
-      after.match(/,\s*\{([\s\S]*?)\}\s*[,)]/);
+      after.match(/,\s*\{([\s\S]*?)\}\s*[,)]/) ??
+      // Kept to a short window: further out and it starts matching unrelated
+      // objects, like a `const { error } = await ...` on the next line.
+      after.slice(0, 90).match(/\{\s*([a-z_][a-z0-9_]*\s*:[\s\S]{0,60}?)\}/i);
 
-    // onLeave is a transport option, not an event property.
-    const keys = obj
-      ? [...obj[1].matchAll(/([a-z_][a-z0-9_]*)\s*:/gi)]
-          .map((k) => k[1])
-          .filter((k) => k !== "onLeave")
-      : [];
+    // Keys are written either as `name: value` or shorthand `{ name }`, and
+    // both reach PostHog as properties. Anything that is plainly not one -
+    // a JSX handler, a transport option - is dropped rather than reported as
+    // a property the dashboard could use.
+    const NOT_A_PROPERTY = /^(onLeave|on[A-Z]|class|key|ref|href|children)/;
+    const body = obj ? obj[1] : "";
+    const keys = [
+      ...[...body.matchAll(/([a-z_][a-z0-9_]*)\s*:/gi)].map((k) => k[1]),
+      ...[...body.matchAll(/(?:^|[{,])\s*([a-z_][a-z0-9_]*)\s*(?=[,}]|$)/gi)].map((k) => k[1]),
+    ].filter((k) => !NOT_A_PROPERTY.test(k));
 
     const prev = fired.get(constant) ?? new Set();
     keys.forEach((k) => prev.add(k));

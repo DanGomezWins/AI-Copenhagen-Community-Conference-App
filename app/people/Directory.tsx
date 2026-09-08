@@ -123,7 +123,13 @@ export default function Directory({ people }: { people: DirectoryPerson[] }) {
       <ul className="mt-3 divide-y divide-[var(--color-line)] rounded-xl border border-[var(--color-line)]">
         {results.map((p) => (
           <li key={p.id}>
-            <Link href={`/people/${p.id}`} className="flex items-center gap-3 p-3">
+            {/* Marks profiles reached by searching, which is what makes the
+                "did the directory help them find someone specific" tile
+                answerable - browsing and searching are different intents. */}
+            <Link
+              href={`/people/${p.id}${query.trim() ? "?from=search" : ""}`}
+              className="flex items-center gap-3 p-3"
+            >
               <Avatar
                 firstName={p.first_name}
                 lastName={p.last_name}
