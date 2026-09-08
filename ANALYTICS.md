@@ -169,6 +169,49 @@ sign_in_completed
   AND feed_opened
 ```
 
+Both now exist in PostHog: [Aha moment](https://eu.posthog.com/project/265578/cohorts/234827)
+and [Super user](https://eu.posthog.com/project/265578/cohorts/234828). Every
+condition is anchored to `2026-09-10 08:00` with `explicit_datetime`, so the
+weeks of build-and-test activity cannot count towards either. They read **0
+until the day** - that is correct, not a fault.
+
+### The day boundary
+
+Everything captured before 10 September is test data from building the app: 691
+events across five people, most of them one person. Two things keep it out of
+the write-up.
+
+**Annotations** mark the boundary on every chart - a 🚦 at 08:00 on 10
+September and a 🏁 at 15:30 when the last session ends. These are project-scoped,
+so they appear on any insight with `showAnnotations` on, which is all of them.
+
+**A dashboard-level date filter** is the real exclusion. Set `date_from` to
+`2026-09-10` on the HEART dashboard on the morning of the event: dashboard
+filters override each tile's own range, so it is one change rather than
+nineteen. It is deliberately **not** set in advance, because it would blank
+every tile during the last rounds of testing.
+
+### Why the tiles are numbers, not graphs
+
+The event is one day. Every tile was built with `interval: day`, which on a
+single-day event draws a line graph with one point on it - and a ratio with a
+large denominator is invisible on an axis anyway. So:
+
+- **Ratios** render as `BoldNumber` with `aggregationAxisFormat:
+  percentage_scaled` - one figure, e.g. 4 taps out of 100 opens reads as 4%.
+- **Averages and counts** render as `BoldNumber`, numeric.
+- **Only where the shape through the day is the point** does a chart survive -
+  rooms explored and the Open Space board - and those were moved to
+  `interval: hour` so there is something to see.
+- **Return visits is hourly too, and measures the day rather than days.** It is
+  a one-day event, so returning means coming back later the same morning, not
+  the next day. The tile is cumulative hourly stickiness - people active in N
+  or more separate hours - which is the metric the framework always specified.
+  It only reads correctly with the dashboard date filter set to the event day,
+  since "distinct hours" over a wider range would count hours across days.
+- `metricShowChange` is off everywhere: there is no previous period to compare
+  a one-day event against.
+
 ### Not firing
 
 - `notification_received` - not trackable in any honest way. The push service
