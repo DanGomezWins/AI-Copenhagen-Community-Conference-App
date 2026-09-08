@@ -24,11 +24,21 @@ export default function RatingModal({
     saveRating,
     {},
   );
+  /**
+   * Whether the thank-you is showing for THIS opening of the modal.
+   *
+   * useActionState keeps its result for the life of the component, so gating
+   * the panel on state.ok meant that once someone had rated, every reopen
+   * showed the thank-you and the form was unreachable - they could never
+   * change a rating or edit a comment.
+   */
+  const [saved, setSaved] = useState(false);
   const dialog = useRef<HTMLDivElement>(null);
   const [viewportHeight, setViewportHeight] = useState<string>("90dvh");
 
   useEffect(() => {
     if (state.ok) {
+      setSaved(true);
       track(
         sessionId ? EVENTS.SESSION_RATING_SUBMITTED : EVENTS.APP_RATING_SUBMITTED,
         {
@@ -78,10 +88,15 @@ export default function RatingModal({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          // Reopening returns to the form, carrying the last answer, so it can
+          // be changed rather than merely re-read.
+          setSaved(false);
+          setOpen(true);
+        }}
         className="w-full rounded-lg border border-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-[var(--color-accent)]"
       >
-        {already ? `${label} — you gave ${existingStars}★` : label}
+        {already ? `${label} — you gave ${existingStars}★, tap to change` : label}
       </button>
 
       {open && (
@@ -98,7 +113,7 @@ export default function RatingModal({
             className="fixed top-0 left-0 right-0 z-50 flex flex-col rounded-2xl bg-[var(--color-surface)] sm:left-1/2 sm:top-1/2 sm:w-full sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2"
             style={{ maxHeight: viewportHeight }}
           >
-            {state.ok ? (
+            {saved ? (
               <div className="flex flex-1 items-center justify-center overflow-y-auto p-5">
                 <div className="py-6 text-center">
                   <p className="text-3xl">🙂</p>
