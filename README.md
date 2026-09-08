@@ -112,6 +112,24 @@ happening.
 — five stars plus an optional comment. Both are **anonymous**: who left a
 rating is never shown and can't be looked up.
 
+Two prompts ask for those ratings, and each has its own off switch on the
+organiser screen.
+
+**When a session ends**, the people who starred it are asked how it was —
+only them, and only if they have not already said. A star is the one signal
+that somebody chose to be in the room; asking everyone about every session is
+how a useful channel gets muted.
+
+**Half an hour after the last session of the day**, everyone who has not yet
+rated the app is asked to, once. The timing is taken from the programme, so a
+day that runs long moves the ask with it, and the send is claimed in the
+database so a restart cannot repeat it.
+
+Deliberately not mid-day. Notification permission is the scarcest thing the app
+has, and spending it on a metric rather than on something useful to the person
+is how people turn notifications off — which would cost the schedule alerts
+that genuinely help them.
+
 ---
 
 ## Getting started
@@ -371,6 +389,7 @@ npm run dev
 | `npm run reset:demo` | Empty the feed and restore a clean demo state |
 | `npm run test:scan` | Whiteboard reader, against a generated board |
 | `npm run test:announcer` | Automatic announcements, incl. no-double-post |
+| `npm run test:day-end` | The end-of-day "how was the app" prompt, incl. no-double-send |
 | `npm run test:slides` | Slide publishing — the feature is off, kept for revival |
 | `npm run test:clash` | Schedule overlap detection |
 

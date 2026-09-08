@@ -31,3 +31,22 @@ export async function setRatingNudge(formData: FormData): Promise<void> {
 
   revalidatePath("/admin");
 }
+
+/**
+ * The end-of-day "how was the app" prompt, on its own switch again.
+ *
+ * It is not interchangeable with the per-session prompt: twelve session
+ * prompts could plausibly be one buzz too many, while this one fires once and
+ * is the only thing that produces the app's own rating. Sharing a switch would
+ * mean turning off the noisy half also silently discards the valuable half.
+ */
+export async function setAppRatingNudge(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const { data: allowed } = await supabase.rpc("is_organiser");
+  if (allowed !== true) return;
+
+  const on = formData.get("on") === "true";
+  await supabase.from("app_settings").update({ app_rating_nudge: on }).eq("id", true);
+
+  revalidatePath("/admin");
+}

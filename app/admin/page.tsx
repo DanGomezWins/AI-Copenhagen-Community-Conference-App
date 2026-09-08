@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AnnouncerToggle from "./AnnouncerToggle";
 import RatingNudgeToggle from "./RatingNudgeToggle";
+import AppRatingNudgeToggle from "./AppRatingNudgeToggle";
 import { SCAN_ENABLED } from "@/lib/scan/enabled";
 
 type Item = { href: string; title: string; desc: string; soon?: boolean };
@@ -27,6 +28,7 @@ export default async function AdminHub() {
 
       <AnnouncerToggle />
       <RatingNudgeToggle />
+      <AppRatingNudgeToggle />
 
       <ul className="mt-6 space-y-3">
         {ITEMS.map((i) => (

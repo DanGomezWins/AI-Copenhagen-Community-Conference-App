@@ -149,3 +149,31 @@ export function describeChange(
   if (parts.length === 0) return null; // title-only edits are not worth a broadcast
   return `Schedule change: ${after.title} is ${parts.join(", ")}.`;
 }
+
+/**
+ * Start and end of the Copenhagen calendar day containing `at`.
+ *
+ * Sessions are stored as instants, but "the last session of the day" is a
+ * local-calendar question. Without the bound, a query for the latest session
+ * reaches forward to whatever is furthest in the future — which on any day
+ * before the event is the real programme, so anything keyed off the end of the
+ * day could never be tested until the day itself.
+ *
+ * The offset is read from the instant rather than assumed, so this stays
+ * correct either side of a DST change.
+ */
+export function dayBounds(at: Date = new Date()): { from: string; to: string } {
+  const ymd = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(at);
+
+  const offset =
+    new Intl.DateTimeFormat("en-US", { timeZone: TZ, timeZoneName: "longOffset" })
+      .format(at)
+      .match(/GMT([+-]\d{2}:\d{2})/)?.[1] ?? "+00:00";
+
+  return { from: `${ymd}T00:00:00${offset}`, to: `${ymd}T23:59:59.999${offset}` };
+}
