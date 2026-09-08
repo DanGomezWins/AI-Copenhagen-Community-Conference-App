@@ -34,14 +34,10 @@ export const EVENTS = {
   SCAN_PUBLISHED: "scan_published",
 
   // Notifications
-  NOTIFICATION_RECEIVED: "notification_received",
   NOTIFICATION_OPENED: "notification_opened",
 
   // Slides
   SLIDES_ANNOUNCEMENT_POSTED: "slides_announcement_posted",
-
-  // Session
-  SESSION_START: "session_start",
 
   // Happiness
   APP_RATING_SUBMITTED: "app_rating_submitted",

@@ -77,6 +77,7 @@ without translation.
 | `company_link_tapped`             | LinkedIn or company link tapped                                                                                 | -                                     |
 | `product_link_tapped`             | Product link tapped on a demo session                                                                           | -                                     |
 | `open_space_board_tapped`         | Board link tapped                                                                                               | before_schedule (bool)                |
+| `notification_opened` | Notification tapped | path |
 | `$pageview`                       | Repeat sessions per user                                                                                        | path                                  |
 | `program_opened (track=main`      | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
 | `open)`                           | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
@@ -111,8 +112,10 @@ sign_in_completed
 
 ### Not firing
 
-- `notification_received` / `notification_opened` - would need the service
-  worker to post back to the page; deliberately left until after the event.
+- `notification_received` - not trackable in any honest way. The push service
+  reports what it accepted, never what a phone chose to display, so a
+  "delivered" count would be a guess. Opens are measured against people who
+  enabled notifications instead.
 - `session_start` - PostHog already derives sessions from pageviews.
 - `scan_*` and `slides_*` - defined in [lib/analytics.ts](lib/analytics.ts) but
   dormant along with the features they belong to. Not in the framework, because

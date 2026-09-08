@@ -32,7 +32,12 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = (event.notification.data && event.notification.data.url) || "/";
+  const raw = (event.notification.data && event.notification.data.url) || "/";
+  // Marks the navigation as coming from a notification, so the app can record
+  // the open. A service worker has no window and cannot call the analytics
+  // client itself; passing a flag through the URL is the one channel that
+  // works whether the app was closed, backgrounded, or already open.
+  const target = raw + (raw.includes("?") ? "&" : "?") + "from=push";
 
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { track } from "@/lib/track";
 import { EVENTS } from "@/lib/analytics";
@@ -21,6 +21,7 @@ import { EVENTS } from "@/lib/analytics";
  */
 export default function Analytics({ distinctId }: { distinctId?: string | null }) {
   const pathname = usePathname();
+  const search = useSearchParams();
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   const host = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com";
 
@@ -59,6 +60,25 @@ export default function Analytics({ distinctId }: { distinctId?: string | null }
       (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
     if (standalone) track(EVENTS.HOME_SCREEN_LAUNCH);
   }, [key]);
+
+  /**
+   * A notification open, flagged by the service worker as ?from=push.
+   *
+   * Recorded here rather than in the worker because a worker has no window and
+   * cannot reach the analytics client. Fires once per arrival: the parameter is
+   * stripped from the address bar immediately, so a refresh does not count
+   * twice and the URL stays clean if the person shares it.
+   */
+  useEffect(() => {
+    if (!key || !posthog.__loaded) return;
+    if (search?.get("from") !== "push") return;
+
+    track(EVENTS.NOTIFICATION_OPENED, { path: pathname });
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("from");
+    window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+  }, [key, search, pathname]);
 
   // One pageview per route change, since this is a single-page app.
   useEffect(() => {
