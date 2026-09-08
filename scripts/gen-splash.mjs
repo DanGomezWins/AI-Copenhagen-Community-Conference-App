@@ -8,9 +8,11 @@
  * matching the device exactly. There is no fallback and no scaling: a size
  * that is not listed gets white, so this covers every current iPhone.
  *
- * The images are the brand purple with the app icon centred, which is also the
- * manifest's theme and background colour, so the launch image and the app it
- * becomes are the same colour and the handover is invisible.
+ * The images are the brand purple with the app icon and "Loading…" centred.
+ * Purple is also the manifest's theme and background colour, so the launch
+ * image and the app it becomes match and the handover is invisible - and the
+ * word matches the app's own loading state, so the two read as one moment
+ * rather than two screens.
  */
 import { Resvg } from "@resvg/resvg-js";
 import fs from "node:fs";
@@ -46,13 +48,27 @@ for (const { w, h, r } of DEVICES) {
   // A quarter of the narrow edge, matching how iOS sizes its own launch marks.
   const size = Math.round(Math.min(pw, ph) * 0.25);
 
+  // Icon sits above centre so the pair - icon and word - is optically centred
+  // rather than the icon alone.
+  const iconY = (ph - size) / 2 - size * 0.28;
+  const textY = iconY + size + Math.round(size * 0.42);
+  const fontSize = Math.round(size * 0.15);
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${pw}" height="${ph}" viewBox="0 0 ${pw} ${ph}">
   <rect width="${pw}" height="${ph}" fill="${BRAND}"/>
-  <image x="${(pw - size) / 2}" y="${(ph - size) / 2}" width="${size}" height="${size}"
+  <image x="${(pw - size) / 2}" y="${iconY}" width="${size}" height="${size}"
          href="data:image/png;base64,${icon}"/>
+  <text x="${pw / 2}" y="${textY}" fill="#ffffff" fill-opacity="0.85"
+        font-family="Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="${fontSize}" text-anchor="middle">Loading…</text>
 </svg>`;
 
-  const png = new Resvg(svg, { fitTo: { mode: "width", value: pw } }).render().asPng();
+  const png = new Resvg(svg, {
+    fitTo: { mode: "width", value: pw },
+    // Text is drawn once here, at generation time, so the phone never needs
+    // the font - but this machine does.
+    font: { loadSystemFonts: true },
+  }).render().asPng();
   const file = `splash-${pw}x${ph}.png`;
   fs.writeFileSync(path.join(OUT, file), png);
 
