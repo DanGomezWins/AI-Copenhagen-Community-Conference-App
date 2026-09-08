@@ -73,7 +73,9 @@ export default function OpenSessions({
             </p>
           </div>
 
-          <div className="mt-5 flex items-center gap-2">
+          {boardUrl && <BoardLink url={boardUrl} primary />}
+
+          <div className="mt-6 flex items-center gap-2">
             <span className="h-px flex-1 bg-[var(--color-line)]" />
             <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
               Example only
@@ -81,7 +83,8 @@ export default function OpenSessions({
             <span className="h-px flex-1 bg-[var(--color-line)]" />
           </div>
           <p className="mt-2 text-center text-xs text-[var(--color-muted)]">
-            Roughly how the schedule will look. These are not real topics.
+            Roughly how the schedule will look. These are not real topics and
+            will be replaced.
           </p>
 
           <ol className="mt-3 space-y-2 opacity-60">
@@ -91,38 +94,48 @@ export default function OpenSessions({
           </ol>
         </>
       ) : (
-        <ol className="space-y-2">
-          {agenda.map((item) => (
-            <AgendaCard key={item.id} item={item} />
-          ))}
-        </ol>
-      )}
-
-      {boardUrl && (
-        <a
-          href={boardUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
-        >
-          <span className="min-w-0">
-            <span className="block text-sm font-semibold text-[var(--color-accent)]">
-              {agenda.length === 0
-                ? "Propose and vote on topics"
-                : "Open Space board"}
-            </span>
-            <span className="block text-xs text-[var(--color-muted)]">
-              Opens the Open Space board in your browser
-            </span>
-          </span>
-          <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
-        </a>
+        <>
+          <ol className="space-y-2">
+            {agenda.map((item) => (
+              <AgendaCard key={item.id} item={item} />
+            ))}
+          </ol>
+          {boardUrl && <BoardLink url={boardUrl} primary={false} />}
+        </>
       )}
 
       <p className="mt-3 text-center text-xs text-[var(--color-muted)]">
         Open Sessions run at {EVENT.venue}, alongside the Demos track.
       </p>
     </div>
+  );
+}
+
+/**
+ * Where proposing and voting actually happen.
+ *
+ * Sits directly under the explainer while there is no schedule - that is the
+ * moment it is a call to action - and below the agenda once one exists, when
+ * it is only a reference.
+ */
+function BoardLink({ url, primary }: { url: string; primary: boolean }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
+    >
+      <span className="min-w-0">
+        <span className="block text-sm font-semibold text-[var(--color-accent)]">
+          {primary ? "Propose and vote on topics" : "Open Space board"}
+        </span>
+        <span className="block text-xs text-[var(--color-muted)]">
+          Opens the Open Space board in your browser
+        </span>
+      </span>
+      <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
+    </a>
   );
 }
 
