@@ -40,7 +40,7 @@ export default function SessionCard({
 
   return (
     <li
-      className={`flex items-start gap-2 rounded-xl border p-3.5 transition-opacity ${
+      className={`press flex items-start gap-2 rounded-xl border p-3.5 transition-opacity ${
         state === "now"
           ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)]"
           : "border-[var(--color-line)]"

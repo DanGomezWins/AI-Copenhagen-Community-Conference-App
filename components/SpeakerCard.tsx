@@ -29,7 +29,7 @@ export default function SpeakerCard({
       // Carry where we are, so Back on their profile returns to this session
       // rather than dumping you in the directory.
       href={`/people/${speaker.id}?from=session&session=${sessionId}`}
-      className="flex items-center gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
+      className="press flex items-center gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
     >
       <Avatar
         firstName={speaker.first_name}

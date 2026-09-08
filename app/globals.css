@@ -73,3 +73,62 @@ body {
   outline-offset: 2px;
   border-radius: 0.375rem;
 }
+
+/* ---------- instant feedback on touch ----------
+   A tap that changes nothing on screen reads as a tap that did not register,
+   and invites a second one. Navigation to a route the router has not already
+   fetched takes about a second before Next can even show the loading state,
+   so without this the app looks frozen for that whole second.
+
+   :active costs nothing and fires on touch-down, before any network work
+   starts. It is the difference between "slow" and "broken". */
+@media (hover: none) {
+  :where(a, button, [role="button"], summary, label[for]) {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+:where(a, button, [role="button"], summary):active {
+  opacity: 0.55;
+}
+
+/* Cards and rows are big targets where a dim alone reads as a page-wide flash;
+   a slight press-in is clearer about which one was hit. */
+:where(a, [role="button"]).press:active {
+  opacity: 1;
+  transform: scale(0.985);
+  background-color: color-mix(in srgb, var(--color-accent) 7%, transparent);
+}
+
+:where(a, button, [role="button"], summary) {
+  transition:
+    opacity 90ms ease-out,
+    transform 90ms ease-out,
+    background-color 90ms ease-out;
+}
+
+/* Respect the system setting - the dim still applies, only the movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  :where(a, button, [role="button"], summary) {
+    transition: none;
+  }
+  :where(a, [role="button"]).press:active {
+    transform: none;
+  }
+}
+
+/* Sweeps under the tab that was tapped while its page loads. A determinate
+   bar would have to lie about progress it cannot know; a sweep only claims
+   that something is happening, which is all the user needs to stop tapping. */
+@keyframes tab-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pending] > span {
+    animation: none;
+    width: 100%;
+    opacity: 0.7;
+  }
+}
