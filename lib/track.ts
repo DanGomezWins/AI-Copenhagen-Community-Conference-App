@@ -17,15 +17,20 @@ export function track(
     if (typeof window === "undefined") return;
     if (!posthog.__loaded) return;
 
-    // Events fired as the page goes away need sendBeacon. PostHog batches over
-    // XHR, and tapping an outbound link backgrounds the app - on an installed
-    // iOS app the link opens in an overlay browser and the request is dropped
-    // with the page. The browser queues a beacon and delivers it regardless,
-    // which is the difference between a metric and an empty tile.
+    // Events fired as the page goes away need both halves of this.
+    //
+    // send_instantly takes the event out of the batch queue, which otherwise
+    // holds it until the next flush - by which time an installed iOS app has
+    // been suspended behind the overlay browser and the queue dies with it.
+    // transport then hands it to sendBeacon, which the browser delivers even
+    // as the page goes away. Setting only the transport does nothing on its
+    // own: it chooses how a request is made, not when.
     posthog.capture(
       event,
       properties,
-      options?.onLeave ? { transport: "sendBeacon" } : undefined,
+      options?.onLeave
+        ? { send_instantly: true, transport: "sendBeacon" }
+        : undefined,
     );
   } catch {
     /* analytics is never load-bearing */
