@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { saveProfile, type ProfileFormState } from "./actions";
 import CharCount from "@/components/CharCount";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 type Profile = {
   first_name?: string | null;
@@ -30,7 +32,11 @@ export default function ProfileForm({
   );
 
   return (
-    <form action={action} className="mt-6 space-y-5">
+    <form
+      action={action}
+      onSubmit={() => track(EVENTS.PROFILE_EDITED)}
+      className="mt-6 space-y-5"
+    >
       {prefilled && (
         <p className="rounded-lg bg-[var(--color-accent)]/10 px-3 py-2 text-sm">
           We found your registration and filled in what we could. Check it over.

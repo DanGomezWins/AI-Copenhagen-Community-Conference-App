@@ -9,6 +9,8 @@ import SessionSlidesLink from "@/components/SessionSlidesLink";
 import { TRACKS, timeRange, liveness, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
 import { SLIDES_ENABLED } from "@/lib/slides";
+import TrackedLink from "@/components/TrackedLink";
+import { EVENTS } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -121,17 +123,16 @@ export default async function SessionPage({
           thing itself. Only shown when there is somewhere to go - a row
           promising a link that never arrives is worse than no row. */}
       {s.track === "demos" && s.company_url && (
-        <a
+        <TrackedLink
           href={s.company_url}
-          target="_blank"
-          rel="noopener noreferrer"
+          event={EVENTS.PRODUCT_LINK_TAPPED}
           className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
         >
           <span className="text-sm font-medium text-[var(--color-accent)]">
             Visit the product
           </span>
           <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
-        </a>
+        </TrackedLink>
       )}
 
       {speakers.length > 0 && (

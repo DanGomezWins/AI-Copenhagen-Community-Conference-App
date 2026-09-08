@@ -1,4 +1,6 @@
 import { EVENT } from "@/lib/event";
+import TrackedLink from "@/components/TrackedLink";
+import { EVENTS } from "@/lib/analytics";
 
 export type AgendaItem = {
   id: string;
@@ -120,10 +122,10 @@ export default function OpenSessions({
  */
 function BoardLink({ url, primary }: { url: string; primary: boolean }) {
   return (
-    <a
+    <TrackedLink
       href={url}
-      target="_blank"
-      rel="noopener noreferrer"
+      event={EVENTS.OPEN_SPACE_BOARD_TAPPED}
+      properties={{ before_schedule: primary }}
       className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)] p-3.5"
     >
       <span className="min-w-0">
@@ -135,7 +137,7 @@ function BoardLink({ url, primary }: { url: string; primary: boolean }) {
         </span>
       </span>
       <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
-    </a>
+    </TrackedLink>
   );
 }
 

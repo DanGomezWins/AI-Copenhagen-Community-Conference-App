@@ -19,7 +19,6 @@ export const EVENTS = {
   FEED_OPENED: "feed_opened",
   ATTENDEE_POST_CREATED: "attendee_post_created",
   SESSION_STARRED: "session_starred",
-  MY_SCHEDULE_VIEWED: "my_schedule_viewed",
 
   // Task success
   PROGRAM_OPENED: "program_opened",
@@ -27,6 +26,9 @@ export const EVENTS = {
   DIRECTORY_SEARCH: "directory_search",
   PROFILE_VIEW: "profile_view",
   LINKEDIN_TAP: "linkedin_tap",
+  COMPANY_LINK_TAPPED: "company_link_tapped",
+  PRODUCT_LINK_TAPPED: "product_link_tapped",
+  OPEN_SPACE_BOARD_TAPPED: "open_space_board_tapped",
   SLIDES_DOWNLOAD_TAPPED: "slides_download_tapped",
   SCAN_STARTED: "scan_started",
   SCAN_PUBLISHED: "scan_published",

@@ -140,6 +140,7 @@ export default function LoginForm() {
       return;
     }
 
+    track(EVENTS.SIGN_IN_EMAIL_REQUESTED);
     setResentAt(Date.now());
     setStep("code");
   }

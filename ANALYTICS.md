@@ -49,38 +49,74 @@ NEXT_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
 
 All event names are defined in [`lib/analytics.ts`](lib/analytics.ts). The app fires these events deliberately, and nothing else is tracked.
 
-### Implemented (17 events)
+### Events
 
-| Event | When fired | Properties |
-|---|---|---|
-| `app_rating_submitted` | User rates the app | `star_rating` (1-5) |
-| `session_rating_submitted` | User rates a session | `star_rating` (1-5), `has_comment` (bool) |
-| `feed_opened` | Home screen loads | — |
-| `attendee_post_created` | Attendee posts text/photo/link | — |
-| `session_starred` | Added to My Schedule | `sessionId` |
-| `profile_view` | Directory profile opened | `from_search` (bool, optional) |
-| `linkedin_tap` | LinkedIn button tapped | — |
-| `slides_download_tapped` | Download button tapped on finished session — **inactive, slides are switched off** | — |
-| `program_opened` | Programme/schedule screen loads | — |
-| `session_page_opened` | Session detail page opens | — |
-| `directory_search` | Search performed in directory | `length`, `results` |
-| `profile_edited` | User edits their prefilled profile | — |
-| `sign_in_started` | User enters email for sign-in | — |
-| `sign_in_completed` | User authenticated with code | — |
-| `notification_permission_granted` | Push permission accepted | — |
-| `scan_started` | Whiteboard scan initiated | — |
-| `scan_published` | Scan accepted and published | — |
+Every event below fires in the app today. The table is derived from
+[Assets/metrics-framework.csv](Assets/metrics-framework.csv), which is the
+source of truth - the spreadsheet, this file and the PostHog dashboard use the
+same names for the same things, so a tile can be traced back to a line of code
+without translation.
 
-### Not yet implemented (6 events requiring infrastructure integration)
+| Event                             | Signal                                                                                                          | Properties                            |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `app_rating_submitted`            | App rating submitted                                                                                            | star_rating (1-5), has_comment (bool) |
+| `session_rating_submitted`        | Session rating submitted                                                                                        | star_rating (1-5), has_comment (bool) |
+| `sign_in_email_requested`         | Code requested, then entered successfully                                                                       | -                                     |
+| `sign_in_started`                 | Code requested, then entered successfully                                                                       | -                                     |
+| `sign_in_completed`               | Code requested, then entered successfully                                                                       | -                                     |
+| `home_screen_launch`              | App launched from the Home Screen                                                                               | -                                     |
+| `notification_permission_granted` | Push permission granted                                                                                         | -                                     |
+| `profile_edited`                  | Profile saved                                                                                                   | -                                     |
+| `feed_opened`                     | Feed opened; attendee posts                                                                                     | -                                     |
+| `attendee_post_created`           | Feed opened; attendee posts                                                                                     | -                                     |
+| `session_starred`                 | Session starred                                                                                                 | sessionId                             |
+| `program_opened`                  | Programme tab opened                                                                                            | track (main, demos, open, mine)       |
+| `session_page_opened`             | Session page opened                                                                                             | -                                     |
+| `directory_search`                | Search performed                                                                                                | length, results                       |
+| `linkedin_tap`                    | LinkedIn or company link tapped                                                                                 | -                                     |
+| `company_link_tapped`             | LinkedIn or company link tapped                                                                                 | -                                     |
+| `product_link_tapped`             | Product link tapped on a demo session                                                                           | -                                     |
+| `open_space_board_tapped`         | Board link tapped                                                                                               | before_schedule (bool)                |
+| `$pageview`                       | Repeat sessions per user                                                                                        | path                                  |
+| `program_opened (track=main`      | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
+| `open)`                           | Cohort: signed in AND saved a profile AND viewed all three room tabs AND opened a session AND starred a session | -                                     |
+| `profile_view`                    | Cohort: the aha cohort AND viewed a profile AND opened the feed                                                 | -                                     |
 
-These events need additional integration work and will be added later:
+### Aha moment and super users
 
-- `sign_in_email_requested` — when magic link email is sent (needs Resend hook)
-- `home_screen_launch` — when app is launched from PWA home screen
-- `notification_received` — when notification is delivered to device
-- `notification_opened` — when user taps a notification
-- `session_start` — when app session begins
-- `slides_announcement_posted` — when slide deck notification is posted (**inactive, slides are switched off**)
+Both are **PostHog cohorts**, not events the app fires. A cohort can be
+redefined after the fact and applies retroactively to data already collected,
+where an event only counts from the moment it ships.
+
+**Aha moment** - signed in, saved a profile, viewed all three room tabs, opened
+a session, and starred at least one:
+
+```
+sign_in_completed
+  AND profile_edited
+  AND program_opened where track = main
+  AND program_opened where track = demos
+  AND program_opened where track = open
+  AND session_page_opened
+  AND session_starred
+```
+
+**Super user** - everything above, plus engaged with other people:
+
+```
+(aha moment cohort)
+  AND profile_view
+  AND feed_opened
+```
+
+### Not firing
+
+- `notification_received` / `notification_opened` - would need the service
+  worker to post back to the page; deliberately left until after the event.
+- `session_start` - PostHog already derives sessions from pageviews.
+- `scan_*` and `slides_*` - defined in [lib/analytics.ts](lib/analytics.ts) but
+  dormant along with the features they belong to. Not in the framework, because
+  a dashboard row that can never move is noise on the day.
 
 ---
 

@@ -7,6 +7,8 @@ import LinkedInLink from "@/components/LinkedInLink";
 import { SLIDES_ENABLED } from "@/lib/slides";
 import { TRACKS, timeRange, type Session } from "@/lib/program";
 import { nameKey } from "@/lib/names";
+import TrackedLink from "@/components/TrackedLink";
+import { EVENTS } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -98,17 +100,16 @@ export default async function ProfilePage({
           their name, so a row that says "link coming soon" adds a dead control
           rather than information. */}
       {profile.company && profile.company_url && (
-        <a
+        <TrackedLink
           href={profile.company_url}
-          target="_blank"
-          rel="noopener noreferrer"
+          event={EVENTS.COMPANY_LINK_TAPPED}
           className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-line)] p-3.5"
         >
           <span className="truncate text-sm font-medium text-[var(--color-accent)] underline underline-offset-2">
             {profile.company}
           </span>
           <span className="shrink-0 text-sm text-[var(--color-accent)]">Open ↗</span>
-        </a>
+        </TrackedLink>
       )}
 
       {sessions.length > 0 && (

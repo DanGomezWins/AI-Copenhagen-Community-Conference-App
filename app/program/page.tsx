@@ -113,7 +113,7 @@ export default async function ProgramPage({
 
   return (
     <section>
-      <TrackProgramView />
+      <TrackProgramView track={view} />
 
       {/* Sticks under the app header so the room you are looking at stays on
           screen. Scrolling a long programme otherwise loses which tab is

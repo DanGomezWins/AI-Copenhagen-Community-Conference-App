@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
+import { track } from "@/lib/track";
+import { EVENTS } from "@/lib/analytics";
 
 /**
  * PostHog, EU cloud.
@@ -40,6 +42,23 @@ export default function Analytics({ distinctId }: { distinctId?: string | null }
 
     if (distinctId) posthog.identify(distinctId);
   }, [key, host, distinctId]);
+
+  /**
+   * Whether this is the installed app or a browser tab, recorded once per
+   * launch.
+   *
+   * Needs no service worker or platform check: a Home Screen app reports
+   * display-mode standalone, and iOS additionally sets navigator.standalone.
+   * Worth knowing because installing is what makes notifications work, so the
+   * split between installed and browser explains a lot of other numbers.
+   */
+  useEffect(() => {
+    if (!key || !posthog.__loaded) return;
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (standalone) track(EVENTS.HOME_SCREEN_LAUNCH);
+  }, [key]);
 
   // One pageview per route change, since this is a single-page app.
   useEffect(() => {
