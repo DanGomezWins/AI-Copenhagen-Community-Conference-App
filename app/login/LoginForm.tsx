@@ -118,6 +118,18 @@ export default function LoginForm() {
       const noTicket = code === "otp_disabled" || /signups not allowed/i.test(err.message);
       const cannotSend = /error sending|smtp|relay|authentication failed/i.test(err.message);
 
+      // Supabase reports the cooldown as a bare number of seconds and then
+      // stops counting. Reading it back starts the same ticking countdown the
+      // resend button uses, so a wait the user can see replaces a wait they
+      // have to guess at - and the number is the server's, not ours, so a
+      // cooldown started elsewhere is still accurate.
+      const wait = Number(/after (\d+) seconds?/i.exec(err.message)?.[1] ?? 0);
+      if (wait > 0) {
+        setResentAt(Date.now() - (60_000 - wait * 1000));
+        setError("");
+        return;
+      }
+
       setError(
         noTicket
           ? "We can't find a ticket for that address. Use the address you bought your ticket with, or find an organiser."
@@ -299,10 +311,16 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        disabled={busy}
+        disabled={busy || cooldown > 0}
         className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3.5 font-semibold text-white disabled:opacity-60"
       >
-        {busy ? "Sending…" : DEV_SIGNIN ? "Sign in" : "Email me a code"}
+        {busy
+          ? "Sending…"
+          : cooldown > 0
+            ? `Wait ${cooldown}s before asking again`
+            : DEV_SIGNIN
+              ? "Sign in"
+              : "Email me a code"}
       </button>
     </form>
   );
