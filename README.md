@@ -193,15 +193,20 @@ or resending inside the window fails with an unhelpful error.
 
 ### DNS on aimeetupcopenhagen.dk
 
-DKIM and DMARC are in place. **SPF is missing** - add this TXT record on the
-root domain:
+DKIM and DMARC are in place, and **that is enough** - no SPF record is needed.
 
-```
-v=spf1 include:spf.brevo.com ~all
-```
+SPF and DKIM are alternatives for DMARC alignment, not both required: Brevo
+signs with the domain's DKIM key, so DMARC passes and Gmail and Yahoo's
+bulk-sender rules are satisfied. Brevo's own support confirmed SPF is not
+required for domain authentication on their shared IPs.
 
-Mail still authenticates through DKIM without it, but SPF lowers the chance of
-landing in spam.
+It would matter if the domain also sent through another service - Google
+Workspace, Microsoft 365 - because then that sender would need authorising too.
+It does not: the domain has no MX records at all, so nothing else sends or
+receives on it. Worth revisiting only if that changes.
+
+One consequence of having no MX: replies to `app@aimeetupcopenhagen.dk` bounce.
+Fine for a sign-in code, worth knowing if an invitation goes from that address.
 
 ### Test mode
 
@@ -236,7 +241,6 @@ Both must be `false` in production. Once real sign-in is confirmed, delete
 ## Before the event
 
 - [ ] Switch off test-mode sign-in (`ENABLE_DEV_SIGNIN`) and confirm a real code arrives
-- [ ] Add the SPF record for aimeetupcopenhagen.dk
 - [ ] Load the real programme (arriving 24–48h before)
 - [ ] Load the attendee list from checkin.no — **this is what I need most**
 - [ ] Set `OPEN_SESSIONS_TOKEN` in Railway, and send it with the endpoint spec
