@@ -5,6 +5,7 @@ import Link from "next/link";
 import { saveSession, deleteSession, type SessionFormState } from "@/app/actions/sessions";
 import { TRACKS, isoToTime, type Session } from "@/lib/program";
 import { SLIDES_ENABLED } from "@/lib/slides";
+import CharCount from "@/components/CharCount";
 
 const field =
   "mt-1 w-full rounded-lg border border-[var(--color-line)] bg-transparent px-3 py-3 text-base outline-none focus:border-[var(--color-accent)]";
@@ -114,6 +115,11 @@ export default function SessionForm({ session }: { session?: Session | null }) {
             defaultValue={session?.description ?? ""}
             placeholder="What this session covers."
             className={field}
+          />
+          <CharCount
+            htmlFor="description"
+            max={1200}
+            initial={(session?.description ?? "").length}
           />
           <p className="mt-1 text-xs text-[var(--color-muted)]">
             Shown on the session&rsquo;s own page.

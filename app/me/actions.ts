@@ -72,7 +72,13 @@ export async function saveProfile(
 
   revalidatePath("/me");
   revalidatePath("/people");
-  return { ok: true };
+  revalidatePath("/program");
+
+  // Saving a profile is the last step of getting set up, so it hands people on
+  // to the programme rather than leaving them on a form they have finished
+  // with. redirect() throws, so nothing after this runs - the ok state exists
+  // only for the case where the redirect is removed.
+  redirect("/program");
 }
 
 /**

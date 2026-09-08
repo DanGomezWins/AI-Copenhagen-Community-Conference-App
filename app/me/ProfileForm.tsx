@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { saveProfile, type ProfileFormState } from "./actions";
+import CharCount from "@/components/CharCount";
 
 type Profile = {
   first_name?: string | null;
@@ -129,6 +130,7 @@ export default function ProfileForm({
           placeholder="A sentence or two about what you work on."
           className={field}
         />
+        <CharCount htmlFor="bio" max={600} initial={(profile.bio ?? "").length} />
         <p className="mt-1 text-xs text-[var(--color-muted)]">
           Shown on your profile. Speakers arrive with this already filled in.
         </p>
