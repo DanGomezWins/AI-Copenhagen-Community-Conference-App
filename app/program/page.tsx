@@ -64,7 +64,7 @@ export default async function ProgramPage({
         : Promise.resolve({ data: [] as AgendaRow[] }),
       supabase
         .from("room_moderators")
-        .select("track, profile_id, position")
+        .select("track, profile_id, position, name, linkedin_url")
         .order("position", { ascending: true }),
     ]);
 
@@ -95,10 +95,21 @@ export default async function ProgramPage({
     kind: a.kind === "ask" || a.kind === "tell" ? a.kind : null,
   }));
 
+  // A moderator may have no account - moderating is a role at the event, not a
+  // sign-in - so a row can carry a bare name instead, linking to LinkedIn.
   const moderators = (moderatorRows ?? [])
     .filter((m) => m.track === view)
-    .map((m) => people.find((p) => p.id === m.profile_id))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+    .map((m) => {
+      const p = m.profile_id
+        ? people.find((x) => x.id === m.profile_id)
+        : undefined;
+      return p
+        ? { key: p.id, label: `${p.first_name} ${p.last_name}`, href: `/people/${p.id}?from=program&track=${view}`, external: false }
+        : m.name
+          ? { key: m.name, label: m.name, href: m.linkedin_url, external: true }
+          : null;
+    })
+    .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   return (
     <section>
@@ -142,14 +153,21 @@ export default async function ProgramPage({
             <>
               Moderated by{" "}
               {moderators.map((m, i) => (
-                <span key={m.id}>
+                <span key={m.key}>
                   {i > 0 && (i === moderators.length - 1 ? " and " : ", ")}
-                  <Link
-                    href={`/people/${m.id}?from=program&track=${view}`}
-                    className="font-medium text-[var(--color-accent)]"
-                  >
-                    {m.first_name} {m.last_name}
-                  </Link>
+                  {m.href ? (
+                    <Link
+                      href={m.href}
+                      {...(m.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className="font-medium text-[var(--color-accent)]"
+                    >
+                      {m.label}
+                    </Link>
+                  ) : (
+                    <span className="font-medium">{m.label}</span>
+                  )}
                 </span>
               ))}
             </>

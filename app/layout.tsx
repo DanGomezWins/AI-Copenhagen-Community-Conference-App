@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import TabBar from "@/components/TabBar";
 import AppHeader from "@/components/AppHeader";
@@ -37,7 +38,22 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-dvh">
-        <AppHeader />
+        {/* AppHeader makes three Supabase round trips before it can render.
+            Rendered bare, it holds up the whole document: nothing paints until
+            they finish, which on mobile data is the blank launch people see.
+            Behind Suspense the shell flushes immediately and the bar fills in,
+            so the skeleton must be exactly the header's height or the page
+            jumps as it arrives. */}
+        <Suspense
+          fallback={
+            <div
+              style={{ height: "var(--app-header-h)" }}
+              className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]"
+            />
+          }
+        >
+          <AppHeader />
+        </Suspense>
         <main className="mx-auto w-full max-w-screen-sm px-4 pt-4">{children}</main>
         <noscript>
           <p className="p-4 text-sm">AIMC-CC needs JavaScript enabled.</p>
