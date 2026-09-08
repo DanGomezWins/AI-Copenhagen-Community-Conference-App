@@ -31,7 +31,29 @@ export type PushPayload = {
  * doesn't land must never break the action that triggered it, because the feed
  * is the source of truth and push is only an accelerant.
  */
-export async function sendToAll(payload: PushPayload): Promise<{
+export async function sendToAll(payload: PushPayload) {
+  return send(payload, null);
+}
+
+/**
+ * Sends to specific people rather than everyone.
+ *
+ * Some notifications are only relevant to a few - asking how a session was
+ * makes sense to the people who starred it and nobody else. Sending those to
+ * the room at large is how a useful channel becomes one people turn off.
+ */
+export async function sendToProfiles(
+  profileIds: string[],
+  payload: PushPayload,
+) {
+  if (!profileIds.length) return { sent: 0, removed: 0, failed: 0 };
+  return send(payload, profileIds);
+}
+
+async function send(
+  payload: PushPayload,
+  profileIds: string[] | null,
+): Promise<{
   sent: number;
   removed: number;
   failed: number;
@@ -39,9 +61,10 @@ export async function sendToAll(payload: PushPayload): Promise<{
   if (!configure()) return { sent: 0, removed: 0, failed: 0 };
 
   const admin = createAdminClient();
-  const { data: subs } = await admin
-    .from("push_subscriptions")
-    .select("id, endpoint, keys");
+  const query = admin.from("push_subscriptions").select("id, endpoint, keys");
+  const { data: subs } = profileIds
+    ? await query.in("profile_id", profileIds)
+    : await query;
 
   if (!subs?.length) return { sent: 0, removed: 0, failed: 0 };
 

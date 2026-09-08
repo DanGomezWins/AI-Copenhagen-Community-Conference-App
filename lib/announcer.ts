@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SLIDES_ENABLED } from "@/lib/slides";
-import { sendToAll } from "@/lib/push";
+import { sendToAll, sendToProfiles } from "@/lib/push";
 import { timeAt, TRACKS, type Session } from "@/lib/program";
 
 /** How far ahead of a session to announce it. */
@@ -13,6 +13,14 @@ const LEAD_MINUTES = 5;
 const STALE_MINUTES = 20;
 /** Slides are offered for the rest of the day, not just a few minutes after. */
 const SLIDES_STALE_MINUTES = 8 * 60;
+
+/**
+ * How long after a session ends the prompt is still worth sending.
+ *
+ * Long enough to survive the scheduler being down for a while, short enough
+ * that nobody is asked about a talk two sessions ago.
+ */
+const NUDGE_STALE_MINUTES = 25;
 
 function announcementFor(s: Session): { body: string; push: string } {
   const track = TRACKS.find((t) => t.key === s.track)?.label ?? "";
@@ -30,7 +38,7 @@ function announcementFor(s: Session): { body: string; push: string } {
   };
 }
 
-type Tick = { posted: number; slides: number; skipped: string | null };
+type Tick = { posted: number; slides: number; nudged: number; skipped: string | null };
 
 /**
  * One tick. Posts "next up" announcements for sessions about to start, and
@@ -44,20 +52,21 @@ export async function runAnnouncerTick(now: Date = new Date()): Promise<Tick> {
   try {
     admin = createAdminClient();
   } catch {
-    return { posted: 0, slides: 0, skipped: "no service role key" };
+    return { posted: 0, slides: 0, nudged: 0, skipped: "no service role key" };
   }
 
   const { data: settings } = await admin
     .from("app_settings")
-    .select("auto_announce")
+    .select("auto_announce, rating_nudge")
     .maybeSingle();
 
   if (settings?.auto_announce === false) {
-    return { posted: 0, slides: 0, skipped: "kill switch is off" };
+    return { posted: 0, slides: 0, nudged: 0, skipped: "kill switch is off" };
   }
 
   let posted = 0;
   let slides = 0;
+  let nudged = 0;
 
   // ---------- next up ----------
   const windowEnd = new Date(now.getTime() + LEAD_MINUTES * 60_000);
@@ -106,57 +115,106 @@ export async function runAnnouncerTick(now: Date = new Date()): Promise<Tick> {
   }
 
   // ---------- slides ----------
-  // Switched off with the feature. Returning here rather than filtering the
-  // query keeps the post itself impossible, not merely unlikely.
-  if (!SLIDES_ENABLED) return { posted, slides, skipped: null };
+  // Wrapped rather than returned out of: an early return here would skip
+  // everything below it, which is how the rating prompt silently never ran.
+  if (SLIDES_ENABLED) {
+    // Only for sessions that have actually finished and that have a URL. A
+    // session without slides announces nothing at all, which is the whole point:
+    // "slides available" must never be posted for something with no slides.
+    const slidesFrom = new Date(now.getTime() - SLIDES_STALE_MINUTES * 60_000);
 
-  // Only for sessions that have actually finished and that have a URL. A
-  // session without slides announces nothing at all, which is the whole point:
-  // "slides available" must never be posted for something with no slides.
-  const slidesFrom = new Date(now.getTime() - SLIDES_STALE_MINUTES * 60_000);
-
-  const { data: finished } = await admin
-    .from("sessions")
-    .select("*")
-    .is("slides_announced_at", null)
-    .not("slides_url", "is", null)
-    .eq("status", "scheduled")
-    .lte("ends_at", now.toISOString())
-    .gte("ends_at", slidesFrom.toISOString())
-    .order("ends_at", { ascending: true });
-
-  for (const session of (finished ?? []) as Session[]) {
-    const { data: claimed } = await admin
+    const { data: finished } = await admin
       .from("sessions")
-      .update({ slides_announced_at: now.toISOString() })
-      .eq("id", session.id)
+      .select("*")
       .is("slides_announced_at", null)
-      .select("id")
-      .maybeSingle();
-    if (!claimed) continue;
+      .not("slides_url", "is", null)
+      .eq("status", "scheduled")
+      .lte("ends_at", now.toISOString())
+      .gte("ends_at", slidesFrom.toISOString())
+      .order("ends_at", { ascending: true });
 
-    const who = session.speaker_name ? ` — ${session.speaker_name}` : "";
-    const { error } = await admin.from("posts").insert({
-      body: `Slides are now available for "${session.title}"${who}. Open the session to download them.`,
-      kind: "auto",
-      track: session.track,
-      session_id: session.id,
-      author_id: null,
-    });
+    for (const session of (finished ?? []) as Session[]) {
+      const { data: claimed } = await admin
+        .from("sessions")
+        .update({ slides_announced_at: now.toISOString() })
+        .eq("id", session.id)
+        .is("slides_announced_at", null)
+        .select("id")
+        .maybeSingle();
+      if (!claimed) continue;
 
-    if (error) {
-      await admin.from("sessions").update({ slides_announced_at: null }).eq("id", session.id);
-      continue;
+      const who = session.speaker_name ? ` — ${session.speaker_name}` : "";
+      const { error } = await admin.from("posts").insert({
+        body: `Slides are now available for "${session.title}"${who}. Open the session to download them.`,
+        kind: "auto",
+        track: session.track,
+        session_id: session.id,
+        author_id: null,
+      });
+
+      if (error) {
+        await admin.from("sessions").update({ slides_announced_at: null }).eq("id", session.id);
+        continue;
+      }
+
+      slides++;
+      await sendToAll({
+        title: "Slides available",
+        body: `${session.title}${who}`,
+        url: `/session/${session.id}`,
+        tag: `slides-${session.id}`,
+      });
     }
-
-    slides++;
-    await sendToAll({
-      title: "Slides available",
-      body: `${session.title}${who}`,
-      url: `/session/${session.id}`,
-      tag: `slides-${session.id}`,
-    });
   }
 
-  return { posted, slides, skipped: null };
+  // ---------- ask how it was ----------
+  // Only the people who starred it, and only those who have not already said.
+  // A star is the one signal we have that somebody chose to be in the room;
+  // asking everyone about every session is how a useful channel gets muted.
+  if (settings?.rating_nudge !== false) {
+    const nudgeFrom = new Date(now.getTime() - NUDGE_STALE_MINUTES * 60_000);
+
+    const { data: justFinished } = await admin
+      .from("sessions")
+      .select("*")
+      .is("rating_nudge_sent_at", null)
+      .not("speaker_name", "is", null) // breaks and lunch are not rated
+      .eq("status", "scheduled")
+      .lte("ends_at", now.toISOString())
+      .gte("ends_at", nudgeFrom.toISOString());
+
+    for (const session of (justFinished ?? []) as Session[]) {
+      // Claim first, so two overlapping ticks cannot both ask.
+      const { data: claimed } = await admin
+        .from("sessions")
+        .update({ rating_nudge_sent_at: now.toISOString() })
+        .eq("id", session.id)
+        .is("rating_nudge_sent_at", null)
+        .select("id")
+        .maybeSingle();
+      if (!claimed) continue;
+
+      const [{ data: stars }, { data: rated }] = await Promise.all([
+        admin.from("session_stars").select("profile_id").eq("session_id", session.id),
+        admin.from("ratings").select("profile_id").eq("session_id", session.id),
+      ]);
+
+      const alreadyRated = new Set((rated ?? []).map((r) => r.profile_id));
+      const ask = (stars ?? [])
+        .map((s) => s.profile_id)
+        .filter((id) => !alreadyRated.has(id));
+
+      if (!ask.length) continue;
+
+      const result = await sendToProfiles(ask, {
+        title: "How was it?",
+        body: `Rate ${session.title} while it is fresh.`,
+        url: `/session/${session.id}`,
+        tag: `rate-${session.id}`,
+      });
+      if (result.sent > 0) nudged++;
+    }
+  }
+
+  return { posted, slides, nudged, skipped: null };
 }
