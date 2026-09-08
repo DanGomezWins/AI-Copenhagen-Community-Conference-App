@@ -42,6 +42,7 @@ export default async function ProgramPage({
     { data: settings },
     { data: profiles },
     { data: agendaRows },
+    { data: moderatorRows },
   ] =
     await Promise.all([
       view === MY_SCHEDULE
@@ -53,7 +54,7 @@ export default async function ProgramPage({
         : Promise.resolve({ data: [] as { session_id: string }[] }),
       supabase
         .from("app_settings")
-        .select("open_sessions_url, moderator_main_id, moderator_demos_id, moderator_open_id")
+        .select("open_sessions_url")
         .maybeSingle(),
       supabase.from("profiles").select("id, first_name, last_name, role, company"),
       // Only needed on the Open Sessions tab, but fetched in the same round
@@ -61,6 +62,10 @@ export default async function ProgramPage({
       view === "open"
         ? supabase.from("open_agenda").select("*").order("position", { ascending: true })
         : Promise.resolve({ data: [] as AgendaRow[] }),
+      supabase
+        .from("room_moderators")
+        .select("track, profile_id, position")
+        .order("position", { ascending: true }),
     ]);
 
   const starred = new Set((starRows ?? []).map((r) => r.session_id));
@@ -90,14 +95,10 @@ export default async function ProgramPage({
     kind: a.kind === "ask" || a.kind === "tell" ? a.kind : null,
   }));
 
-  const moderatorId =
-    view === "main" ? settings?.moderator_main_id
-    : view === "demos" ? settings?.moderator_demos_id
-    : view === "open" ? settings?.moderator_open_id
-    : null;
-  const moderator = moderatorId
-    ? people.find((p) => p.id === moderatorId) ?? null
-    : null;
+  const moderators = (moderatorRows ?? [])
+    .filter((m) => m.track === view)
+    .map((m) => people.find((p) => p.id === m.profile_id))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p));
 
   return (
     <section>
@@ -137,15 +138,20 @@ export default async function ProgramPage({
         {/* Named under the tabs, because the question "who do I ask in this
             room?" is asked in the room, not on a separate page. */}
         <p className="mt-2.5 pb-3 text-xs text-[var(--color-muted)]">
-          {moderator ? (
+          {moderators.length > 0 ? (
             <>
               Moderated by{" "}
-              <Link
-                href={`/people/${moderator.id}?from=program&track=${view}`}
-                className="font-medium text-[var(--color-accent)]"
-              >
-                {moderator.first_name} {moderator.last_name}
-              </Link>
+              {moderators.map((m, i) => (
+                <span key={m.id}>
+                  {i > 0 && (i === moderators.length - 1 ? " and " : ", ")}
+                  <Link
+                    href={`/people/${m.id}?from=program&track=${view}`}
+                    className="font-medium text-[var(--color-accent)]"
+                  >
+                    {m.first_name} {m.last_name}
+                  </Link>
+                </span>
+              ))}
             </>
           ) : view === MY_SCHEDULE ? (
             <span className="opacity-0">.</span>
