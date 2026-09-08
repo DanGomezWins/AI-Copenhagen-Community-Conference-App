@@ -199,7 +199,17 @@ large denominator is invisible on an axis anyway. So:
 
 - **Ratios** render as `BoldNumber` with `aggregationAxisFormat:
   percentage_scaled` - one figure, e.g. 4 taps out of 100 opens reads as 4%.
-- **Averages and counts** render as `BoldNumber`, numeric.
+- **Averages and counts** render as `BoldNumber`, numeric - but only where
+  the tile has a single number to show. `BoldNumber` renders the *first*
+  series and silently drops the rest, so a tile pairing two measures showed one
+  unlabelled figure with no way to tell which it was. Where the framework names
+  two numbers in one row - "Average app star rating; count of ratings", "Feed
+  opens per user; count of attendee posts" - the tile uses `ActionsTable`,
+  which lists each series with its own label. A bar chart would be worse than
+  either: 4.2 average stars and 37 ratings on one axis is a meaningless
+  comparison.
+- **A tile carrying a formula is safe as `BoldNumber`**, because the formula
+  collapses the series into the one number that was meant.
 - **Only where the shape through the day is the point** does a chart survive -
   rooms explored and the Open Space board - and those were moved to
   `interval: hour` so there is something to see.
