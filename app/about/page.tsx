@@ -64,9 +64,10 @@ export default async function AboutPage() {
         <p className="text-sm text-[var(--color-muted)]">
           Got feedback or suggestions? We&rsquo;d love to hear it!
         </p>
-        <div className="mt-3">
+        <div className="mt-3 flex justify-center">
           <RatingModal
             label="Rate this app"
+            solid
             existingStars={myRating?.stars ?? null}
             existingComment={myRating?.comment ?? null}
             fullWidth={false}

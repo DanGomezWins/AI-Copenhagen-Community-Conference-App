@@ -12,6 +12,7 @@ export default function RatingModal({
   existingStars,
   existingComment,
   fullWidth = true,
+  solid = false,
 }: {
   label: string;
   sessionId?: string;
@@ -20,6 +21,8 @@ export default function RatingModal({
   /** The session page wants a full-width primary action; the About page,
    * lower down a page of text, just needs an ordinary button. */
   fullWidth?: boolean;
+  /** Filled accent button instead of the outline style. */
+  solid?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [stars, setStars] = useState(existingStars ?? 0);
@@ -98,9 +101,9 @@ export default function RatingModal({
           setSaved(false);
           setOpen(true);
         }}
-        className={`rounded-lg border border-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-[var(--color-accent)] ${
-          fullWidth ? "w-full" : ""
-        }`}
+        className={`rounded-lg border border-[var(--color-accent)] px-4 py-3 text-sm font-semibold ${
+          solid ? "bg-[var(--color-accent)] text-white" : "text-[var(--color-accent)]"
+        } ${fullWidth ? "w-full" : ""}`}
       >
         {already ? `${label} — you gave ${existingStars} stars, tap to change` : label}
       </button>
