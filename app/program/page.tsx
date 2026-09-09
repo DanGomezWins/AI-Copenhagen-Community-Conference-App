@@ -4,7 +4,7 @@ import { currentUser } from "@/lib/auth";
 import SessionCard from "@/components/SessionCard";
 import { TrackProgramView } from "@/components/TrackPageView";
 import {
-  TRACKS, MY_SCHEDULE, VIEW_COLORS, isProgramView, liveness,
+  TRACKS, MY_SCHEDULE, VIEW_COLORS, isProgramView, isStructural, liveness,
   type Session, type ProgramView,
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
@@ -46,10 +46,10 @@ export default async function ProgramPage({
     { data: moderatorRows },
   ] =
     await Promise.all([
-      view === MY_SCHEDULE
-        ? supabase.from("sessions").select("*").order("starts_at", { ascending: true })
-        : supabase.from("sessions").select("*").eq("track", view)
-            .order("starts_at", { ascending: true }),
+      // Every room, every view. The filtering happens below, because a break
+      // belongs to the day rather than to one track and has to appear in all
+      // of them - which a `where track = ...` cannot express.
+      supabase.from("sessions").select("*").order("starts_at", { ascending: true }),
       user
         ? supabase.from("session_stars").select("session_id").eq("profile_id", user.id)
         : Promise.resolve({ data: [] as { session_id: string }[] }),
@@ -72,9 +72,28 @@ export default async function ProgramPage({
   const starred = new Set((starRows ?? []).map((r) => r.session_id));
   const all = (sessionRows ?? []) as Session[];
 
-  // My Schedule draws from every room, in one chronological run.
+  // Breaks, lunch and registration are stored on the main track but stop the
+  // whole venue: someone following the Demos room still needs to know when
+  // lunch is. So they show up in every room's list, and in My schedule
+  // alongside what you starred.
+  //
+  // Pinned to the main track deliberately. isStructural means "has no
+  // speaker", which is also true of a demo slot still waiting for one - and
+  // an unfilled Demos slot is not a break, it is a gap in one room.
+  const isBreak = (s: Session) => isStructural(s) && s.track === "main";
+  const breaks = all.filter(isBreak);
+
+  // My schedule draws from every room, in one chronological run. Breaks only
+  // join it once there is something to break between - a schedule showing
+  // nothing but lunch reads as broken rather than empty.
+  const mine = all.filter((s) => starred.has(s.id));
+
   const sessions =
-    view === MY_SCHEDULE ? all.filter((s) => starred.has(s.id)) : all;
+    view === MY_SCHEDULE
+      ? mine.length > 0
+        ? [...mine, ...breaks].sort((a, b) => a.starts_at.localeCompare(b.starts_at))
+        : []
+      : all.filter((s) => s.track === view || isBreak(s));
 
   const state = liveness(sessions);
 
@@ -228,7 +247,12 @@ export default async function ProgramPage({
               session={s}
               state={state.get(s.id) ?? "upcoming"}
               starred={starred.has(s.id)}
-              showTrack={view === MY_SCHEDULE}
+              // A break is not a room you chose, so it carries no room badge
+              // even in My schedule, where everything else does.
+              showTrack={view === MY_SCHEDULE && !isBreak(s)}
+              // Inside a room, a break wears that room's colour rather than
+              // the main track's, where it happens to be stored.
+              colorKey={view !== MY_SCHEDULE && isBreak(s) ? view : undefined}
               from={view === MY_SCHEDULE ? "mine" : view}
               speaker={
                 s.speaker_name ? byName.get(nameKey(s.speaker_name)) : undefined

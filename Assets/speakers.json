@@ -1,5 +1,15 @@
 [
   {
+    "name": "Alexander Høier",
+    "title": "Senior Data Science Engineer",
+    "company": "Twoday",
+    "linkedin_url": "https://www.linkedin.com/in/alexander-hoier",
+    "bio": "Entangled in software development around AI-powered applications, Alexander builds production AI systems and shapes the strategy behind them. At Twoday Data & AI, he sits at the intersection of deep technical delivery and strategic advisory.",
+    "talk_title": "How to Utilize AI in Operations",
+    "talk_description": "We'll cover an example of how AI can be used to ease the burden of operating a multitude of applications",
+    "photo": "03_Alexander_Høier.jpeg"
+  },
+  {
     "name": "Arun Prakash",
     "title": "Risk Manager",
     "company": "Novo Nordisk Engineering",

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { currentUser } from "@/lib/auth";
-import Avatar from "@/components/Avatar";
+import PhotoLightbox from "@/components/PhotoLightbox";
 import ProfileTracker from "@/components/ProfileTracker";
 import LinkedInLink from "@/components/LinkedInLink";
 import { SLIDES_ENABLED } from "@/lib/slides";
@@ -70,7 +70,7 @@ export default async function ProfilePage({
       </Link>
 
       <div className="mt-6 flex flex-col items-center text-center">
-        <Avatar
+        <PhotoLightbox
           firstName={profile.first_name}
           lastName={profile.last_name}
           photoUrl={profile.photo_url}

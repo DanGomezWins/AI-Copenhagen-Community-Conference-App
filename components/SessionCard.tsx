@@ -1,6 +1,9 @@
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
-import { timeRange, isStructural, TRACKS, VIEW_COLORS, type Session } from "@/lib/program";
+import {
+  timeRange, isStructural, TRACKS, VIEW_COLORS,
+  type Session, type ProgramView,
+} from "@/lib/program";
 import type { Liveness } from "@/lib/program";
 import { SLIDES_ENABLED } from "@/lib/slides";
 
@@ -15,6 +18,7 @@ export default function SessionCard({
   showTrack = false,
   from,
   speaker,
+  colorKey,
 }: {
   session: Session;
   state: Liveness;
@@ -23,10 +27,19 @@ export default function SessionCard({
   from?: string;
   /** Role and company for the speaker, when they have a profile. */
   speaker?: { role: string | null; company: string | null };
+  /**
+   * Colour this card as if it belonged to another view.
+   *
+   * For breaks, which are stored on the main track but appear in every room:
+   * inside the Demos list a lunch card in Main-stage blue reads as a mistake,
+   * so it takes the colour of the room you are actually looking at.
+   */
+  colorKey?: ProgramView;
 }) {
   const cancelled = s.status === "cancelled";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
-  const trackColor = VIEW_COLORS[s.track];
+  const trackColor = VIEW_COLORS[colorKey ?? s.track];
+  const structural = isStructural(s);
 
   // Everyone on stage, not just the lead - the closing keynote has three, and
   // naming one of them made the other two look like they were not appearing.
@@ -56,7 +69,15 @@ export default function SessionCard({
         // in the accent. A second colour on top of that would compete with the
         // one state worth interrupting for.
         state !== "now"
-          ? { borderLeftColor: `var(${trackColor.edge})`, borderLeftWidth: "3px" }
+          ? {
+              borderLeftColor: `var(${trackColor.edge})`,
+              borderLeftWidth: "3px",
+              // Day structure — a break, lunch, registration — filled with the
+              // room's own colour at its faintest. Enough to let the eye skip
+              // it while scanning for the next talk, without making it look
+              // like something is wrong with the card.
+              ...(structural ? { background: `var(${trackColor.soft})` } : {}),
+            }
           : undefined
       }
     >
@@ -138,7 +159,7 @@ export default function SessionCard({
 
       {/* Breaks, lunch and registration are day structure, not something you
           choose to attend, so they carry no star. */}
-      {!cancelled && !isStructural(s) && (
+      {!cancelled && !structural && (
         <StarButton sessionId={s.id} starred={starred} />
       )}
     </li>
