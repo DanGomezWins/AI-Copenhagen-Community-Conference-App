@@ -196,7 +196,7 @@ have to create anything.
 | 3.6  | Real speakers             | Actual speaker names, not invented ones                               | -      |       |
 | 3.7  | **Finished sessions dim** | Anything already past fades back and is labelled "Finished"           | -      |       |
 | 3.8  | Happening now             | The current session is outlined and badged "Now"                      | -      |       |
-| 3.9  | **Open Sessions**         | Explains how Open Space works, links to the board, and shows an example schedule labelled "Example only" | -      |       |
+| 3.9  | **Open Sessions**         | Explains how Open Space works and links out to the board. No schedule until the Open Space platform pushes one | -      |       |
 | 3.10 | No stars on breaks        | Lunch and breaks have no ☆ — you don't choose to attend lunch         | -      |       |
 
 > ### "How can I test 3.7 and 3.8 when everything is in the future?"

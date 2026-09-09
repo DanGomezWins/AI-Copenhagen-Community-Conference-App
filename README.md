@@ -337,8 +337,11 @@ source has one name field rather than a first and last, and topics can be
 proposed anonymously, so matching them would be guesswork that occasionally
 credits the wrong person.
 
-Until the first push the tab shows a labelled example agenda and links to the
-board.
+Until the first push the tab explains how Open Space works and links to the
+board - and shows no schedule at all. It carried a labelled example agenda
+while the board was still being built, so the layout could be reviewed before
+there was anything real to put in it. That is gone: an example sitting under
+the real thing is a schedule somebody can act on by mistake.
 
 ### Speaker slides are switched off
 

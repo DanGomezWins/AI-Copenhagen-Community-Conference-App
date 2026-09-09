@@ -23,34 +23,6 @@ export type AgendaItem = {
  * them to profiles would be guesswork that occasionally credits the wrong
  * person.
  */
-/**
- * Shown until the Open Space platform pushes the real thing. Rendered exactly
- * as a real agenda is, so what you see before the day is what you get on it -
- * behind a label, so nobody mistakes it for the schedule.
- */
-const PLACEHOLDER: AgendaItem[] = [
-  {
-    id: "eg-1", kind: "ask", slot: "10:50 - 11:15",
-    title: "Getting agents to admit when they are stuck",
-    description:
-      "Mine will churn for twenty minutes rather than say it cannot do the thing. Has anyone found a stopping rule that works?",
-    facilitator: "Freja Lindqvist",
-  },
-  {
-    id: "eg-2", kind: "tell", slot: "11:20 - 11:45",
-    title: "We replaced our whole RAG stack with one long prompt",
-    description:
-      "Six months of chunking, embeddings and a vector database, deleted. Quality went up.",
-    facilitator: null,
-  },
-  {
-    id: "eg-3", kind: "ask", slot: "13:20 - 13:45",
-    title: "Where do you draw the line on tool access at work?",
-    description: null,
-    facilitator: "Nikolaj Steenbaek",
-  },
-];
-
 export default function OpenSessions({
   agenda,
   boardUrl,
@@ -76,24 +48,6 @@ export default function OpenSessions({
           </div>
 
           {boardUrl && <BoardLink url={boardUrl} primary />}
-
-          <div className="mt-6 flex items-center gap-2">
-            <span className="h-px flex-1 bg-[var(--color-line)]" />
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-              Example only
-            </span>
-            <span className="h-px flex-1 bg-[var(--color-line)]" />
-          </div>
-          <p className="mt-2 text-center text-xs text-[var(--color-muted)]">
-            Roughly how the schedule will look. These are not real topics and
-            will be replaced.
-          </p>
-
-          <ol className="mt-3 space-y-2 opacity-60">
-            {PLACEHOLDER.map((item) => (
-              <AgendaCard key={item.id} item={item} />
-            ))}
-          </ol>
         </>
       ) : (
         <>
@@ -141,7 +95,7 @@ function BoardLink({ url, primary }: { url: string; primary: boolean }) {
   );
 }
 
-/** One agenda row. Shared so the example cannot drift from the real thing. */
+/** One agenda row, exactly as the Open Space platform sends it. */
 function AgendaCard({ item }: { item: AgendaItem }) {
   return (
     <li className="rounded-xl border border-[var(--color-line)] p-3.5">
