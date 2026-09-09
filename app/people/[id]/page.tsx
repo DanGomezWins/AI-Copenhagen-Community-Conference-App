@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import Avatar from "@/components/Avatar";
 import ProfileTracker from "@/components/ProfileTracker";
 import LinkedInLink from "@/components/LinkedInLink";
@@ -23,9 +24,9 @@ export default async function ProfilePage({
   const { from, track, session: fromSession } = await searchParams;
   const supabase = await createClient();
 
-  const [{ data: profile }, { data: { user } }] = await Promise.all([
+  const [{ data: profile }, user] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", id).maybeSingle(),
-    supabase.auth.getUser(),
+    currentUser(),
   ]);
 
   if (!profile) notFound();

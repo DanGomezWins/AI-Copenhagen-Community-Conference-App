@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import { getPrefill, signOut, deleteMyProfile } from "./actions";
 import SubmitButton from "@/components/SubmitButton";
 import ProfileForm from "./ProfileForm";
@@ -14,7 +15,7 @@ export default async function MePage({
 }) {
   const { welcome } = await searchParams;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await currentUser();
 
   const { data: profile } = await supabase
     .from("profiles")

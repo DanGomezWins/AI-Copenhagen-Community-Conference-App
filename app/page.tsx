@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import FeedList from "./FeedList";
 import type { PostWithAuthor } from "@/lib/feed";
@@ -28,14 +29,15 @@ async function organiserProfileIds(): Promise<string[]> {
 export default async function FeedPage() {
   const supabase = await createClient();
 
-  const [{ data: posts }, { data: { user } }, { data: organiser }, organiserIds] =
+  const user = await currentUser();
+
+  const [{ data: posts }, { data: organiser }, organiserIds] =
     await Promise.all([
       supabase
         .from("posts")
         .select("*, author:profiles(id, first_name, last_name, photo_url)")
         .order("created_at", { ascending: false })
         .limit(100),
-      supabase.auth.getUser(),
       supabase.rpc("is_organiser"),
       organiserProfileIds(),
     ]);

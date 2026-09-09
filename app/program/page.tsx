@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import SessionCard from "@/components/SessionCard";
 import { TrackProgramView } from "@/components/TrackPageView";
 import {
@@ -34,7 +35,7 @@ export default async function ProgramPage({
   const view: ProgramView = isProgramView(raw) ? raw : "main";
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await currentUser();
 
   const [
     { data: sessionRows },

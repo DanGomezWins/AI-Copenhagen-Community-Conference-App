@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import RatingModal from "@/components/RatingModal";
 import { EVENT } from "@/lib/event";
 import { nameKey } from "@/lib/names";
@@ -12,7 +13,7 @@ const MAKERS = ["Daniel Gomez-Windshuttle", "Martin Schultz"];
 
 export default async function AboutPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await currentUser();
 
   const [{ data: profiles }, { data: myRating }] = await Promise.all([
     supabase.from("profiles").select("id, first_name, last_name"),

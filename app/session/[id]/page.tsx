@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import SpeakerCard, { type SpeakerProfile } from "@/components/SpeakerCard";
 import StarButton from "@/components/StarButton";
 import RatingModal from "@/components/RatingModal";
@@ -25,9 +26,9 @@ export default async function SessionPage({
   const { from } = await searchParams;
   const supabase = await createClient();
 
-  const [{ data: session }, { data: { user } }] = await Promise.all([
+  const [{ data: session }, user] = await Promise.all([
     supabase.from("sessions").select("*").eq("id", id).maybeSingle(),
-    supabase.auth.getUser(),
+    currentUser(),
   ]);
 
   if (!session) notFound();

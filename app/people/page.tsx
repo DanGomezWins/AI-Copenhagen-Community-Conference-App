@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import Directory, { type DirectoryPerson } from "./Directory";
 
 export const dynamic = "force-dynamic";
@@ -7,13 +8,13 @@ export const dynamic = "force-dynamic";
 export default async function PeoplePage() {
   const supabase = await createClient();
 
-  const [{ data: people }, { data: { user } }] = await Promise.all([
+  const [{ data: people }, user] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, first_name, last_name, is_speaker, company, role, photo_url")
       .order("first_name", { ascending: true })
       .order("last_name", { ascending: true }),
-    supabase.auth.getUser(),
+    currentUser(),
   ]);
 
   const list = (people ?? []) as DirectoryPerson[];

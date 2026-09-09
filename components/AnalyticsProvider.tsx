@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import Analytics from "./Analytics";
 
 /**
@@ -10,8 +10,7 @@ import Analytics from "./Analytics";
  * reaches the analytics provider.
  */
 export default async function AnalyticsProvider() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await currentUser();
 
   return (
     <Suspense fallback={null}>

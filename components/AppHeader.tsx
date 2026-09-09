@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import Avatar from "@/components/Avatar";
 import { EVENT } from "@/lib/event";
 
@@ -12,10 +13,10 @@ import { EVENT } from "@/lib/event";
  * directory for yourself.
  */
 export default async function AppHeader() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await currentUser();
   if (!user) return null;
 
+  const supabase = await createClient();
   const [{ data: profile }, { data: organiser }] = await Promise.all([
     supabase
       .from("profiles")

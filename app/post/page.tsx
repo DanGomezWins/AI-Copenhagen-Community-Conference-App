@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { currentUser } from "@/lib/auth";
 import { deletePost } from "@/app/actions/posts";
 import SubmitButton from "@/components/SubmitButton";
 import PostComposer from "./PostComposer";
@@ -15,8 +16,8 @@ export default async function PostPage({
   const { edit } = await searchParams;
   const supabase = await createClient();
 
-  const [{ data: { user } }, { data: organiser }] = await Promise.all([
-    supabase.auth.getUser(),
+  const [user, { data: organiser }] = await Promise.all([
+    currentUser(),
     supabase.rpc("is_organiser"),
   ]);
   if (!user) redirect("/login");
