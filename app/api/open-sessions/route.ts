@@ -101,6 +101,29 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Retract any standing schedule announcement before writing the new one.
+  //
+  // A push replaces the whole agenda, so the previous announcement is stale the
+  // moment this one lands: it names a session count that is no longer true, and
+  // a clearing push leaves it advertising a schedule that does not exist at all.
+  // That is not hypothetical - a test push of 8 sessions was cleared afterwards
+  // and the feed spent the morning telling everyone the schedule was set, with
+  // an empty Open Sessions tab behind it.
+  //
+  // Runs on every push rather than only on a clear, because two pushes in a row
+  // would otherwise leave "8 sessions" sitting above "6 sessions".
+  //
+  // Matched narrowly, and only this route writes a post that fits: the
+  // announcer always sets session_id, schedule-change notices use their own
+  // kind, and anything a person wrote has an author.
+  await admin
+    .from("posts")
+    .delete()
+    .eq("kind", "auto")
+    .eq("track", "open")
+    .is("session_id", null)
+    .is("author_id", null);
+
   if (announce && sessions.length > 0) {
     await admin.from("posts").insert({
       body: `The Open Space schedule is set — ${sessions.length} sessions. Open the Program, then Open sessions, to see what is on.`,

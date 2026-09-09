@@ -323,7 +323,10 @@ Authorization: Bearer $OPEN_SESSIONS_TOKEN
 ```
 
 Only `title` is required. Each push **replaces the whole agenda**, so pushing
-again is how a mistake is corrected and `{"sessions": []}` clears it. The route
+again is how a mistake is corrected and `{"sessions": []}` clears it. A push
+also **retracts the previous announcement** before writing a new one, so the
+feed can never carry two contradictory session counts, or advertise a schedule
+that a clearing push has just removed. The route
 authenticates with its own bearer token, so it is exempt from the session
 redirect in [PUBLIC_PATHS](lib/supabase/middleware.ts) and writes with the
 service role — `open_agenda` has no write policy at all.
