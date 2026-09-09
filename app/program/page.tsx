@@ -93,7 +93,13 @@ export default async function ProgramPage({
       ? mine.length > 0
         ? [...mine, ...breaks].sort((a, b) => a.starts_at.localeCompare(b.starts_at))
         : []
-      : all.filter((s) => s.track === view || isBreak(s));
+      : all.filter(
+          // Not Open sessions. Its topics live in open_agenda with free-text
+          // slots rather than timestamps, so breaks cannot be interleaved with
+          // them - they would sit under the board as a list of nothing but
+          // lunch, which reads as the schedule having gone missing.
+          (s) => s.track === view || (view !== "open" && isBreak(s)),
+        );
 
   const state = liveness(sessions);
 
