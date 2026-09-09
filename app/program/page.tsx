@@ -4,7 +4,7 @@ import { currentUser } from "@/lib/auth";
 import SessionCard from "@/components/SessionCard";
 import { TrackProgramView } from "@/components/TrackPageView";
 import {
-  TRACKS, MY_SCHEDULE, isProgramView, liveness,
+  TRACKS, MY_SCHEDULE, VIEW_COLORS, isProgramView, liveness,
   type Session, type ProgramView,
 } from "@/lib/program";
 import { EVENT } from "@/lib/event";
@@ -23,7 +23,7 @@ type AgendaRow = {
 };
 const VIEWS = [
   ...TRACKS.map((t) => ({ key: t.key as ProgramView, label: t.label })),
-  { key: MY_SCHEDULE as ProgramView, label: "My Schedule" },
+  { key: MY_SCHEDULE as ProgramView, label: "My schedule" },
 ];
 
 export default async function ProgramPage({
@@ -130,17 +130,28 @@ export default async function ProgramPage({
         </p>
 
         <nav className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
-        {VIEWS.map((v) => (
+        {VIEWS.map((v) => {
+          const c = VIEW_COLORS[v.key];
+          const current = v.key === view;
+          return (
           <Link
             key={v.key}
             href={`/program?track=${v.key}`}
             scroll={false}
-            aria-current={v.key === view ? "page" : undefined}
-            className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
-              v.key === view
-                ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                : "border-[var(--color-line)] text-[var(--color-muted)]"
-            }`}
+            aria-current={current ? "page" : undefined}
+            className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm transition-colors"
+            style={
+              // Filled in its own colour when you are on it, outlined in the
+              // readable version of that colour when you are not — so the room
+              // you are looking at and the cards below it agree.
+              current
+                ? {
+                    background: `var(${c.fill})`,
+                    borderColor: `var(${c.fill})`,
+                    color: `var(${c.onFill})`,
+                  }
+                : { borderColor: `var(${c.soft})`, color: `var(${c.ink})` }
+            }
           >
             {v.key === MY_SCHEDULE && (
               <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
@@ -149,7 +160,8 @@ export default async function ProgramPage({
             )}
             {v.label}
           </Link>
-          ))}
+          );
+          })}
         </nav>
 
         {/* Named under the tabs, because the question "who do I ask in this

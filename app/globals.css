@@ -12,7 +12,10 @@
                       reverse, so it also carries a solid fill with white text/
                       icons on top — the sticky header and tab bar use exactly
                       that, the one place colour is a background rather than
-                      an accent.
+                      an accent. It is also the only one of the four that can
+                      take white text: the other three are filled under dark
+                      ink instead, which is why the Program's nav buttons do
+                      not all use the same label colour.
      #FF5555  3.14:1  UI only — borders, badges, icons. Never body text;
                       --color-danger-ink is the readable partner at 6.97:1
      #99FCA0  1.25:1  decoration only — backgrounds and badges. Dark text on
@@ -36,11 +39,20 @@
   --color-positive-ink: #0a5f2c;
 
   /* Demos track identity (card edges, icons — see lib/program.ts
-     TRACK_COLORS). A deepened stand-in for --color-positive, which stays too
+     VIEW_COLORS). A deepened stand-in for --color-positive, which stays too
      light to draw a line or a stroke with. Same hue family as the brand
      green, just carrying its own weight instead of borrowing the success
      colour's. */
   --color-demos: #3ac24f;
+
+  /* My schedule. Not a room — a view onto all three — so it gets its own hue
+     rather than borrowing one, and it never colours a card: cards in there
+     keep the colour of the room they came from.
+       #bb44ff  3.90:1  fill only, and only under dark text (4.85:1)
+       #7c1fb0  7.83:1  the readable partner, for the label on white */
+  --color-mine: #bb44ff;
+  --color-mine-soft: #f6e6ff;
+  --color-mine-ink: #7c1fb0;
 
   /* Open Space topic kinds. Two hues carrying the same weight - a Tell is not
      more important than an Ask. Deliberately outside the accent family: a

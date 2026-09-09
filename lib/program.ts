@@ -20,20 +20,6 @@ export function isTrackKey(v: string | undefined): v is TrackKey {
 }
 
 /**
- * Per-track colour, so a session's room reads at a glance instead of only
- * from its label text. CSS variable names, not values — components interpolate
- * them into `var(--color-x)` so the actual colour still lives in globals.css.
- */
-export const TRACK_COLORS: Record<
-  TrackKey,
-  { edge: string; soft: string; ink: string }
-> = {
-  main: { edge: "--color-accent", soft: "--color-accent-soft", ink: "--color-accent" },
-  demos: { edge: "--color-demos", soft: "--color-positive-soft", ink: "--color-positive-ink" },
-  open: { edge: "--color-danger", soft: "--color-danger-soft", ink: "--color-danger-ink" },
-};
-
-/**
  * The Program's fourth view. Not a track: it draws from every room and is
  * personal to the viewer, so it lives beside the tracks rather than among them.
  */
@@ -43,6 +29,64 @@ export type ProgramView = TrackKey | typeof MY_SCHEDULE;
 export function isProgramView(v: string | undefined): v is ProgramView {
   return v === MY_SCHEDULE || isTrackKey(v);
 }
+
+export type ViewColor = {
+  /** Background of the nav button when it is the view you are on. */
+  fill: string;
+  /** Label on that fill. Only the blue is dark enough to take white. */
+  onFill: string;
+  /** The same colour deepened until it can be read as text on white. */
+  ink: string;
+  /** Faint tint, for a badge that has to sit inside a white card. */
+  soft: string;
+  /** The stripe down the left of a session card. */
+  edge: string;
+};
+
+/**
+ * One colour per view of the Program, so a room reads at a glance rather than
+ * only from its label — the nav button you tapped and the cards underneath it
+ * are the same colour, and in My schedule each card keeps the colour of the
+ * room it came from.
+ *
+ * CSS variable names rather than values: the colours themselves stay in
+ * globals.css, next to the contrast measurements that justify them. Which is
+ * also why `fill` and `ink` differ for three of the four — as specified, only
+ * the blue is dark enough to be legible as text on white or to carry white
+ * text on top.
+ */
+export const VIEW_COLORS: Record<ProgramView, ViewColor> = {
+  main: {
+    fill: "--color-accent",
+    onFill: "--color-surface",
+    ink: "--color-accent",
+    soft: "--color-accent-soft",
+    edge: "--color-accent",
+  },
+  demos: {
+    fill: "--color-positive",
+    onFill: "--color-ink",
+    ink: "--color-positive-ink",
+    soft: "--color-positive-soft",
+    edge: "--color-demos",
+  },
+  open: {
+    fill: "--color-danger",
+    onFill: "--color-ink",
+    ink: "--color-danger-ink",
+    soft: "--color-danger-soft",
+    edge: "--color-danger",
+  },
+  // Never reaches a card: My schedule draws from every room, so the cards in
+  // it stay the colour of wherever they came from.
+  mine: {
+    fill: "--color-mine",
+    onFill: "--color-ink",
+    ink: "--color-mine-ink",
+    soft: "--color-mine-soft",
+    edge: "--color-mine",
+  },
+};
 
 export type Session = {
   id: string;

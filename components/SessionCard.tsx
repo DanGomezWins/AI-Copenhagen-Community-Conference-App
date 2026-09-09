@@ -1,6 +1,6 @@
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
-import { timeRange, isStructural, TRACKS, TRACK_COLORS, type Session } from "@/lib/program";
+import { timeRange, isStructural, TRACKS, VIEW_COLORS, type Session } from "@/lib/program";
 import type { Liveness } from "@/lib/program";
 import { SLIDES_ENABLED } from "@/lib/slides";
 
@@ -26,7 +26,7 @@ export default function SessionCard({
 }) {
   const cancelled = s.status === "cancelled";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
-  const trackColor = TRACK_COLORS[s.track];
+  const trackColor = VIEW_COLORS[s.track];
 
   // Everyone on stage, not just the lead - the closing keynote has three, and
   // naming one of them made the other two look like they were not appearing.
@@ -51,9 +51,11 @@ export default function SessionCard({
         state === "past" ? "opacity-45" : ""
       }`}
       style={
-        // "Now" already owns the whole border in accent colour - a track edge
-        // on top of that would compete with it instead of adding information.
-        showTrack && state !== "now"
+        // Every card carries its room's colour, matching the nav button above
+        // it — except while it is on, when the whole card is already outlined
+        // in the accent. A second colour on top of that would compete with the
+        // one state worth interrupting for.
+        state !== "now"
           ? { borderLeftColor: `var(${trackColor.edge})`, borderLeftWidth: "3px" }
           : undefined
       }

@@ -1,6 +1,7 @@
 import { EVENT } from "@/lib/event";
 import TrackedLink from "@/components/TrackedLink";
 import { EVENTS } from "@/lib/analytics";
+import { VIEW_COLORS } from "@/lib/program";
 
 export type AgendaItem = {
   id: string;
@@ -98,7 +99,16 @@ function BoardLink({ url, primary }: { url: string; primary: boolean }) {
 /** One agenda row, exactly as the Open Space platform sends it. */
 function AgendaCard({ item }: { item: AgendaItem }) {
   return (
-    <li className="rounded-xl border border-[var(--color-line)] p-3.5">
+    // Carries the Open sessions colour down the left edge, the same as a
+    // session card in any other room. The Ask/Tell badge keeps its own pair of
+    // hues - those say what kind of topic it is, not which room it is in.
+    <li
+      className="rounded-xl border border-[var(--color-line)] p-3.5"
+      style={{
+        borderLeftColor: `var(${VIEW_COLORS.open.edge})`,
+        borderLeftWidth: "3px",
+      }}
+    >
       <div className="flex flex-wrap items-center gap-2">
         {item.kind && (
           <span
