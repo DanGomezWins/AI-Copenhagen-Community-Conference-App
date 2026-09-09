@@ -32,7 +32,7 @@ export default function StarButton({
   const [optimistic, setOptimistic] = useOptimistic(starred);
 
   const dimension = size === "sm" ? "size-8" : "size-10";
-  const glyph = size === "sm" ? "text-base" : "text-xl";
+  const iconSize = labelled ? 18 : size === "sm" ? 16 : 20;
 
   return (
     <form
@@ -65,9 +65,24 @@ export default function StarButton({
               }`
         }
       >
-        <span className={labelled ? "text-lg" : glyph} aria-hidden="true">
-          {optimistic ? "★" : "☆"}
-        </span>
+        {/* SVG, not a ★/☆ character - those fall back to whatever symbol
+            font the OS has, not Inter and not this button's own colour. */}
+        <svg width={iconSize} height={iconSize} viewBox="0 0 20 20" aria-hidden="true">
+          {optimistic ? (
+            <path
+              fill="currentColor"
+              d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z"
+            />
+          ) : (
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+              d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z"
+            />
+          )}
+        </svg>
         {labelled && (optimistic ? "In My Schedule" : "Add to My Schedule")}
       </button>
     </form>

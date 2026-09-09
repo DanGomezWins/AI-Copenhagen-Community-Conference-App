@@ -13,9 +13,20 @@ type Row = {
 
 function Stars({ n }: { n: number }) {
   return (
-    <span className="whitespace-nowrap text-[var(--color-accent)]" aria-label={`${n} out of 5`}>
-      {"★".repeat(n)}
-      <span className="text-[var(--color-line)]">{"★".repeat(5 - n)}</span>
+    <span className="inline-flex gap-0.5" aria-label={`${n} out of 5`}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <svg
+          key={i}
+          width="13"
+          height="13"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+          fill="currentColor"
+          className={i <= n ? "text-[var(--color-accent)]" : "text-[var(--color-line)]"}
+        >
+          <path d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z" />
+        </svg>
+      ))}
     </span>
   );
 }

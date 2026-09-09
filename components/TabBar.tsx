@@ -6,9 +6,33 @@ import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
 const TABS = [
-  { href: "/", label: "Feed" },
-  { href: "/program", label: "Program" },
-  { href: "/people", label: "Networking" },
+  {
+    href: "/",
+    label: "Feed",
+    icon: (
+      <path d="M3 10l7-6 7 6M5 9v8h10V9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    ),
+  },
+  {
+    href: "/program",
+    label: "Program",
+    icon: (
+      <>
+        <rect x="3.5" y="4" width="13" height="13" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M3.5 8h13M7 2.5v3M13 2.5v3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </>
+    ),
+  },
+  {
+    href: "/people",
+    label: "Networking",
+    icon: (
+      <>
+        <circle cx="10" cy="7" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </>
+    ),
+  },
 ] as const;
 
 /**
@@ -72,7 +96,7 @@ export default function TabBar() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--color-line)] bg-[var(--color-surface)]/95 backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-50 bg-[var(--color-accent)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="mx-auto flex w-full max-w-screen-sm">
@@ -88,20 +112,21 @@ export default function TabBar() {
                 onClick={(e) => mark(e, tab.href)}
                 aria-current={active ? "page" : undefined}
                 aria-busy={loading || undefined}
-                className={`relative flex h-16 flex-col items-center justify-center text-sm font-medium transition-colors ${
-                  active || loading
-                    ? "text-[var(--color-accent)]"
-                    : "text-[var(--color-muted)]"
+                className={`relative flex h-16 flex-col items-center justify-center gap-1 text-sm font-medium transition-colors ${
+                  active || loading ? "text-white" : "text-white/60"
                 }`}
               >
+                <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden>
+                  {tab.icon}
+                </svg>
                 {tab.label}
                 {loading && (
                   <span
                     aria-hidden
                     data-pending
-                    className="absolute inset-x-3 bottom-2.5 h-0.5 overflow-hidden rounded-full bg-[var(--color-line)]"
+                    className="absolute inset-x-3 bottom-2.5 h-0.5 overflow-hidden rounded-full bg-white/25"
                   >
-                    <span className="block h-full w-1/2 animate-[tab-progress_900ms_ease-in-out_infinite] rounded-full bg-[var(--color-accent)]" />
+                    <span className="block h-full w-1/2 animate-[tab-progress_900ms_ease-in-out_infinite] rounded-full bg-white" />
                   </span>
                 )}
               </Link>

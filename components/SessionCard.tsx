@@ -1,6 +1,6 @@
 import Link from "next/link";
 import StarButton from "@/components/StarButton";
-import { timeRange, isStructural, TRACKS, type Session } from "@/lib/program";
+import { timeRange, isStructural, TRACKS, TRACK_COLORS, type Session } from "@/lib/program";
 import type { Liveness } from "@/lib/program";
 import { SLIDES_ENABLED } from "@/lib/slides";
 
@@ -26,6 +26,7 @@ export default function SessionCard({
 }) {
   const cancelled = s.status === "cancelled";
   const track = TRACKS.find((t) => t.key === s.track)?.label;
+  const trackColor = TRACK_COLORS[s.track];
 
   // Everyone on stage, not just the lead - the closing keynote has three, and
   // naming one of them made the other two look like they were not appearing.
@@ -49,13 +50,24 @@ export default function SessionCard({
         // eye lands on what is still to come.
         state === "past" ? "opacity-45" : ""
       }`}
+      style={
+        // "Now" already owns the whole border in accent colour - a track edge
+        // on top of that would compete with it instead of adding information.
+        showTrack && state !== "now"
+          ? { borderLeftColor: `var(${trackColor.edge})`, borderLeftWidth: "3px" }
+          : undefined
+      }
     >
       <Link
         href={`/session/${s.id}${from ? `?from=${from}` : ""}`}
         className="min-w-0 flex-1"
       >
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-xs tabular-nums text-[var(--color-muted)]">
+          <span className="inline-flex items-center gap-1 font-mono text-xs tabular-nums text-[var(--color-muted)]">
+            <svg width="11" height="11" viewBox="0 0 20 20" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+              <circle cx="10" cy="10" r="7.5" />
+              <path d="M10 6v4l2.6 1.6" />
+            </svg>
             {timeRange(s.starts_at, s.ends_at)}
           </span>
           {state === "now" && (
@@ -79,7 +91,13 @@ export default function SessionCard({
             </span>
           )}
           {showTrack && track && (
-            <span className="rounded-full bg-[var(--color-raised)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-muted)]">
+            <span
+              className="rounded-full px-2 py-0.5 text-[10px] font-medium"
+              style={{
+                background: `var(${trackColor.soft})`,
+                color: `var(${trackColor.ink})`,
+              }}
+            >
               {track}
             </span>
           )}

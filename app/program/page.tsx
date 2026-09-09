@@ -135,13 +135,18 @@ export default async function ProgramPage({
             href={`/program?track=${v.key}`}
             scroll={false}
             aria-current={v.key === view ? "page" : undefined}
-            className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+            className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
               v.key === view
                 ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
                 : "border-[var(--color-line)] text-[var(--color-muted)]"
             }`}
           >
-            {v.key === MY_SCHEDULE ? `★ ${v.label}` : v.label}
+            {v.key === MY_SCHEDULE && (
+              <svg width="12" height="12" viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+                <path d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z" />
+              </svg>
+            )}
+            {v.label}
           </Link>
           ))}
         </nav>
@@ -188,8 +193,8 @@ export default async function ProgramPage({
         <div className="mt-6 rounded-xl border border-dashed border-[var(--color-line)] p-6">
           <p className="text-sm font-medium">Nothing starred yet</p>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            Tap the ☆ on any session and it appears here, across all rooms, in
-            the order you&rsquo;ll attend them.
+            Tap the star on any session and it appears here, across all
+            rooms, in the order you&rsquo;ll attend them.
           </p>
         </div>
       )}

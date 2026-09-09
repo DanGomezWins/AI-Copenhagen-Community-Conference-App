@@ -11,11 +11,15 @@ export default function RatingModal({
   sessionId,
   existingStars,
   existingComment,
+  fullWidth = true,
 }: {
   label: string;
   sessionId?: string;
   existingStars?: number | null;
   existingComment?: string | null;
+  /** The session page wants a full-width primary action; the About page,
+   * lower down a page of text, just needs an ordinary button. */
+  fullWidth?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [stars, setStars] = useState(existingStars ?? 0);
@@ -94,9 +98,11 @@ export default function RatingModal({
           setSaved(false);
           setOpen(true);
         }}
-        className="w-full rounded-lg border border-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-[var(--color-accent)]"
+        className={`rounded-lg border border-[var(--color-accent)] px-4 py-3 text-sm font-semibold text-[var(--color-accent)] ${
+          fullWidth ? "w-full" : ""
+        }`}
       >
-        {already ? `${label} — you gave ${existingStars}★, tap to change` : label}
+        {already ? `${label} — you gave ${existingStars} stars, tap to change` : label}
       </button>
 
       {open && (
@@ -146,13 +152,31 @@ export default function RatingModal({
                         aria-checked={stars === n}
                         aria-label={`${n} star${n > 1 ? "s" : ""}`}
                         onClick={() => setStars(n)}
-                        className={`text-4xl leading-none transition-colors ${
+                        className={`transition-colors ${
                           n <= stars
                             ? "text-[var(--color-accent)]"
                             : "text-[var(--color-line)]"
                         }`}
                       >
-                        {n <= stars ? "★" : "☆"}
+                        {/* SVG, not the ★/☆ characters - those fall back to
+                            whatever symbol font the OS happens to have,
+                            which is neither Inter nor the brand colour. */}
+                        <svg width="34" height="34" viewBox="0 0 20 20" aria-hidden>
+                          {n <= stars ? (
+                            <path
+                              fill="currentColor"
+                              d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z"
+                            />
+                          ) : (
+                            <path
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinejoin="round"
+                              d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z"
+                            />
+                          )}
+                        </svg>
                       </button>
                     ))}
                   </div>

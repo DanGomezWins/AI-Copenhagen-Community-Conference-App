@@ -8,11 +8,17 @@
    The three brand accents were specified; their contrast against white was
    measured, and each is used only where it stays readable:
 
-     #4309FF  7.72:1  primary — text, buttons, links
+     #4309FF  7.72:1  primary — text, buttons, links. The same 7.72:1 holds in
+                      reverse, so it also carries a solid fill with white text/
+                      icons on top — the sticky header and tab bar use exactly
+                      that, the one place colour is a background rather than
+                      an accent.
      #FF5555  3.14:1  UI only — borders, badges, icons. Never body text;
                       --color-danger-ink is the readable partner at 6.97:1
      #99FCA0  1.25:1  decoration only — backgrounds and badges. Dark text on
-                      it reads at 14.89:1, so it works as a surface
+                      it reads at 14.89:1, so it works as a surface. Too light
+                      for a border or an icon stroke, which is what
+                      --color-demos is for below.
 --------------------------------------------------------------------------- */
 
 @theme {
@@ -28,6 +34,13 @@
   --color-positive: #99fca0;
   --color-positive-soft: #e8fde9;
   --color-positive-ink: #0a5f2c;
+
+  /* Demos track identity (card edges, icons — see lib/program.ts
+     TRACK_COLORS). A deepened stand-in for --color-positive, which stays too
+     light to draw a line or a stroke with. Same hue family as the brand
+     green, just carrying its own weight instead of borrowing the success
+     colour's. */
+  --color-demos: #3ac24f;
 
   /* Open Space topic kinds. Two hues carrying the same weight - a Tell is not
      more important than an Ask. Deliberately outside the accent family: a

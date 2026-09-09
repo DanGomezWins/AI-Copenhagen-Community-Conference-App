@@ -118,8 +118,10 @@ export default function FeedList({
                     size={28}
                   />
                 ) : (
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-xs text-white">
-                    ★
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-white">
+                    <svg width="13" height="13" viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+                      <path d="M10 1l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L10 15.3l-5.8 3.3 1.6-6.5-5.1-4.4 6.7-.5z" />
+                    </svg>
                   </span>
                 )}
 

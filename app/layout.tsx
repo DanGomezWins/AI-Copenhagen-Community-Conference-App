@@ -123,7 +123,7 @@ export default function RootLayout({
           fallback={
             <div
               style={{ height: "var(--app-header-h)" }}
-              className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]"
+              className="sticky top-0 z-40 bg-[var(--color-accent)]"
             />
           }
         >

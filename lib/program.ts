@@ -20,6 +20,20 @@ export function isTrackKey(v: string | undefined): v is TrackKey {
 }
 
 /**
+ * Per-track colour, so a session's room reads at a glance instead of only
+ * from its label text. CSS variable names, not values — components interpolate
+ * them into `var(--color-x)` so the actual colour still lives in globals.css.
+ */
+export const TRACK_COLORS: Record<
+  TrackKey,
+  { edge: string; soft: string; ink: string }
+> = {
+  main: { edge: "--color-accent", soft: "--color-accent-soft", ink: "--color-accent" },
+  demos: { edge: "--color-demos", soft: "--color-positive-soft", ink: "--color-positive-ink" },
+  open: { edge: "--color-danger", soft: "--color-danger-soft", ink: "--color-danger-ink" },
+};
+
+/**
  * The Program's fourth view. Not a track: it draws from every room and is
  * personal to the viewer, so it lives beside the tracks rather than among them.
  */

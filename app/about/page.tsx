@@ -47,29 +47,31 @@ export default async function AboutPage() {
               ) : (
                 <span className="font-medium">{name}</span>
               )}
-              {i < MAKERS.length - 1 ? " & " : ""}
+              {i < MAKERS.length - 1 ? " with " : ""}
             </span>
           );
         })}{" "}
-        as an experiment — one day, one venue, three rooms, and a question about
-        how much of the running of an event can simply take care of itself.
+        as an experiment for the conference.
       </p>
 
       <p className="mt-4 leading-relaxed text-[var(--color-muted)]">
-        It keeps the programme, the live updates and the people in one place, so
-        nobody has to hunt for what changed. There is no app to download and no
-        account to create: your profile was set up before you arrived.
+        What started with the question &ldquo;where/how to display the
+        program&rdquo; became a fully fledged conference app. We&rsquo;d love
+        to know what you think!
       </p>
 
       <div className="mt-8">
-        <RatingModal
-          label="Rate this app"
-          existingStars={myRating?.stars ?? null}
-          existingComment={myRating?.comment ?? null}
-        />
-        <p className="mt-2 text-center text-sm text-[var(--color-muted)]">
-          Got feedback or suggestions? We&rsquo;d love to hear it.
+        <p className="text-sm text-[var(--color-muted)]">
+          Got feedback or suggestions? We&rsquo;d love to hear it!
         </p>
+        <div className="mt-3">
+          <RatingModal
+            label="Rate this app"
+            existingStars={myRating?.stars ?? null}
+            existingComment={myRating?.comment ?? null}
+            fullWidth={false}
+          />
+        </div>
       </div>
 
       <div className="mt-10 border-t border-[var(--color-line)] pt-6">
