@@ -6,6 +6,7 @@ import FeedList from "./FeedList";
 import type { PostWithAuthor } from "@/lib/feed";
 import { EVENT } from "@/lib/event";
 import InstallBanner from "@/components/InstallBanner";
+import PushPrompt from "@/components/PushPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,12 @@ export default async function FeedPage() {
       </div>
 
       <InstallBanner />
+
+      {/* The one place everybody lands. On the profile page this sat below
+          the whole form, where almost nobody scrolled: on the morning of the
+          conference 2 people in 17 had notifications on, which makes every
+          schedule change a silent one. Disappears once it is on. */}
+      <PushPrompt onlyIfActionable />
 
       <h2 className="mt-8 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
         Feed

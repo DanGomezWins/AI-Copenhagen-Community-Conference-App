@@ -38,7 +38,18 @@ function urlBase64ToBuffer(base64: string): ArrayBuffer {
   return buffer;
 }
 
-export default function PushPrompt() {
+export default function PushPrompt({
+  onlyIfActionable = false,
+}: {
+  /**
+   * Show nothing unless there is a button here that fixes something.
+   *
+   * For the Feed, where this sits above everything else: once notifications
+   * are on, the reassurance is not worth the space, and "add to your home
+   * screen first" is already said by the install banner directly above.
+   */
+  onlyIfActionable?: boolean;
+} = {}) {
   const [state, setState] = useState<State>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -125,6 +136,7 @@ export default function PushPrompt() {
   }
 
   if (state === "checking" || state === "unsupported") return null;
+  if (onlyIfActionable && state !== "available") return null;
 
   const shell = "mt-6 rounded-xl border p-4";
 
@@ -174,8 +186,8 @@ export default function PushPrompt() {
   }
 
   return (
-    <div className={`${shell} border-[var(--color-accent)]/40 bg-[var(--color-accent)]/5`}>
-      <p className="text-sm font-medium">Get notified about changes</p>
+    <div className={`${shell} border-[var(--color-accent)] bg-[var(--color-accent-soft)]`}>
+      <p className="text-sm font-semibold">Get notified about changes</p>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         Room changes, delays and what’s next — without keeping the app open.
       </p>
