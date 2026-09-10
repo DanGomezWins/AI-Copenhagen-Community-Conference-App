@@ -323,6 +323,16 @@ export default function LoginForm() {
               ? "Sign in"
               : "Email me a code"}
       </button>
+
+      {/* Work mail servers routinely hold the first message from a new sender
+          for a minute or two. Without saying so, the wait reads as failure and
+          people tap again - which only starts the 60 second lock. */}
+      {!DEV_SIGNIN && (
+        <p className="text-center text-xs text-[var(--color-muted)]">
+          The email can take a minute to arrive — give it a moment before
+          asking again.
+        </p>
+      )}
     </form>
   );
 }
