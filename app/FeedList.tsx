@@ -7,6 +7,7 @@ import Avatar from "@/components/Avatar";
 import { relativeAge, type PostWithAuthor } from "@/lib/feed";
 import { TRACKS } from "@/lib/program";
 import { track } from "@/lib/track";
+import { linkify } from "@/lib/linkify";
 import { EVENTS } from "@/lib/analytics";
 
 const trackLabel = (k: string | null) =>
@@ -146,7 +147,7 @@ export default function FeedList({
               </div>
 
               {p.body && (
-                <p className="mt-2.5 whitespace-pre-wrap leading-relaxed">{p.body}</p>
+                <p className="mt-2.5 whitespace-pre-wrap leading-relaxed">{linkify(p.body)}</p>
               )}
 
               {p.image_url && (
