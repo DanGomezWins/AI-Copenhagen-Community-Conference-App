@@ -28,3 +28,11 @@ tsconfig.tsbuildinfo
 
 # Push token for the Open Space agenda endpoint
 OPEN-SESSIONS-TOKEN.txt
+
+# Attendee exports — names, employers and email addresses of ~120 people, and
+# this repository is public. They are imported straight into Supabase and are
+# never needed by the build, so they must not follow the code anywhere.
+Assets/attendees-*.xlsx
+Assets/attendees-*.csv
+Assets/*attendee*
+
