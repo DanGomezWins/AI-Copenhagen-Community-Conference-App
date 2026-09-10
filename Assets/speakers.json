@@ -151,12 +151,12 @@
   },
   {
     "name": "Sofie Hvitved",
-    "title": null,
-    "company": null,
+    "title": "Futurist & Director of Media Futures & Innovation",
+    "company": "Copenhagen Institute for Futures Studies",
     "linkedin_url": null,
-    "bio": null,
-    "talk_title": null,
-    "talk_description": null,
+    "bio": "Sofie Hvitved is a futurist and Director of Media Futures & Innovation at the Copenhagen Institute for Futures Studies, where she also co-leads the H3 AI Lab. Her work explores how AI and emerging technologies are reshaping information ecosystems, communication, organizations and society. She works with strategic foresight, innovation and possible futures, with a particular focus on what it means to prepare for a world increasingly mediated by AI.",
+    "talk_title": "Beyond AI adoption: Staying relevant in the futures of AI",
+    "talk_description": "Learn how you can apply a ‘futures lens’ to AI, looking beyond the next tool to identify shifting systems and emerging possibilities, and reduce the risk of your products and services losing relevance over time. In this talk, futurist Sofie Hvitved introduces a futures perspective on AI and innovation, sharing insights from the CIFS H3 AI Lab. Using the Three Horizons framework, she explores the difference between optimizing what already exists and creating space to imagine, explore and experiment with what might come next. Through emerging signals, including increasingly contextual AI and the rise of personal and organizational ‘second brains’, the talk explores what future-driven innovation can look like when the direction of technological development is becoming clearer, while the outcomes remain highly uncertain. Don’t expect predictions about the future of AI. Instead, expect to become better prepared for multiple possible futures in an AI-mediated world, where staying relevant requires challenging assumptions about today’s systems and identifying where experimentation should begin.",
     "photo": "Sofie.PNG"
   },
   {
@@ -184,9 +184,9 @@
     "title": "Head of Digital Innovation Catalyst",
     "company": "Ørsted",
     "linkedin_url": "https://www.linkedin.com/in/alexanderevangelidis/",
-    "bio": null,
-    "talk_title": null,
-    "talk_description": null,
+    "bio": "Working at the intersection of AI, strategy, and business transformation, helping one of the world’s leading renewable energy companies navigate how AI can deliver real impact.",
+    "talk_title": "Building the AI Value Portfolio of a Modern Energy Company",
+    "talk_description": "Many energy companies no longer struggle to find AI use cases. Instead, they face a more difficult challenge: deciding which opportunities are worth investing in, how to prioritise them against other strategic initiatives, and how to ensure they generate measurable business.",
     "photo": "Xander.png"
   }
 ]
